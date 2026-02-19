@@ -2,15 +2,17 @@
 extends Control
 class_name Hand
 
+## Arrangement values
 @export var curve_x : Curve
 @export var curve_y : Curve
 @export var curve_rot : Curve
-
 @export var mult_x : float = 120
 @export var mult_y : float = 25
 @export var mult_rot : float = 0.25
 
+## Nodes
 @export var card_scene : PackedScene
+@export var selection_component: SelectionComponent
 
 var cards : Array[Card] = []
 
@@ -60,4 +62,4 @@ func _on_card_up(card: Card) -> void:
 	arrange_hand()
 
 func _on_card_pressed(card: Card) -> void:
-	print("Card of index: ", card.arrange_index, " got pressed!")
+	selection_component.select(card)
