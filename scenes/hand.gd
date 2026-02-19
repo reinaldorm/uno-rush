@@ -47,20 +47,7 @@ func arrange_hand() -> void:
 			card.tween_arange.tween_property(card, "position", final_position, 1)
 			card.tween_arange.tween_property(card, "rotation", final_rot, 1)
 
-##
-
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint() and cards.size():
-		arrange_hand()
-		print("arranging!")
-
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_accept"):
-		var tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
-		tween.tween_method(func(value: float): 
-			mult_rot = value
-			arrange_hand(),
-			0.25, TAU * 2, 5)
+## BT
 
 ## Handlers
 
