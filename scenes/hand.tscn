@@ -20,7 +20,6 @@ point_count = 2
 [node name="Hand" type="Control" unique_id=1315296912]
 layout_mode = 3
 anchors_preset = 0
-pivot_offset = Vector2(93, -76)
 script = ExtResource("1_eyfoh")
 curve_x = SubResource("Curve_cmdsa")
 curve_y = SubResource("Curve_m1v21")

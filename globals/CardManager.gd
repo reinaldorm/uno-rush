@@ -27,6 +27,11 @@ func attach_card(attach_component: AttachComponent) -> void:
 		held_card.animate_rot()
 		attached_component = attach_component
 
+func dettach_card() -> void:
+	if held_card: 
+		held_card.animate_scale(Vector2(2.5, 2.5))
+		attached_component = null
+
 ##
 
 func _process(_delta: float) -> void:
