@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://clbegaov7rk68"]
+
+[ext_resource type="Script" uid="uid://m007nlb67vq1" path="res://scenes/draw_pile/draw_pile.gd" id="1_5owy3"]
+[ext_resource type="Texture2D" uid="uid://cohf4d6rq1y6b" path="res://scenes/card/assets/card_back.png" id="1_mvv51"]
+
+[node name="DrawPile" type="Control" unique_id=1703369888]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_5owy3")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=95625007]
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=1575988209]
+position = Vector2(0, -4)
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")
+
+[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=280360285]
+position = Vector2(0, -8)
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")
+
+[node name="Sprite2D4" type="Sprite2D" parent="." unique_id=1443130341]
+position = Vector2(0, -12)
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")
+
+[node name="Sprite2D5" type="Sprite2D" parent="." unique_id=1862750421]
+position = Vector2(0, -16)
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")
+
+[node name="Sprite2D6" type="Sprite2D" parent="." unique_id=246532042]
+position = Vector2(0, -20)
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")

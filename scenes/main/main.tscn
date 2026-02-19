@@ -1,0 +1,137 @@
+[gd_scene format=3 uid="uid://dvet35xoth03y"]
+
+[ext_resource type="Script" uid="uid://c200ppkbu73ih" path="res://scenes/main/main.gd" id="1_l3cfh"]
+[ext_resource type="PackedScene" uid="uid://dx5kml527dyff" path="res://scenes/hand.tscn" id="2_k2fmo"]
+[ext_resource type="PackedScene" uid="uid://clbegaov7rk68" path="res://scenes/draw_pile/draw_pile.tscn" id="3_k2fmo"]
+[ext_resource type="PackedScene" uid="uid://do5kc56ios2tk" path="res://scenes/discard_pile/discard_pile.tscn" id="4_l3cfh"]
+
+[sub_resource type="Gradient" id="Gradient_hyk8p"]
+offsets = PackedFloat32Array(0, 0.26229507, 0.5081967, 0.7704918, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0.09803922, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_iuonh"]
+gradient = SubResource("Gradient_hyk8p")
+
+[sub_resource type="Curve" id="Curve_k2fmo"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.25324675, 0.7894737), 0.0, 0.0, 0, 0, Vector2(0.512987, 0.23157895), 0.0, 0.0, 0, 0, Vector2(0.7662338, 0.74736845), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveTexture" id="CurveTexture_l3cfh"]
+curve = SubResource("Curve_k2fmo")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6q06x"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(320, 180, 0)
+emission_shape = 3
+emission_box_extents = Vector3(320, 180, 1)
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_l3cfh")
+color_ramp = SubResource("GradientTexture1D_iuonh")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_k2fmo"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(320, 180, 0)
+emission_shape = 3
+emission_box_extents = Vector3(320, 180, 1)
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_l3cfh")
+color = Color(1, 0.8862745, 0, 1)
+color_ramp = SubResource("GradientTexture1D_iuonh")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_l3cfh"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(320, 180, 0)
+emission_shape = 3
+emission_box_extents = Vector3(320, 180, 1)
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_l3cfh")
+color = Color(0.56078434, 0.9098039, 1, 1)
+color_ramp = SubResource("GradientTexture1D_iuonh")
+
+[sub_resource type="Environment" id="Environment_ow5a4"]
+background_mode = 3
+glow_enabled = true
+glow_levels/3 = 1.05
+glow_levels/5 = 0.16
+glow_levels/7 = 0.17
+glow_intensity = 0.25
+glow_hdr_threshold = 0.04
+
+[node name="Main" type="Control" unique_id=1835543078 node_paths=PackedStringArray("hand", "draw_pile", "discard_pile")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l3cfh")
+hand = NodePath("Hand")
+draw_pile = NodePath("DrawPile")
+discard_pile = NodePath("DiscardPile")
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=1884324124]
+layer = -1
+
+[node name="Background" type="ColorRect" parent="Background" unique_id=1292939240]
+z_index = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0045961356, 0.0059171747, 0.015647467, 1)
+metadata/_edit_lock_ = true
+
+[node name="Stars" type="GPUParticles2D" parent="Background" unique_id=1323026414]
+z_index = -1
+amount = 100
+lifetime = 10.0
+visibility_rect = Rect2(0, 0, 640, 360)
+process_material = SubResource("ParticleProcessMaterial_6q06x")
+metadata/_edit_lock_ = true
+
+[node name="Stars2" type="GPUParticles2D" parent="Background" unique_id=994513518]
+z_index = -1
+amount = 50
+lifetime = 10.0
+visibility_rect = Rect2(0, 0, 640, 360)
+process_material = SubResource("ParticleProcessMaterial_k2fmo")
+metadata/_edit_lock_ = true
+
+[node name="Stars3" type="GPUParticles2D" parent="Background" unique_id=131352892]
+z_index = -1
+amount = 25
+lifetime = 10.0
+visibility_rect = Rect2(0, 0, 640, 360)
+process_material = SubResource("ParticleProcessMaterial_l3cfh")
+metadata/_edit_lock_ = true
+
+[node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
+layout_mode = 1
+offset_left = 41.0
+offset_top = 332.0
+offset_right = 41.0
+offset_bottom = 332.0
+
+[node name="DiscardPile" parent="." unique_id=1939346024 instance=ExtResource("4_l3cfh")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1605705152]
+environment = SubResource("Environment_ow5a4")

@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://do5kc56ios2tk"]
+
+[ext_resource type="Texture2D" uid="uid://lr7ptxd33xqe" path="res://scenes/card/assets/outline.png" id="1_levwr"]
+[ext_resource type="Script" uid="uid://dsj0niqdyk6fm" path="res://scenes/discard_pile/discard_pile.gd" id="1_twh83"]
+[ext_resource type="Script" uid="uid://cw12ktjdt7lyy" path="res://components/attach_component.gd" id="3_hrls4"]
+[ext_resource type="FontFile" uid="uid://bb0nad1sip4d4" path="res://assets/fonts/bold_pixels.ttf" id="4_74hxx"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_74hxx"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4y8cg"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xjoml"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ovds3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c5nev"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ro0s3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ubear"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mmnr5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_w6b4y"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tb4se"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1wh1r"]
+
+[node name="DiscardPile" type="Control" unique_id=1939346024 node_paths=PackedStringArray("warn_text")]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_twh83")
+warn_text = NodePath("WarnText")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2097543852]
+modulate = Color(1, 1, 1, 0.11764706)
+scale = Vector2(3, 3)
+texture = ExtResource("1_levwr")
+
+[node name="WarnText" type="RichTextLabel" parent="." unique_id=1597933548]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = 28.0
+offset_right = 64.0
+offset_bottom = 68.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_74hxx")
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[wave]DROP IT HERE![/wave]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AttachComponent" type="Button" parent="." unique_id=1904701616]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -37.0
+offset_right = 24.0
+offset_bottom = 37.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_74hxx")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_4y8cg")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_xjoml")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_ovds3")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_c5nev")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_ro0s3")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_ubear")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_mmnr5")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_w6b4y")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_tb4se")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_1wh1r")
+script = ExtResource("3_hrls4")
+metadata/_custom_type_script = "uid://cw12ktjdt7lyy"

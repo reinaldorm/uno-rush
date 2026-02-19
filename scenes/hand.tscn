@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://dx5kml527dyff"]
+
+[ext_resource type="Script" uid="uid://4jmmbq33ah3v" path="res://scenes/hand.gd" id="1_eyfoh"]
+[ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://scenes/card/card.tscn" id="2_cmdsa"]
+
+[sub_resource type="Curve" id="Curve_cmdsa"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -1), 0.0, 1.8973686, 0, 1, Vector2(1, 1), 1.8586465, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_m1v21"]
+_data = [Vector2(0, 0), 0.0, 5.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -5.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_k7pjy"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -1), 0.0, 0.0, 0, 0, Vector2(0.9611651, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="Hand" type="Control" unique_id=1315296912]
+layout_mode = 3
+anchors_preset = 0
+pivot_offset = Vector2(93, -76)
+script = ExtResource("1_eyfoh")
+curve_x = SubResource("Curve_cmdsa")
+curve_y = SubResource("Curve_m1v21")
+curve_rot = SubResource("Curve_k7pjy")
+card_scene = ExtResource("2_cmdsa")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1942361955]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -141.0
+offset_top = -12.0
+offset_right = 141.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 0.11372549, 0.02745098, 0.16470589)
