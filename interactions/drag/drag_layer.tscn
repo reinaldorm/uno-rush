@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bge1wr6a45a8d"]
+
+[ext_resource type="Script" uid="uid://dhair5cdw83oc" path="res://interactions/drag/drag_layer.gd" id="1_jbdqh"]
+
+[node name="DragLayer" type="Node2D" unique_id=1888223450]
+script = ExtResource("1_jbdqh")

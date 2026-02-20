@@ -7,27 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://do5kc56ios2tk" path="res://piles/discard_pile/discard_pile.tscn" id="4_l3cfh"]
 [ext_resource type="Shader" uid="uid://dp3lgf7lykufk" path="res://shaders/vcr.gdshader" id="6_ow5a4"]
 [ext_resource type="Script" uid="uid://cl5yn6116qkw2" path="res://core/game_manager.gd" id="7_hujxm"]
-[ext_resource type="PackedScene" uid="uid://bge1wr6a45a8d" path="res://interactions/drag/drag_layer.tscn" id="8_yyfjg"]
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_ow5a4"]
-noise_type = 4
-seed = 2
-frequency = 0.0973
-fractal_type = 0
-fractal_lacunarity = 2.4
-fractal_gain = -0.06
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hujxm"]
-width = 1
-noise = SubResource("FastNoiseLite_ow5a4")
-seamless = true
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_yyfjg"]
-shader = ExtResource("6_ow5a4")
-shader_parameter/scale = Vector2(1, 1)
-shader_parameter/strength = 1.0
-shader_parameter/fps = 6.0
-shader_parameter/noise = SubResource("NoiseTexture2D_hujxm")
 
 [sub_resource type="Gradient" id="Gradient_hyk8p"]
 offsets = PackedFloat32Array(0, 0.26229507, 0.5081967, 0.7704918, 1)
@@ -72,6 +51,31 @@ scale_curve = SubResource("CurveTexture_l3cfh")
 color = Color(0.56078434, 0.9098039, 1, 1)
 color_ramp = SubResource("GradientTexture1D_iuonh")
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ow5a4"]
+noise_type = 4
+seed = 2
+frequency = 0.0973
+fractal_type = 0
+fractal_lacunarity = 2.4
+fractal_gain = -0.06
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hujxm"]
+noise = SubResource("FastNoiseLite_ow5a4")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yyfjg"]
+shader = ExtResource("6_ow5a4")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 1.0
+shader_parameter/fps = 6.0
+shader_parameter/noise = SubResource("NoiseTexture2D_hujxm")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hujxm"]
+shader = ExtResource("6_ow5a4")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 1.0
+shader_parameter/fps = 6.0
+
 [sub_resource type="Environment" id="Environment_ow5a4"]
 background_mode = 3
 glow_enabled = true
@@ -95,15 +99,6 @@ discard_pile = NodePath("DiscardPile")
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=1884324124]
 layer = -1
-
-[node name="Background" type="TextureRect" parent="Background" unique_id=1712668910]
-z_index = -1
-texture_repeat = 3
-material = SubResource("ShaderMaterial_yyfjg")
-offset_right = 640.0
-offset_bottom = 360.0
-texture = ExtResource("2_6q06x")
-stretch_mode = 1
 
 [node name="Stars" type="GPUParticles2D" parent="Background" unique_id=1323026414]
 z_index = -1
@@ -129,21 +124,53 @@ visibility_rect = Rect2(0, 0, 640, 360)
 process_material = SubResource("ParticleProcessMaterial_l3cfh")
 metadata/_edit_lock_ = true
 
-[node name="Hand" parent="." unique_id=1315296912 node_paths=PackedStringArray("drag_layer") instance=ExtResource("2_k2fmo")]
-position = Vector2(320, 360)
-drag_layer = NodePath("../DragLayer")
+[node name="TextureRect" type="TextureRect" parent="Background" unique_id=1712668910]
+texture_repeat = 3
+material = SubResource("ShaderMaterial_yyfjg")
+offset_right = 640.0
+offset_bottom = 360.0
+texture = ExtResource("2_6q06x")
+stretch_mode = 1
+
+[node name="ColorRect2" type="ColorRect" parent="Background" unique_id=1883566665]
+material = SubResource("ShaderMaterial_hujxm")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.012617188, 0.012617188, 0.012617188, 0)
+
+[node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
 
 [node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
-position = Vector2(44, 340)
+layout_mode = 1
+offset_left = 41.0
+offset_top = 332.0
+offset_right = 41.0
+offset_bottom = 332.0
 
 [node name="DiscardPile" parent="." unique_id=1939346024 instance=ExtResource("4_l3cfh")]
-position = Vector2(320, 180)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="DragLayer" parent="." unique_id=1888223450 instance=ExtResource("8_yyfjg")]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1605705152]
+environment = SubResource("Environment_ow5a4")
 
 [node name="GameManager" type="Node" parent="." unique_id=1267347403]
 script = ExtResource("7_hujxm")
 metadata/_custom_type_script = "uid://cl5yn6116qkw2"
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1605705152]
-environment = SubResource("Environment_ow5a4")

@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://do5kc56ios2tk"]
+
+[ext_resource type="Texture2D" uid="uid://lr7ptxd33xqe" path="res://card/assets/outline.png" id="1_levwr"]
+[ext_resource type="Script" uid="uid://dsj0niqdyk6fm" path="res://piles/discard_pile/discard_pile.gd" id="1_twh83"]
+[ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="2_kccp7"]
+[ext_resource type="FontFile" uid="uid://bb0nad1sip4d4" path="res://assets/fonts/bold_pixels.ttf" id="4_74hxx"]
+[ext_resource type="Texture2D" uid="uid://cd40jerrwodxi" path="res://assets/cursor/press_hand.png" id="5_4y8cg"]
+[ext_resource type="Script" uid="uid://cn2y722rub2qw" path="res://interactions/drop/drop_zone.gd" id="5_pn0yc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kccp7"]
+size = Vector2(48, 72)
+
+[node name="DiscardPile" type="Node2D" unique_id=411543129 node_paths=PackedStringArray("warn_text", "press_hand")]
+script = ExtResource("1_twh83")
+warn_text = NodePath("WarnText")
+press_hand = NodePath("PressHand")
+card_scene = ExtResource("2_kccp7")
+
+[node name="WarnText" type="RichTextLabel" parent="." unique_id=1597933548]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = 28.0
+offset_right = 64.0
+offset_bottom = 68.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("4_74hxx")
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[wave]DROP IT HERE![/wave]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2097543852]
+modulate = Color(0.16892296, 0.32012013, 0.7374242, 0.3647059)
+scale = Vector2(3, 3)
+texture = ExtResource("1_levwr")
+
+[node name="PressHand" type="Sprite2D" parent="." unique_id=1413175034]
+position = Vector2(0, -51.999996)
+rotation = 0.11006674
+scale = Vector2(0.99999994, 0.99999994)
+texture = ExtResource("5_4y8cg")
+
+[node name="DropZone" type="Area2D" parent="." unique_id=845120461]
+script = ExtResource("5_pn0yc")
+metadata/_custom_type_script = "uid://cn2y722rub2qw"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DropZone" unique_id=1427458665]
+shape = SubResource("RectangleShape2D_kccp7")
+
+[connection signal="drag_component_entered" from="DropZone" to="." method="_on_drop_zone_drag_component_entered"]
