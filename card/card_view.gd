@@ -5,7 +5,19 @@ extends Node2D
 @export var drag_component : DragComponent
 
 var data : CardData
-var tween : Tween
+
+enum ANIMATION_CHANNEL {
+	LAYOUT,
+	GRAPHICS
+}
+
+var _layout_tween
+var _graphics_tween
+
+var _tween_channel : Dictionary<ANIMATION_CHANNEL, Tween> = {
+	LAYOUT: null,
+	GRAPHICS: null
+}
 
 # -------------------------
 # Public API
@@ -17,28 +29,32 @@ func setup(card_data: CardData, draggable: bool) -> void:
 	if not draggable: drag_component.disable()
 
 func get_size() -> Vector2:
-	
 	var _size = Vector2(sprite_2d.texture.get_size().x / sprite_2d.hframes, sprite_2d.texture.get_size().y / sprite_2d.vframes)
 	
 	return _size * 2.5
 
-# Animations
+func _animate(c: ANIMATION_CHANNEL, kill_previous: bool = true) -> Tween:
+	var tween = _tween_channel[c]
+	
+	if tween: if kill_previous: tween.kill()
+	else: tween = create_tween()
 
-func animate_scale(to: Vector2 = Vector2(2.5, 2.5)) -> void:
-	var t = _new_tween()
-	t.tween_property(sprite_2d, "scale", to, 0.75)
+	return tween
 
-func animate_rotation(to: float) -> void:
-	var t = _new_tween(Tween.EASE_OUT, Tween.TRANS_EXPO)
-	t.tween_property(self, "rotation", to, 0.3)
+func _create_animation_callback(node: Node2D, tween: Tween) -> Callable:
+	return func(property: String, value: Variant, duration: float, ease: Tween.EASE, transition: Tween.TRANS) -> void:
+		tween.tween_property(node, property, value, duration)
+		tween.set_ease(ease)
+		tween.set_trans(transition)
 
-func animate_to(pos: Vector2, rot: float) -> void:
-	var t = _new_tween()
-	t.set_parallel()
-	t.tween_property(self, "position", pos, 0.75)
-	t.tween_property(self, "rotation", rot, 0.75)
-	t.tween_property(sprite_2d, "scale", Vector2(2.5, 2.5), 0.75)
+func animate_layout(parallel: bool = true, kill_previous: bool = true) -> Callable:
+	var tween = _animate(ANIMATION_CHANNEL.LAYOUT, kill_previous)
+	tween.set_parallel(parallel)
 
+	return _create_animation_callback(self, tween)
+
+	return animation_callback
+ 
 # -------------------------
 # Internal
 # -------------------------
@@ -61,16 +77,24 @@ func _new_tween(e := Tween.EASE_OUT, t := Tween.TRANS_ELASTIC) -> Tween:
 # -------------------------
 
 func _on_drag_started(_o: Node2D) -> void:
-	if tween: tween.kill()
-	animate_scale(Vector2(2.0, 2.0))
-	rotation = 0.0
+	## Waiting new animation system to be tested
+	#if tween: tween.kill()
+	#animate_scale(Vector2(2.0, 2.0))
+	#rotation = 0.0
+	pass
 
 func _on_drag_ended(_o: Node2D) -> void:
-	if tween: tween.kill()
-	animate_scale()
+	## Waiting new animation system to be tested
+	#if tween: tween.kill()
+	#animate_scale()
+	pass
 
 func _on_drop_zone_entered(_drop_zone: DropZone) -> void:
-	animate_scale()
+	## Waiting new animation system to be tested
+	#animate_scale()
+	pass
 
 func _on_drop_zone_exited(_drop_zone: DropZone) -> void:
-	animate_scale(Vector2(2.0, 2.0))
+	## Waiting new animation system to be tested
+	#animate_scale(Vector2(2.0, 2.0))
+	pass
