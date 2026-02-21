@@ -36,7 +36,10 @@ func get_size() -> Vector2:
 func _animate(c: ANIMATION_CHANNEL, kill_previous: bool = true) -> Tween:
 	var tween = _tween_channel[c]
 	
-	if tween: if kill_previous: tween.kill()
+	if tween: 
+		if kill_previous: 
+			tween.kill()
+			tween = create_tween()
 	else: tween = create_tween()
 
 	return tween
