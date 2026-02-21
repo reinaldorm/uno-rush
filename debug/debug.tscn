@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://bcq7a0o5wxhj8"]
+
+[ext_resource type="Script" uid="uid://cw12ktjdt7lyy" path="res://interactions/drag/drag_component.gd" id="1_ikwhb"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ifkhq"]
+radius = 51.088158
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ikwhb"]
+radius = 51.088158
+
+[node name="Debug" type="Node2D" unique_id=901537645]
+
+[node name="Node2D" type="Node2D" parent="." unique_id=1299695967]
+position = Vector2(323, 176)
+
+[node name="DragComponent" type="Area2D" parent="Node2D" unique_id=1992126813]
+script = ExtResource("1_ikwhb")
+metadata/_custom_type_script = "uid://cw12ktjdt7lyy"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D/DragComponent" unique_id=2027619372]
+shape = SubResource("CircleShape2D_ifkhq")
+debug_color = Color(0.9737385, 0, 0.4352313, 0.41960785)
+
+[node name="Node2D2" type="Node2D" parent="." unique_id=1410300331]
+position = Vector2(435, 159)
+
+[node name="DragComponent" type="Area2D" parent="Node2D2" unique_id=536919750]
+script = ExtResource("1_ikwhb")
+metadata/_custom_type_script = "uid://cw12ktjdt7lyy"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D2/DragComponent" unique_id=674857122]
+shape = SubResource("CircleShape2D_ikwhb")
+debug_color = Color(0, 0.53033084, 0.9878195, 0.41960785)

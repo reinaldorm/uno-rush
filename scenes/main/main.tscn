@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://do5kc56ios2tk" path="res://piles/discard_pile/discard_pile.tscn" id="4_l3cfh"]
 [ext_resource type="Shader" uid="uid://dp3lgf7lykufk" path="res://shaders/vcr.gdshader" id="6_ow5a4"]
 [ext_resource type="Script" uid="uid://cl5yn6116qkw2" path="res://core/game_manager.gd" id="7_hujxm"]
-[ext_resource type="PackedScene" uid="uid://bge1wr6a45a8d" path="res://interactions/drag/drag_layer.tscn" id="8_yyfjg"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_ow5a4"]
 noise_type = 4
@@ -74,24 +73,20 @@ color_ramp = SubResource("GradientTexture1D_iuonh")
 
 [sub_resource type="Environment" id="Environment_ow5a4"]
 background_mode = 3
+ssao_radius = 8.24
+ssao_intensity = 6.77
 glow_enabled = true
 glow_levels/3 = 1.05
 glow_levels/5 = 0.16
 glow_levels/7 = 0.17
 glow_intensity = 0.25
 glow_hdr_threshold = 0.04
+adjustment_enabled = true
+adjustment_contrast = 1.03
+adjustment_saturation = 1.1
 
-[node name="Main" type="Control" unique_id=1835543078 node_paths=PackedStringArray("hand", "draw_pile", "discard_pile")]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Main" type="Node2D" unique_id=1247881097]
 script = ExtResource("1_l3cfh")
-hand = NodePath("Hand")
-draw_pile = NodePath("DrawPile")
-discard_pile = NodePath("DiscardPile")
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=1884324124]
 layer = -1
@@ -129,9 +124,8 @@ visibility_rect = Rect2(0, 0, 640, 360)
 process_material = SubResource("ParticleProcessMaterial_l3cfh")
 metadata/_edit_lock_ = true
 
-[node name="Hand" parent="." unique_id=1315296912 node_paths=PackedStringArray("drag_layer") instance=ExtResource("2_k2fmo")]
+[node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
 position = Vector2(320, 360)
-drag_layer = NodePath("../DragLayer")
 
 [node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
 position = Vector2(44, 340)
@@ -139,11 +133,14 @@ position = Vector2(44, 340)
 [node name="DiscardPile" parent="." unique_id=1939346024 instance=ExtResource("4_l3cfh")]
 position = Vector2(320, 180)
 
-[node name="DragLayer" parent="." unique_id=1888223450 instance=ExtResource("8_yyfjg")]
-
-[node name="GameManager" type="Node" parent="." unique_id=1267347403]
+[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("hand", "draw_pile_node", "discard_pile_node")]
 script = ExtResource("7_hujxm")
+hand = NodePath("../Hand")
+draw_pile_node = NodePath("../DrawPile")
+discard_pile_node = NodePath("../DiscardPile")
 metadata/_custom_type_script = "uid://cl5yn6116qkw2"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1605705152]
 environment = SubResource("Environment_ow5a4")
+
+[connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_discard_pile_play_requested"]

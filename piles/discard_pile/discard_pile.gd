@@ -2,27 +2,43 @@
 extends Node2D
 class_name DiscardPile
 
-@export var warn_text : RichTextLabel
-@export var press_hand : Sprite2D
+signal play_requested(card: CardView)
+
 @export var card_scene : PackedScene
 
 var card_pile : Array[CardView] = []
 
-func _ready() -> void:
-	var c : CardView = card_scene.instantiate()
-	c.setup(CardData.create(CardData.COLOR.RED, 5), false)
-	add_child(c)
-	
-	var t = create_tween()
-	t.set_ease(Tween.EASE_IN_OUT)
-	t.set_trans(Tween.TRANS_BACK)
-	t.set_loops()
-	t.tween_property(press_hand, "rotation", -0.25, 0.1)
-	t.tween_property(press_hand, "rotation", 0.25, 0.1)
+# -------------------------
+# Public API
+# -------------------------
 
-func _process(delta: float) -> void:
+func start(first_card: CardData) -> void:
+	var c : CardView = card_scene.instantiate()
+	c.setup(first_card, false)
+	add_child(c)
+	card_pile.append(c)
+
+func accept_play_request(card: CardView) -> void:
+	reparent(card)
+	
+func deny_play_request(card: CardView) -> void:
+	#drag_layer.restore_to_original_parent(card)
 	pass
 
-func _on_drop_zone_drag_component_entered(drag: DragComponent) -> void:
-	var view : CardView = drag.get_parent()
-	view.animate_scale(Vector2(2.5, 2.5))
+# -------------------------
+# Internal
+# -------------------------
+
+##
+
+# -------------------------
+# Handlers
+# -------------------------
+
+func _on_drag_component_entered(drag: DragComponent) -> void:
+	if drag.owner is CardView:
+		pass;
+
+func _on_drop_requested(draggable: Node2D) -> void:
+	if draggable is CardView:
+		emit_signal("play_requested", draggable)

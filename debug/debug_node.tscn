@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://dvingmein0pga"]
+
+[ext_resource type="Texture2D" uid="uid://b0rpy34qljq5o" path="res://items/assets/bow.png" id="1_vgcv5"]
+[ext_resource type="Script" uid="uid://cw12ktjdt7lyy" path="res://interactions/drag/drag_component.gd" id="1_vlut0"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vgcv5"]
+radius = 16.03122
+
+[node name="DebugNode" type="Node2D" unique_id=310299145]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=430584338]
+scale = Vector2(2, 2)
+texture = ExtResource("1_vgcv5")
+
+[node name="DragComponent" type="Area2D" parent="." unique_id=568146376]
+script = ExtResource("1_vlut0")
+metadata/_custom_type_script = "uid://cw12ktjdt7lyy"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DragComponent" unique_id=633304007]
+shape = SubResource("CircleShape2D_vgcv5")
+debug_color = Color(0.9590897, 0, 0.52622503, 0.41960785)

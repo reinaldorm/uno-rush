@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://4jmmbq33ah3v" path="res://card/hand/hand.gd" id="1_eyfoh"]
 [ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="2_cmdsa"]
 [ext_resource type="Script" uid="uid://cv7cqa7ltc674" path="res://card/hand/components/hand_layout_component.gd" id="3_rx25c"]
+[ext_resource type="FontFile" uid="uid://bb0nad1sip4d4" path="res://assets/fonts/bold_pixels.ttf" id="4_63ntp"]
 
 [sub_resource type="Curve" id="Curve_rx25c"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
@@ -18,30 +19,105 @@ _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, -1), 0.0, 2.0, 0, 1, Vector2(1, 1), 2.0, 0.0, 1, 0]
 point_count = 2
 
-[node name="Hand" type="Node2D" unique_id=342436484 node_paths=PackedStringArray("layout_component")]
+[sub_resource type="LabelSettings" id="LabelSettings_8pyht"]
+font = ExtResource("4_63ntp")
+
+[node name="Hand" type="Node2D" unique_id=342436484 node_paths=PackedStringArray("layout_component", "gap_slider", "gap_slider_label", "max_width_slider", "max_width_slider_label", "max_width_preview")]
 script = ExtResource("1_eyfoh")
 card_scene = ExtResource("2_cmdsa")
 layout_component = NodePath("HandLayoutComponent")
-
-[node name="DebugRect" type="ColorRect" parent="." unique_id=1942361955]
-visible = false
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -141.0
-offset_top = -12.0
-offset_right = 141.0
-offset_bottom = 12.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 0.11372549, 0.02745098, 0.16470589)
+gap_slider = NodePath("GapSlider")
+gap_slider_label = NodePath("GapSlider/Label")
+max_width_slider = NodePath("MaxWidthSlider")
+max_width_slider_label = NodePath("MaxWidthSlider/Label")
+max_width_preview = NodePath("MaxWidthPreview")
 
 [node name="HandLayoutComponent" type="Node" parent="." unique_id=936228926]
 script = ExtResource("3_rx25c")
 curve_x = SubResource("Curve_rx25c")
 curve_y = SubResource("Curve_2sa6u")
 curve_rot = SubResource("Curve_8kqfu")
-mult_x = 150.0
+mult_x = 100.0
+max_arrange_width = 0.0
 metadata/_custom_type_script = "uid://cv7cqa7ltc674"
+
+[node name="GapSlider" type="HSlider" parent="." unique_id=13980620]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.5
+offset_top = -95.0
+offset_right = 142.5
+offset_bottom = -79.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+value = 20.0
+
+[node name="Label" type="Label" parent="GapSlider" unique_id=1445190053]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -33.5
+offset_right = 20.0
+offset_bottom = -10.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "GAP: 20.0"
+label_settings = SubResource("LabelSettings_8pyht")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MaxWidthPreview" type="ColorRect" parent="." unique_id=1942361955]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = -10.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 0.11372549, 0.02745098, 0.4745098)
+
+[node name="MaxWidthSlider" type="HSlider" parent="." unique_id=61768190]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.5
+offset_top = -73.0
+offset_right = 142.5
+offset_bottom = -57.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.5, 0.5)
+max_value = 600.0
+
+[node name="Label" type="Label" parent="MaxWidthSlider" unique_id=480354436]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -33.5
+offset_right = 20.0
+offset_bottom = -10.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "MAX WIDTH: 0.0"
+label_settings = SubResource("LabelSettings_8pyht")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="value_changed" from="GapSlider" to="." method="_on_gap_slider_value_changed"]
+[connection signal="value_changed" from="MaxWidthSlider" to="." method="_on_max_width_slider_value_changed"]

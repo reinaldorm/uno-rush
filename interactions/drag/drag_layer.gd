@@ -8,44 +8,45 @@ var _active_drags: Array[Node2D] = []
 # Public API
 # -------------------------
 
-func begin_drag(item: Node2D) -> void:
-	if not is_instance_valid(item):
+func begin_drag(draggable: Node2D) -> void:
+	if not is_instance_valid(draggable):
 		return
 	
 	# Prevent duplicates
-	if _active_drags.has(item):
+	if _active_drags.has(draggable):
 		return
 	
-	# Store original parent + index (so the item can restore itself later)
-	item.set_meta("drag_original_parent", item.get_parent())
-	item.set_meta("drag_original_index", item.get_index())
+	# Store original parent + index (so the draggable can restore itself later)
+	draggable.set_meta("drag_original_parent", draggable.get_parent())
+	draggable.set_meta("drag_original_index", draggable.get_index())
 	
 	# Reparent to drag layer
-	item.reparent(self)
-	item.z_index = 1000
+	draggable.reparent(self)
+	draggable.z_index = 1000
 	
-	_active_drags.append(item)
+	_active_drags.append(draggable)
 
-func end_drag(item: Node2D) -> void:
-	if not _active_drags.has(item):
+func end_drag(draggable: Node2D) -> void:
+	if not _active_drags.has(draggable):
 		return
 	
-	_active_drags.erase(item)
+	_active_drags.erase(draggable)
 	
 	# Visual reset (domain logic decides final parent)
-	item.z_index = 0
+	draggable.z_index = 0
+	restore_to_original_parent(draggable)
 
-func restore_to_original_parent(item: Node2D) -> void:
-	if not is_instance_valid(item):
+func restore_to_original_parent(draggable: Node2D) -> void:
+	if not is_instance_valid(draggable):
 		return
 	
-	var original_parent = item.get_meta("drag_original_parent", null)
-	var original_index = item.get_meta("drag_original_index", -1)
+	var original_parent = draggable.get_meta("drag_original_parent", null)
+	var original_index = draggable.get_meta("drag_original_index", -1)
 	
 	if original_parent and is_instance_valid(original_parent):
-		item.reparent(original_parent)
+		original_parent.restore(draggable)
 		
 		if original_index >= 0 and original_index < original_parent.get_child_count():
-			original_parent.move_child(item, original_index)
+			original_parent.move_child(draggable, original_index)
 	
-	item.z_index = 0
+	draggable.z_index = 0

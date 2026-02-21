@@ -2,69 +2,37 @@
 
 [ext_resource type="Script" uid="uid://nmsbi5c21cxq" path="res://card/card_view.gd" id="1_2nlio"]
 [ext_resource type="Texture2D" uid="uid://dehqyg61rlqbt" path="res://card/assets/sheet.png" id="2_4bpaw"]
+[ext_resource type="Shader" uid="uid://c2kfwnkkt8ge8" path="res://shaders/card.gdshader" id="2_ncspy"]
 [ext_resource type="Script" uid="uid://cw12ktjdt7lyy" path="res://interactions/drag/drag_component.gd" id="3_f2o64"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_imta7"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vtcvk"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_g65cd"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2ufkr"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kaf1t"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ri62e"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b2sko"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_788ek"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_v07qs"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0iqnq"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_s65g1"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m3lw8"]
+shader = ExtResource("2_ncspy")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ncspy"]
+size = Vector2(40, 60)
 
-[node name="CardView" type="Node2D" unique_id=1218889746 node_paths=PackedStringArray("sprite_2d", "hold_timer", "drag_component")]
+[node name="CardView" type="Node2D" unique_id=1218889746 node_paths=PackedStringArray("sprite_2d", "drag_component")]
 script = ExtResource("1_2nlio")
 sprite_2d = NodePath("Sprite2D")
-hold_timer = NodePath("")
 drag_component = NodePath("DragComponent")
 
-[node name="Button" type="Button" parent="." unique_id=1092895074]
-offset_left = -20.0
-offset_top = -30.0
-offset_right = 20.0
-offset_bottom = 30.0
-mouse_default_cursor_shape = 2
-theme_override_styles/normal = SubResource("StyleBoxEmpty_imta7")
-theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_vtcvk")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_g65cd")
-theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_2ufkr")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_kaf1t")
-theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_ri62e")
-theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_b2sko")
-theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_788ek")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_v07qs")
-theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_0iqnq")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_s65g1")
-
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=382725119]
+material = SubResource("ShaderMaterial_m3lw8")
 scale = Vector2(2.5, 2.5)
 texture = ExtResource("2_4bpaw")
 hframes = 10
 vframes = 5
+frame = 49
 
 [node name="DragComponent" type="Area2D" parent="." unique_id=1899036405]
 script = ExtResource("3_f2o64")
 metadata/_custom_type_script = "uid://cw12ktjdt7lyy"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DragComponent" unique_id=1155276474]
+visible = false
 shape = SubResource("RectangleShape2D_ncspy")
 
-[connection signal="button_down" from="Button" to="." method="_on_button_down"]
-[connection signal="button_up" from="Button" to="." method="_on_button_up"]
-[connection signal="gui_input" from="Button" to="." method="_on_button_gui_input"]
+[connection signal="drag_ended" from="DragComponent" to="." method="_on_drag_ended"]
+[connection signal="drag_started" from="DragComponent" to="." method="_on_drag_started"]
+[connection signal="drop_zone_entered" from="DragComponent" to="." method="_on_drop_zone_entered"]
+[connection signal="drop_zone_exited" from="DragComponent" to="." method="_on_drop_zone_exited"]

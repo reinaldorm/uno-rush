@@ -3,6 +3,14 @@ class_name DropZone
 
 signal drag_component_entered(drag: DragComponent)
 signal drag_component_exited(drag: DragComponent)
+signal drop_requested(drag: DragComponent)
+
+# -------------------------
+# Public API
+# -------------------------
+
+func request_drop(draggable: Node2D) -> void:
+	emit_signal("drop_requested", draggable)
 
 # -------------------------
 # Internal
@@ -17,12 +25,11 @@ func _ready() -> void:
 # -------------------------
 
 func _on_area_entered(area: Area2D) -> void:
-	print(area)
 	if area is DragComponent:
-		area.set_drop_zone(self)
+		area.register_drop_zone(self)
 		emit_signal("drag_component_entered", area)
 
 func _on_area_exited(area: Area2D) -> void:
 	if area is DragComponent:
-		area.set_drop_zone(null)
+		area.unregister_drop_zone(self)
 		emit_signal("drag_component_exited", area)
