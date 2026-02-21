@@ -37,8 +37,9 @@ script = ExtResource("3_rx25c")
 curve_x = SubResource("Curve_rx25c")
 curve_y = SubResource("Curve_2sa6u")
 curve_rot = SubResource("Curve_8kqfu")
-mult_x = 100.0
 max_arrange_width = 0.0
+min_arrange_width = 0.0
+arrange_gap = 0.0
 metadata/_custom_type_script = "uid://cv7cqa7ltc674"
 
 [node name="GapSlider" type="HSlider" parent="." unique_id=13980620]
