@@ -5,18 +5,17 @@ extends Node
 @export var curve_y : Curve
 @export var curve_rot : Curve
 
-@export var mult_x : float = 120
 @export var mult_y : float = 25
 @export var mult_rot : float = 0.25
 
-@export var max_arrange_width := 200.0
-@export var max_arrange_gap := 20.0
+@export var max_arrange_width := 300.0
+@export var min_arrange_width := 100.0
+@export var	arrange_gap := 20.0
 
 func arrange(cards: Array[CardView]) -> void:
 	var active_cards : Array[CardView] = []
 	
-	for c in cards: 
-		if not c.drag_component.dragging: active_cards.append(c)
+	for c in cards: if not c.drag_component.dragging: active_cards.append(c)
 	
 	var total := active_cards.size()
 	if total == 0: return
@@ -26,21 +25,15 @@ func arrange(cards: Array[CardView]) -> void:
 		var card := active_cards[i]
 		
 		var ratio := 0.5 if total == 1 else float(i) / float(total - 1)
-		
-		var x : float = curve_x.sample(ratio) * (max_arrange_width / 2)
-		print(x)
-		
-		#print("[ " + str(x) + " ][ " + str(final_x) + " ]")
-		
-		#var x : float = width * i
-		
-		#var final_position := Vector2(
-			#curve_x.sample(ratio) * max_arrange_width,
-			#-curve_y.sample(ratio) * mult_y
-		#)
+
+		var card_width := card.get_size().x
+		var final_card_width := card_width * total
+
+		if final_card_width > max_arrange_width:
+			final_card_width = max_arrange_width
 		
 		var final_position := Vector2(
-			x,
+			curve_x.sample(ratio) * (final_card_width / 2),
 			-curve_y.sample(ratio) * mult_y
 		)
 		
