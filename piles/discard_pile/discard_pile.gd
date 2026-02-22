@@ -19,8 +19,9 @@ func start(first_card: CardData) -> void:
 	card_pile.append(c)
 
 func accept_play_request(card: CardView) -> void:
-	reparent(card)
-	
+	card.reparent(self)
+	card.drag_component.disable()
+
 func deny_play_request(card: CardView) -> void:
 	#drag_layer.restore_to_original_parent(card)
 	pass

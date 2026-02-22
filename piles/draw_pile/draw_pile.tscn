@@ -2,35 +2,190 @@
 
 [ext_resource type="Script" uid="uid://m007nlb67vq1" path="res://piles/draw_pile/draw_pile.gd" id="1_5owy3"]
 [ext_resource type="Texture2D" uid="uid://cohf4d6rq1y6b" path="res://card/assets/card_back.png" id="1_mvv51"]
+[ext_resource type="Shader" uid="uid://c2kfwnkkt8ge8" path="res://shaders/card.gdshader" id="2_5ogxb"]
 
-[node name="DrawPile" type="Node2D" unique_id=338390635]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g1psd"]
+shader = ExtResource("2_5ogxb")
+shader_parameter/fov = 45.00000209
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 0.0
+shader_parameter/x_rot = 7.500008906250002
+shader_parameter/inset = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5ogxb"]
+shader = ExtResource("2_5ogxb")
+shader_parameter/fov = 45.00000209
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 0.0
+shader_parameter/x_rot = 7.500009
+shader_parameter/inset = 0.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5ogxb"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_g1psd"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4vc22"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jp8xb"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_arque"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wtj1p"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tsl37"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_glbnx"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_71d1b"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7wo8x"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vkvox"]
+
+[sub_resource type="Animation" id="Animation_5ogxb"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:material:shader_parameter/x_rot")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(7.500009, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:material:shader_parameter/y_rot")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_g1psd"]
+resource_name = "hover"
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:material:shader_parameter/x_rot")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 2),
+"points": PackedFloat32Array(7.500009, -0.25, 0, 0.45, 0.3695855, 8.55e-06, -0.8666667, 0.101224124, 0, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 2),
+"points": PackedFloat32Array(0, -0.25, 0, 0.43333334, 0.053358186, -10, -0.9, 0.00941658, 0, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:material:shader_parameter/y_rot")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 2, 2, 2),
+"points": PackedFloat32Array(0, -0.25, 0, 0.43333334, 0.5944543, 90.000015, -0.083333336, -15.000003, 0, 0, -89.99999, -0.0016363149, -0.6748994, 0.056666672, 23.372215, 8.55e-06, -0.36666667, -3.0722213, 0, 0),
+"times": PackedFloat32Array(0, 0.5, 0.51, 1)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4vc22"]
+_data = {
+&"RESET": SubResource("Animation_5ogxb"),
+&"hover": SubResource("Animation_g1psd")
+}
+
+[node name="DrawPile" type="Node2D" unique_id=338390635 node_paths=PackedStringArray("sprite_2d")]
 script = ExtResource("1_5owy3")
+sprite_2d = NodePath("Sprite2D")
+
+[node name="Sprite2D6" type="Sprite2D" parent="." unique_id=1906607699]
+material = SubResource("ShaderMaterial_g1psd")
+position = Vector2(0, 25)
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")
+
+[node name="Sprite2D5" type="Sprite2D" parent="." unique_id=774814623]
+material = SubResource("ShaderMaterial_g1psd")
+position = Vector2(0, 20)
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")
+
+[node name="Sprite2D4" type="Sprite2D" parent="." unique_id=1070971118]
+material = SubResource("ShaderMaterial_g1psd")
+position = Vector2(0, 15)
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")
+
+[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=698662039]
+material = SubResource("ShaderMaterial_g1psd")
+position = Vector2(0, 10)
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=229946922]
+material = SubResource("ShaderMaterial_g1psd")
+position = Vector2(0, 5)
+scale = Vector2(3, 3)
+texture = ExtResource("1_mvv51")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=95625007]
+material = SubResource("ShaderMaterial_5ogxb")
 scale = Vector2(3, 3)
 texture = ExtResource("1_mvv51")
 
-[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=1575988209]
-position = Vector2(0, -4)
-scale = Vector2(3, 3)
-texture = ExtResource("1_mvv51")
+[node name="Button" type="Button" parent="." unique_id=93941996]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -35.0
+offset_right = 25.0
+offset_bottom = 39.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_5ogxb")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_g1psd")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_4vc22")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_jp8xb")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_arque")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_wtj1p")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_tsl37")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_glbnx")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_71d1b")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_7wo8x")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_vkvox")
 
-[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=280360285]
-position = Vector2(0, -8)
-scale = Vector2(3, 3)
-texture = ExtResource("1_mvv51")
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=241207999]
+libraries/ = SubResource("AnimationLibrary_4vc22")
+speed_scale = 2.0
 
-[node name="Sprite2D4" type="Sprite2D" parent="." unique_id=1443130341]
-position = Vector2(0, -12)
-scale = Vector2(3, 3)
-texture = ExtResource("1_mvv51")
-
-[node name="Sprite2D5" type="Sprite2D" parent="." unique_id=1862750421]
-position = Vector2(0, -16)
-scale = Vector2(3, 3)
-texture = ExtResource("1_mvv51")
-
-[node name="Sprite2D6" type="Sprite2D" parent="." unique_id=246532042]
-position = Vector2(0, -20)
-scale = Vector2(3, 3)
-texture = ExtResource("1_mvv51")
+[connection signal="mouse_entered" from="Button" to="." method="_on_button_mouse_entered"]
+[connection signal="mouse_exited" from="Button" to="." method="_on_button_mouse_exited"]

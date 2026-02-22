@@ -43,7 +43,6 @@ scale = Vector2(3, 3)
 texture = ExtResource("1_levwr")
 
 [node name="WarnHand" type="Sprite2D" parent="Visuals" unique_id=1413175034]
-visible = false
 position = Vector2(0, -51.999996)
 rotation = 0.11006674
 scale = Vector2(0.9999999, 0.9999999)

@@ -61,10 +61,13 @@ func _create_deck() -> Array[CardData]:
 
 func _on_discard_pile_play_requested(card: CardView) -> void:
 	var data := card.data
+	var payload : Array[CardView] = [card]
 	
 	if data.number == discard_pile[0].number:
 		discard_pile_node.accept_play_request(card)
+		emit_signal("cards_played", payload)
 	elif data.color == discard_pile[discard_pile.size() - 1].color:
 		discard_pile_node.accept_play_request(card)
+		emit_signal("cards_played", payload)
 	else:
 		discard_pile_node.deny_play_request(card)

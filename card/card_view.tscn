@@ -2,22 +2,146 @@
 
 [ext_resource type="Script" uid="uid://nmsbi5c21cxq" path="res://card/card_view.gd" id="1_2nlio"]
 [ext_resource type="Texture2D" uid="uid://dehqyg61rlqbt" path="res://card/assets/sheet.png" id="2_4bpaw"]
-[ext_resource type="Shader" uid="uid://c2kfwnkkt8ge8" path="res://shaders/card.gdshader" id="2_ncspy"]
 [ext_resource type="Script" uid="uid://cw12ktjdt7lyy" path="res://interactions/drag/drag_component.gd" id="3_f2o64"]
+[ext_resource type="Texture2D" uid="uid://d2n812qqvhhi7" path="res://card/assets/drag_bubble.png" id="5_m3lw8"]
+[ext_resource type="Texture2D" uid="uid://dypa4dqlg2fh8" path="res://card/assets/select_bubble.png" id="6_rcv2q"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_m3lw8"]
-shader = ExtResource("2_ncspy")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ncspy"]
 size = Vector2(40, 60)
 
-[node name="CardView" type="Node2D" unique_id=1218889746 node_paths=PackedStringArray("sprite_2d", "drag_component")]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ncspy"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m3lw8"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rcv2q"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jbm5u"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qvwpc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ush2r"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ui2he"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bssyu"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r8rk4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lh0ho"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dyg78"]
+
+[sub_resource type="Animation" id="Animation_rcv2q"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DragBubble:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(2),
+"points": PackedFloat32Array(1e-05, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DragBubble:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(2),
+"points": PackedFloat32Array(1e-05, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SelectBubble:scale:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(2),
+"points": PackedFloat32Array(1e-05, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SelectBubble:scale:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(2),
+"points": PackedFloat32Array(1e-05, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_jbm5u"]
+resource_name = "show_bubbles"
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DragBubble:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1e-05, 0, 0, 0.4, 0.0011678378, 1, -0.925, -0.0008817911, 0, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DragBubble:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1e-05, 0, 0, 0.4, 0.0011678378, 1, -0.93333334, -0.0044091344, 0, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SelectBubble:scale:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1e-05, 0, 0, 0.4, 0.0011678378, 1, -0.93333334, -0.014991045, 0, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SelectBubble:scale:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(1e-05, 0, 0, 0.4, 0.0011678378, 1, -0.9, 0.044973135, 0, 0),
+"times": PackedFloat32Array(0, 1)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qvwpc"]
+_data = {
+&"RESET": SubResource("Animation_rcv2q"),
+&"show_bubbles": SubResource("Animation_jbm5u")
+}
+
+[node name="CardView" type="Node2D" unique_id=1218889746 node_paths=PackedStringArray("drag_component", "sprite_2d", "animation_player")]
 script = ExtResource("1_2nlio")
-sprite_2d = NodePath("Sprite2D")
 drag_component = NodePath("DragComponent")
+sprite_2d = NodePath("Sprite2D")
+animation_player = NodePath("AnimationPlayer")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=382725119]
 material = SubResource("ShaderMaterial_m3lw8")
+position = Vector2(1.9073486e-06, 0)
 scale = Vector2(2.5, 2.5)
 texture = ExtResource("2_4bpaw")
 hframes = 10
@@ -25,6 +149,7 @@ vframes = 5
 frame = 49
 
 [node name="DragComponent" type="Area2D" parent="." unique_id=1899036405]
+input_pickable = false
 script = ExtResource("3_f2o64")
 metadata/_custom_type_script = "uid://cw12ktjdt7lyy"
 
@@ -32,7 +157,51 @@ metadata/_custom_type_script = "uid://cw12ktjdt7lyy"
 visible = false
 shape = SubResource("RectangleShape2D_ncspy")
 
+[node name="Button" type="Button" parent="." unique_id=1824798269]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -30.0
+offset_right = 20.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ncspy")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_m3lw8")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_rcv2q")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_jbm5u")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_qvwpc")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_ush2r")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_ui2he")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_bssyu")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_r8rk4")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_lh0ho")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_dyg78")
+
+[node name="DragBubble" type="Sprite2D" parent="." unique_id=305379211]
+position = Vector2(33, -38)
+scale = Vector2(1e-05, 1e-05)
+texture = ExtResource("5_m3lw8")
+offset = Vector2(0, 1)
+
+[node name="SelectBubble" type="Sprite2D" parent="." unique_id=458282384]
+position = Vector2(-37, -38)
+scale = Vector2(1e-05, 1e-05)
+texture = ExtResource("6_rcv2q")
+offset = Vector2(0, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=728558901]
+libraries/ = SubResource("AnimationLibrary_qvwpc")
+speed_scale = 10.0
+
 [connection signal="drag_ended" from="DragComponent" to="." method="_on_drag_ended"]
 [connection signal="drag_started" from="DragComponent" to="." method="_on_drag_started"]
 [connection signal="drop_zone_entered" from="DragComponent" to="." method="_on_drop_zone_entered"]
 [connection signal="drop_zone_exited" from="DragComponent" to="." method="_on_drop_zone_exited"]
+[connection signal="button_down" from="Button" to="." method="_on_card_down"]
+[connection signal="button_up" from="Button" to="." method="_on_card_up"]
+[connection signal="mouse_entered" from="Button" to="." method="_on_card_entered"]
+[connection signal="mouse_exited" from="Button" to="." method="_on_card_exited"]

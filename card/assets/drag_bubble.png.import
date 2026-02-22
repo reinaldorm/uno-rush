@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dehqyg61rlqbt"
-path="res://.godot/imported/sheet.png-5923fcc69cf9e539dd9c6f749b6961fc.ctex"
+uid="uid://d2n812qqvhhi7"
+path="res://.godot/imported/drag_bubble.png-daaf011749b784b7f7a4092dc79d659e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://card/assets/sheet.png"
-dest_files=["res://.godot/imported/sheet.png-5923fcc69cf9e539dd9c6f749b6961fc.ctex"]
+source_file="res://card/assets/drag_bubble.png"
+dest_files=["res://.godot/imported/drag_bubble.png-daaf011749b784b7f7a4092dc79d659e.ctex"]
 
 [params]
 
@@ -23,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
