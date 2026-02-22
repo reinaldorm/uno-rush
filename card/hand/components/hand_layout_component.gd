@@ -1,4 +1,4 @@
-class_name HandLayoutComponent
+ class_name HandLayoutComponent
 extends Node
 
 @export var curve_x : Curve
@@ -40,7 +40,7 @@ func arrange(cards: Array[CardView]) -> void:
 		
 		if not card.drag_component.dragging: 
 			tween.tween_property(card, "position", final_position, 1)
-			tween.tween_property(card, "scale", Vector2.ONE, 1)
+ 			tween.tween_property(card, "scale", Vector2.ONE, 1)
 		tween.tween_property(card, "rotation", final_rotation, 1)
 
 func arrange_new(cards: Array[CardView], new_cards: Array[CardView]) -> Signal:
