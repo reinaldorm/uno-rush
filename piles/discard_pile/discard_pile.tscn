@@ -3,57 +3,87 @@
 [ext_resource type="Texture2D" uid="uid://lr7ptxd33xqe" path="res://card/assets/outline.png" id="1_levwr"]
 [ext_resource type="Script" uid="uid://dsj0niqdyk6fm" path="res://piles/discard_pile/discard_pile.gd" id="1_twh83"]
 [ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="2_kccp7"]
-[ext_resource type="FontFile" uid="uid://bb0nad1sip4d4" path="res://assets/fonts/bold_pixels.ttf" id="4_74hxx"]
-[ext_resource type="Texture2D" uid="uid://cd40jerrwodxi" path="res://assets/cursor/press_hand.png" id="5_4y8cg"]
+[ext_resource type="Texture2D" uid="uid://rbnfkf3gx2uy" path="res://card/assets/play_bubble.png" id="4_pn0yc"]
 [ext_resource type="Script" uid="uid://cn2y722rub2qw" path="res://interactions/drop/drop_zone.gd" id="5_pn0yc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kccp7"]
-size = Vector2(48, 72)
+size = Vector2(22, 32)
 
-[node name="DiscardPile" type="Node2D" unique_id=411543129]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kccp7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lq65o"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6vir3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xxae7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3qcnc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cquje"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3wfc6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bqit3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_20hy6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2afeu"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hqmra"]
+
+[node name="DiscardPile" type="Node2D" unique_id=411543129 node_paths=PackedStringArray("play_bubble")]
 script = ExtResource("1_twh83")
 card_scene = ExtResource("2_kccp7")
+play_bubble = NodePath("Visuals/PlayBubble")
 
 [node name="Visuals" type="Node2D" parent="." unique_id=1194200993]
 
-[node name="WarnText" type="RichTextLabel" parent="Visuals" unique_id=1597933548]
+[node name="Outline" type="Sprite2D" parent="Visuals" unique_id=2097543852]
+modulate = Color(0.3882353, 0.5529412, 0.9411765, 0.1882353)
+scale = Vector2(3, 3)
+texture = ExtResource("1_levwr")
+
+[node name="PlayBubble" type="Sprite2D" parent="Visuals" unique_id=1564414255]
 visible = false
+position = Vector2(27, -45)
+rotation = 0.34906584
+texture = ExtResource("4_pn0yc")
+
+[node name="DropZone" type="Area2D" parent="." unique_id=845120461]
+z_index = 3
+script = ExtResource("5_pn0yc")
+metadata/_custom_type_script = "uid://cn2y722rub2qw"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DropZone" unique_id=1427458665]
+visible = false
+shape = SubResource("RectangleShape2D_kccp7")
+
+[node name="Button" type="Button" parent="." unique_id=1585859476]
+z_index = 5
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -64.0
-offset_top = 28.0
-offset_right = 64.0
-offset_bottom = 68.0
+offset_left = -36.0
+offset_top = -45.0
+offset_right = 36.0
+offset_bottom = 45.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-theme_override_fonts/normal_font = ExtResource("4_74hxx")
-theme_override_font_sizes/normal_font_size = 12
-bbcode_enabled = true
-text = "[wave]DROP IT HERE![/wave]"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Outline" type="Sprite2D" parent="Visuals" unique_id=2097543852]
-modulate = Color(0.16892296, 0.32012013, 0.7374242, 0.3647059)
-scale = Vector2(3, 3)
-texture = ExtResource("1_levwr")
-
-[node name="WarnHand" type="Sprite2D" parent="Visuals" unique_id=1413175034]
-position = Vector2(0, -51.999996)
-rotation = 0.11006674
-scale = Vector2(0.9999999, 0.9999999)
-texture = ExtResource("5_4y8cg")
-
-[node name="DropZone" type="Area2D" parent="." unique_id=845120461]
-script = ExtResource("5_pn0yc")
-metadata/_custom_type_script = "uid://cn2y722rub2qw"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DropZone" unique_id=1427458665]
-shape = SubResource("RectangleShape2D_kccp7")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_kccp7")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_lq65o")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_6vir3")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_xxae7")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_3qcnc")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_cquje")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_3wfc6")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_bqit3")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_20hy6")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_2afeu")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hqmra")
 
 [connection signal="drag_component_entered" from="DropZone" to="." method="_on_drag_component_entered"]
 [connection signal="drop_requested" from="DropZone" to="." method="_on_drop_requested"]
+[connection signal="mouse_entered" from="Button" to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Button" to="." method="_on_mouse_exited"]

@@ -128,7 +128,6 @@ metadata/_edit_lock_ = true
 
 [node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
 position = Vector2(320, 360)
-DEV_layout_max_width_overwrite = 300.0
 
 [node name="HandLeft" parent="." unique_id=342436484 instance=ExtResource("2_k2fmo")]
 position = Vector2(0, 180)
@@ -198,7 +197,7 @@ DEV_layout_max_width_overwrite = 150.0
 [node name="CardView7" parent="HandRight" unique_id=689027390 instance=ExtResource("6_yyfjg")]
 
 [node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
-position = Vector2(67, 313)
+position = Vector2(252, 155)
 
 [node name="DiscardPile" parent="." unique_id=1939346024 instance=ExtResource("4_l3cfh")]
 position = Vector2(320, 180)
@@ -216,5 +215,7 @@ environment = SubResource("Environment_ow5a4")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1670420092]
 position = Vector2(320, 180)
 
+[connection signal="draw_requested" from="DrawPile" to="GameManager" method="_on_draw_pile_draw_requested"]
 [connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_discard_pile_play_requested"]
+[connection signal="cards_drawn" from="GameManager" to="Hand" method="_on_game_manager_cards_drawn"]
 [connection signal="cards_played" from="GameManager" to="Hand" method="_on_game_manager_cards_played"]

@@ -17,25 +17,8 @@ var moving_card : CardView = null
 # -------------------------
 
 func start(cards: Array[CardData]) -> void:
-	add_cards(cards)
-
-func add_cards(cards: Array[CardData], should_arrange: bool = true) -> void:
-	for data in cards:
-		card_data.append(data)
-		
-		var card_view : CardView = card_scene.instantiate()
-		card_view.setup(data, true)
-		
-		add_child(card_view)
-		card_views.append(card_view)
-		
-		card_view.drag_component.drag_started.connect(_on_card_drag_started)
-		card_view.drag_component.drag_ended.connect(_on_card_drag_ended)
-		
-		card_view.drag_component.drop_zone_entered.connect(_on_card_drop_zone_entered)
-		card_view.drag_component.drop_zone_exited.connect(_on_card_drop_zone_exited)
-		
-	if should_arrange: _arrange()
+	_add_cards(cards)
+	_arrange()
 
 # -------------------------
 # Internal
@@ -48,21 +31,61 @@ func _ready() -> void:
 			card_views.append(child)
 	_arrange()
 
+func _process(_delta: float) -> void:
+	if moving_card: _sort_moving_card(moving_card)
+
 func _arrange() -> void:
 	layout_component.arrange(card_views)
 
-func _process(_delta: float) -> void:
-	if moving_card: _sort_moving_card(moving_card)
+func _arrange_new(cards: Array[CardView]) -> void:
+	await layout_component.arrange_new(card_views, cards)
+	_arrange()
+	print("ended")
+
+func _add_cards(cards: Array[CardData]) -> Array[CardView]:
+	var new_cards : Array[CardView] = []
+	
+	for data in cards:
+		var card_view : CardView = card_scene.instantiate()
+		
+		new_cards.append(card_view)
+		card_data.append(data)
+		card_view.setup(data, true)
+		
+		add_child(card_view)
+		card_views.append(card_view)
+		
+		card_view.drag_component.drag_started.connect(_on_card_drag_started)
+		card_view.drag_component.drag_ended.connect(_on_card_drag_ended)
+		
+		card_view.drag_component.drop_zone_entered.connect(_on_card_drop_zone_entered)
+		card_view.drag_component.drop_zone_exited.connect(_on_card_drop_zone_exited)
+		
+		card_view.scale = Vector2.ZERO
+		
+	return new_cards
 
 # -------------------------
 # Handlers
 # -------------------------
+
+# -------------
+# Game Handlers
+# -------------
 
 func _on_game_manager_cards_played(cards: Array[CardView]) -> void:
 	for card in cards:
 		if card_data.has(card.data):
 			card_data.erase(card.data)
 			card_views.erase(card)
+
+func _on_game_manager_cards_drawn(cards: Array[CardData]) -> void:
+	var new_cards = _add_cards(cards)
+	_arrange_new(new_cards)
+
+# -------------
+# Card Handlers
+# -------------
 
 func _on_card_drag_started(_draggable: Node2D) -> void:
 	moving_card = _draggable
@@ -74,12 +97,14 @@ func _on_card_drag_ended(_draggable: Node2D) -> void:
 
 func _on_card_drop_zone_entered(draggable: Node2D, _drop_zone: DropZone) -> void:
 	if draggable is CardView:
-		if card_views.has(draggable): 
+		if card_views.has(draggable):
+			moving_card = null
 			card_views.erase(draggable)
 
 func _on_card_drop_zone_exited(draggable: Node2D, _drop_zone: DropZone) -> void:
 	if draggable is CardView:
 		if card_data.has(draggable.data): 
+			moving_card = draggable
 			card_views.append(draggable)
 
 func _sort_moving_card(card_view: CardView) -> void:
