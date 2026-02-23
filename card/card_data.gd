@@ -5,7 +5,8 @@ enum COLOR {
 	RED,
 	GREEN,
 	BLUE,
-	YELLOW
+	YELLOW,
+	WILD
 }
 
 var color : COLOR

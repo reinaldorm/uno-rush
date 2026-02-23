@@ -1,13 +1,16 @@
-@tool
 extends Node2D
 class_name DiscardPile
 
 signal play_requested(card: CardView)
 
 @export var card_scene : PackedScene
-@export var play_bubble : Sprite2D
+@export var animation_player : AnimationPlayer
+@export var particles : GPUParticles2D
+@export var cards_node : Node2D
 
 var card_pile : Array[CardView] = []
+var requested_cards : Array[CardView]
+
 var _tween : Tween
 
 # -------------------------
@@ -18,27 +21,23 @@ func start(first_card: CardData) -> void:
 	var c : CardView = card_scene.instantiate()
 	c.setup(first_card, false)
 	card_pile.append(c)
-	add_child(c)
+	cards_node.add_child(c)
 
-func accept_play_request(card: CardView) -> void:
-	card.reparent(self)
-	card.drag_component.disable()
+func accept_play_request() -> void:
+	for card in requested_cards: _add_card_to_pile(card)
+	requested_cards = []
+	particles.emitting = true
 
-func deny_play_request(card: CardView) -> void:
-	#drag_layer.restore_to_original_parent(card)
-	pass
+func deny_play_request() -> void:
+	requested_cards = []
 
 # -------------------------
 # Internal
 # -------------------------
 
-func _toggle_idle(value: bool) -> void:
-	if value:
-		var tween = _new_tween()
-		tween.set_loops()
-		tween.tween_property(play_bubble, "rotation_degrees", 15.0, 0.25)
-		tween.tween_property(play_bubble, "rotation_degrees", 25.0, 0.25)
-	else: if _tween: _tween.kill()
+func _toggle_playable(value: bool) -> void:
+	if value: animation_player.play("show_bubbles")
+	else: animation_player.play_backwards("show_bubbles")
 
 func _new_tween(e:= Tween.EASE_OUT, t:= Tween.TransitionType.TRANS_EXPO) -> Tween:
 	if _tween: _tween.kill()
@@ -49,6 +48,10 @@ func _new_tween(e:= Tween.EASE_OUT, t:= Tween.TransitionType.TRANS_EXPO) -> Twee
 	
 	return _tween
 
+func _add_card_to_pile(card_view: CardView):
+	card_view.reparent(cards_node)
+	card_view.position = Vector2.ZERO
+
 # -------------------------
 # Handlers
 # -------------------------
@@ -58,11 +61,14 @@ func _on_drag_component_entered(drag: DragComponent) -> void:
 		pass
 
 func _on_drop_requested(draggable: Node2D) -> void:
+	var cards_to_request : Array[CardData] = []
 	if draggable is CardView:
-		emit_signal("play_requested", draggable)
+		requested_cards.append(draggable)
+		cards_to_request.append(draggable.data)
+		emit_signal("play_requested", cards_to_request)
 
 func _on_mouse_entered() -> void:
-	_toggle_idle(true)
+	_toggle_playable(true)
 
 func _on_mouse_exited() -> void:
-	_toggle_idle(false)
+	_toggle_playable(false)

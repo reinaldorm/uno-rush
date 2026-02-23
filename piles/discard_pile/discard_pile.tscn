@@ -3,8 +3,42 @@
 [ext_resource type="Texture2D" uid="uid://lr7ptxd33xqe" path="res://card/assets/outline.png" id="1_levwr"]
 [ext_resource type="Script" uid="uid://dsj0niqdyk6fm" path="res://piles/discard_pile/discard_pile.gd" id="1_twh83"]
 [ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="2_kccp7"]
+[ext_resource type="Shader" uid="uid://c2kfwnkkt8ge8" path="res://shaders/card.gdshader" id="3_lq65o"]
 [ext_resource type="Texture2D" uid="uid://rbnfkf3gx2uy" path="res://card/assets/play_bubble.png" id="4_pn0yc"]
+[ext_resource type="Texture2D" uid="uid://dtmex3jq2n2md" path="res://assets/effects/star_sheet.png" id="5_kccp7"]
 [ext_resource type="Script" uid="uid://cn2y722rub2qw" path="res://interactions/drop/drop_zone.gd" id="5_pn0yc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6vir3"]
+shader = ExtResource("3_lq65o")
+shader_parameter/fov = 90.0
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 0.0
+shader_parameter/x_rot = 4.500008763750003
+shader_parameter/inset = 0.0
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_lq65o"]
+particles_animation = true
+particles_anim_h_frames = 2
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_lq65o"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_6vir3"]
+curve = SubResource("Curve_lq65o")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xxae7"]
+particle_flag_disable_z = true
+radial_velocity_min = 99.99998
+radial_velocity_max = 199.99997
+gravity = Vector3(0, 200, 0)
+radial_accel_min = 16.999998
+radial_accel_max = 32.909996
+scale_curve = SubResource("CurveTexture_6vir3")
+color = Color(0.70980394, 0.85490197, 0.99607843, 1)
+anim_offset_max = 1.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kccp7"]
 size = Vector2(22, 32)
@@ -31,23 +65,116 @@ size = Vector2(22, 32)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hqmra"]
 
-[node name="DiscardPile" type="Node2D" unique_id=411543129 node_paths=PackedStringArray("play_bubble")]
+[sub_resource type="Animation" id="Animation_pn0yc"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/PlayBubble:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Visuals/PlayBubble:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Visuals/PlayBubble:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.34906584, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_kccp7"]
+resource_name = "show_bubbles"
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/PlayBubble:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.6666667, -0.0017131835, 1, -0.76666665, -0.027655423, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Visuals/PlayBubble:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.6333333, -0.021292234, 1, -0.73333335, 0.00660789, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Visuals/PlayBubble:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.6666667, -0.0008350905, 0.34906584, -0.73333335, -0.014010876, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lq65o"]
+_data = {
+&"RESET": SubResource("Animation_pn0yc"),
+&"show_bubbles": SubResource("Animation_kccp7")
+}
+
+[node name="DiscardPile" type="Node2D" unique_id=411543129 node_paths=PackedStringArray("animation_player", "particles", "cards_node")]
 script = ExtResource("1_twh83")
 card_scene = ExtResource("2_kccp7")
-play_bubble = NodePath("Visuals/PlayBubble")
+animation_player = NodePath("AnimationPlayer")
+particles = NodePath("Visuals/GPUParticles2D")
+cards_node = NodePath("Cards")
 
 [node name="Visuals" type="Node2D" parent="." unique_id=1194200993]
 
 [node name="Outline" type="Sprite2D" parent="Visuals" unique_id=2097543852]
 modulate = Color(0.3882353, 0.5529412, 0.9411765, 0.1882353)
+material = SubResource("ShaderMaterial_6vir3")
 scale = Vector2(3, 3)
 texture = ExtResource("1_levwr")
 
 [node name="PlayBubble" type="Sprite2D" parent="Visuals" unique_id=1564414255]
-visible = false
 position = Vector2(27, -45)
 rotation = 0.34906584
+scale = Vector2(1e-05, 1e-05)
 texture = ExtResource("4_pn0yc")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Visuals" unique_id=200584945]
+material = SubResource("CanvasItemMaterial_lq65o")
+emitting = false
+amount = 50
+texture = ExtResource("5_kccp7")
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_xxae7")
+
+[node name="Cards" type="Node2D" parent="." unique_id=1854838850]
 
 [node name="DropZone" type="Area2D" parent="." unique_id=845120461]
 z_index = 3
@@ -82,6 +209,10 @@ theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_bqit3"
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_20hy6")
 theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_2afeu")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hqmra")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=605576003]
+libraries/ = SubResource("AnimationLibrary_lq65o")
+speed_scale = 5.0
 
 [connection signal="drag_component_entered" from="DropZone" to="." method="_on_drag_component_entered"]
 [connection signal="drop_requested" from="DropZone" to="." method="_on_drop_requested"]

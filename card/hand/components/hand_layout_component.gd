@@ -1,4 +1,4 @@
- class_name HandLayoutComponent
+class_name HandLayoutComponent
 extends Node
 
 @export var curve_x : Curve
@@ -30,17 +30,22 @@ func arrange(cards: Array[CardView]) -> void:
 		var card := active_cards[i]
 		if not card: return
 		
-		var ratio := _get_safe_ratio(i, total - 1)
+		
+		var ratio := 0.5 if total == 1 else _get_ratio(i, total - 1)
 		var final_card_width : float = (min(card.size.x * total, max_arrange_width) - card.size.x) / 2
 		
 		var final_position := Vector2(curve_x.sample(ratio) * final_card_width, -curve_y.sample(ratio) * mult_y)
 		var final_rotation := curve_rot.sample(ratio) * mult_rot
 		
+		if card.is_selected: final_position.y -= 10.0
+		
 		var tween = card.animate("layout").set_parallel()
 		
-		if not card.drag_component.dragging: 
+		if not card.drag_component.dragging and not card.drag_component.drop_zone: 
+			card.z_index = i
 			tween.tween_property(card, "position", final_position, 1)
- 			tween.tween_property(card, "scale", Vector2.ONE, 1)
+			tween.tween_property(card, "scale", Vector2.ONE, 1)
+		
 		tween.tween_property(card, "rotation", final_rotation, 1)
 
 func arrange_new(cards: Array[CardView], new_cards: Array[CardView]) -> Signal:
@@ -52,14 +57,14 @@ func arrange_new(cards: Array[CardView], new_cards: Array[CardView]) -> Signal:
 	
 	arrange(old_cards)
 	
-	var total_new := new_cards.size()
+	var total := new_cards.size()
 	var tweens : Array[Tween] = []
 	
-	for i in range(total_new):
+	for i in range(total):
 		var card = new_cards[i]
 		
-		var ratio := _get_safe_ratio(i, total_new - 1)
-		var final_card_width : float = (min(card.size.x * total_new, max_arrange_width) - card.size.x) / 2
+		var ratio := 0.5 if total == 1 else _get_ratio(i, total - 1)
+		var final_card_width : float = (min(card.size.x * total, max_arrange_width) - card.size.x) / 2
 
 		var final_rotation := curve_x.sample(ratio) * mult_rot
 		var final_position := Vector2(curve_x.sample(ratio) * final_card_width, -curve_y.sample(ratio) * mult_y - 70)
@@ -67,7 +72,7 @@ func arrange_new(cards: Array[CardView], new_cards: Array[CardView]) -> Signal:
 		var tween = card.animate("layout", Tween.EASE_OUT, Tween.TRANS_EXPO).set_parallel()
 		tweens.append(tween)
 		
-		await tween.tween_property(card, "scale", Vector2(1.0, 1.0), 0.75)
+		tween.tween_property(card, "scale", Vector2(1.0, 1.0), 0.75)
 		tween.tween_property(card, "rotation", final_rotation, 0.75)
 		tween.tween_property(card, "position", final_position, 0.75)
 		await card.animate_flip()
@@ -80,5 +85,5 @@ func arrange_new(cards: Array[CardView], new_cards: Array[CardView]) -> Signal:
 # Internal
 # -------------------------
 
-func _get_safe_ratio(value: float, of: float) -> float:
-	return value / of if of > 1 else 0.5
+func _get_ratio(value: float, of: float) -> float:
+	return value / of 

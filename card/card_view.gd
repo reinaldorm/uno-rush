@@ -9,16 +9,18 @@ signal mouse_left_up(card_view: CardView)
 @export var _card_sheet : Sprite2D
 @export var _card_sprite : Sprite2D
 @export var _back_sprite : Sprite2D
-
+@export var _ordering_visual : Node2D
+@export var _ordering_label : RichTextLabel
 @export var _bubbles_player : AnimationPlayer
 @export var _card_player : AnimationPlayer
-var _graphics_sprite : Sprite2D
 
 @export var size : Vector2
 
 var data : CardData
 
-var _tween_channels : Dictionary[String, Tween] = { "layout": null, "graphics": null }
+var _graphics_sprite : Sprite2D
+var _tween_channels : Dictionary[String, Tween] = { "layout": null, "graphics": null, "utility": null }
+var is_selected := false
 
 # -------------------------
 # Public API
@@ -30,7 +32,7 @@ func setup(card_data: CardData, draggable: bool, flipped:= false) -> void:
 	_card_sheet.frame_coords = Vector2i(data.number, data.color)
 	
 	if not draggable: drag_component.queue_free()
-	if flipped: set_flip(true)
+	set_flip(flipped)
 
 func animate(channel: String, e:= Tween.EASE_OUT, t:= Tween.TRANS_ELASTIC) -> Tween:
 	if _tween_channels[channel]: _tween_channels[channel].kill()
@@ -48,24 +50,33 @@ func animate_flip(backwards := false) -> Signal:
 
 func set_flip(backwards := false) -> void:
 	var _transform : Transform2D
-	if graphics_sprite: 
-		graphics_sprite.hide()
-		_transforrm = Transform2D(graphics_sprite.transform)
+	if _graphics_sprite: 
+		_graphics_sprite.hide()
+		_transform = Transform2D(_graphics_sprite.transform)
 	
-	if backwards: 
-		_back_sprite.transform = graphics_sprite.transform
-		graphics_sprite = _back_sprite
-	else: 
-		_card_sprite.transform = graphics_sprite.transform
-		graphics_sprite = _card_sprite
+	if backwards: _graphics_sprite = _back_sprite
+	else: _graphics_sprite = _card_sprite
 
-	if _transform: graphics_sprite.transform = _transform
+	if _transform: _graphics_sprite.transform = _transform
 
-	graphics_sprite.show()
+	_graphics_sprite.show()
+
+func set_draggable() -> void:
+	pass;
+
+func set_selected(state: bool, order := -1) -> void:
+	is_selected = state
+	_select(state)
+	_ordering_label.text = str(order)
 
 # -------------------------
 # Internal
 # -------------------------
+
+func _select(state: bool) -> void:
+	var tween = animate("utility")
+	if state: tween.tween_property(_ordering_visual, "position:y", -40.0, 0.75)
+	else: tween.tween_property(_ordering_visual, "position:y", -15.0, 0.75)
 
 # -------------------------
 # Handlers
@@ -80,12 +91,12 @@ func _on_drag_ended(_o: Node2D) -> void:
 	var tween = animate("graphics")
 	tween.tween_property(_graphics_sprite, "scale", Vector2(2.5, 2.5), 0.4)
 
-func _on_drop_zone_entered(_drop_zone: DropZone) -> void:
+func _on_drop_zone_entered(_card_view: Node2D, _drop_zone: DropZone) -> void:
 	## Waiting new animation system to be tested
 	#animate_scale()
 	pass
 
-func _on_drop_zone_exited(_drop_zone: DropZone) -> void:
+func _on_drop_zone_exited(_card_view: Node2D, _drop_zone: DropZone) -> void:
 	## Waiting new animation system to be tested
 	#animate_scale(Vector2(2.0, 2.0))
 	pass
@@ -113,12 +124,12 @@ func _on_card_exited() -> void:
 
 func _on_button_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
-		if event.action_pressed("mouse_left"):
+		if event.is_action_pressed("mouse_left"):
 			emit_signal("mouse_left_down", self)
-		elif event.action_released("mouse_left"):
+		elif event.is_action_released("mouse_left"):
 			emit_signal("mouse_left_up", self)
-		elif event.action_press("mouse_right")
+		elif event.is_action_pressed("mouse_right"):
 			if drag_component: drag_component.begin_drag()
 			_bubbles_player.play_backwards("show_bubbles")
-		elif event.action_released("mouse_right")
+		elif event.is_action_released("mouse_right"):
 			if drag_component: drag_component.end_drag()

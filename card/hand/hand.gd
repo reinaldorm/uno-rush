@@ -1,4 +1,3 @@
-@tool
 extends Node2D
 class_name Hand
 
@@ -10,7 +9,6 @@ class_name Hand
 
 var _card_data : Array[CardData] = []
 var _card_views : Array[CardView] = []
-var _available_cards : Array[CardView] = []
 var _selected_cards : Array[CardView] = []
 var moving_card : CardView = null
 
@@ -31,6 +29,7 @@ func _ready() -> void:
 	for child in get_children():
 		if child is CardView:
 			_card_views.append(child)
+			child.setup(CardData.create(randi_range(0, CardData.COLOR.size() - 1), randi_range(0, 9)), false, true)
 	_arrange()
 
 func _process(_delta: float) -> void:
@@ -42,7 +41,6 @@ func _arrange() -> void:
 func _arrange_new(cards: Array[CardView]) -> void:
 	await layout_component.arrange_new(_card_views, cards)
 	_arrange()
-	print("ended")
 
 func _add_cards(cards: Array[CardData]) -> Array[CardView]:
 	var new_cards : Array[CardView] = []
@@ -63,32 +61,22 @@ func _add_cards(cards: Array[CardData]) -> Array[CardView]:
 		card_view.drag_component.drop_zone_entered.connect(_on_card_drop_zone_entered)
 		card_view.drag_component.drop_zone_exited.connect(_on_card_drop_zone_exited)
 
-		card_view.drag_component.mouse_left_down.connect(_on_card_mouse_left_down)
+		card_view.mouse_left_down.connect(_on_card_mouse_left_down)
 		
 		card_view.scale = Vector2.ZERO
 		
 	return new_cards
 
 func _sort_moving_card(card_view: CardView) -> void:
-	var card_index = _card_views.find(card_view)
-	
-	if card_index - 1 >= 0:
-		var previous_simbling := _card_views[card_index - 1]
-		
-		if previous_simbling.position.x - card_view.position.x > 0.0:
-			var temp := previous_simbling
-			_card_views[card_index - 1] = card_view
-			_card_views[card_index] = temp
-			_arrange()
+	var old_index := _card_views.find(card_view)
 
-	if card_index + 1 < _card_views.size():
-		var next_simbling := _card_views[card_index + 1]
-		
-		if next_simbling.position.x - card_view.position.x < 0.0:
-			var temp := next_simbling
-			_card_views[card_index + 1] = card_view
-			_card_views[card_index] = temp
-			_arrange()
+	_card_views.sort_custom(func(a, b):
+		return a.position.x < b.position.x)
+
+	var new_index := _card_views.find(card_view)
+
+	if old_index != new_index:
+		_arrange()
 
 # -------------------------
 # Handlers
@@ -98,15 +86,20 @@ func _sort_moving_card(card_view: CardView) -> void:
 # Game Handlers
 # -------------
 
-func _on_game_manager_cards_played(cards: Array[CardView]) -> void:
-	for card in cards:
-		if _card_data.has(card.data):
-			_card_data.erase(card.data)
-			_card_views.erase(card)
+func _on_game_manager_cards_played(card_data: Array[CardData]) -> void:
+	for data in card_data:
+		if _card_data.has(data):
+			_card_data.erase(data)
+			var view := _get_view_by_data(data)
+			if _card_views.has(view): _card_views.erase(view)
+	_arrange()
 
-func _on_game_manager_cards_drawn(cards: Array[CardData]) -> void:
-	var new_cards = _add_cards(cards)
+func _on_game_manager_cards_drawn(card_data: Array[CardData]) -> void:
+	var new_cards = _add_cards(card_data)
 	_arrange_new(new_cards)
+
+func _on_game_manager_play_denied(_card_data: Array[CardData]) -> void:
+	_arrange()
 
 # -------------
 # Card Handlers
@@ -123,13 +116,30 @@ func _on_card_drop_zone_entered(draggable: Node2D, _drop_zone: DropZone) -> void
 	if draggable is CardView:
 		if _card_views.has(draggable):
 			moving_card = null
-			_card_views.erase(draggable)
 
 func _on_card_drop_zone_exited(draggable: Node2D, _drop_zone: DropZone) -> void:
 	if draggable is CardView:
 		if _card_data.has(draggable.data): 
 			moving_card = draggable
-			_card_views.append(draggable)
 
 func _on_card_mouse_left_down(card_view: CardView) -> void:
-	pass
+	if _selected_cards.has(card_view):
+		_selected_cards.erase(card_view)
+		card_view.set_selected(false)
+		
+		for i in range(_selected_cards.size()):
+			var card := _selected_cards[i]
+			card.set_selected(true, i + 1)
+		
+	else: 
+		_selected_cards.append(card_view)
+		card_view.set_selected(true, _selected_cards.size())
+	_arrange()
+
+# -------------
+# Utilities
+# -------------
+
+func _get_view_by_data(data: CardData) -> CardView:
+	for view in _card_views: if view.data == data: return view
+	return null

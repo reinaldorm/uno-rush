@@ -9,8 +9,8 @@ signal drag_entered()
 signal drag_exited()
 signal drag_started(o: Node2D)
 signal drag_ended(o: Node2D)
-signal drop_zone_entered(draggable:Node2D, drop_zone: DropZone)
-signal drop_zone_exited(draggable:Node2D, drop_zone: DropZone)
+signal drop_zone_entered(draggable: Node2D, drop_zone: DropZone)
+signal drop_zone_exited(draggable: Node2D, drop_zone: DropZone)
 
 # -------------------------
 # Public API
@@ -23,11 +23,11 @@ func begin_drag() -> void:
 	emit_signal("drag_started", owner)
 
 func end_drag() -> void:
+	if drop_zone: drop_zone.request_drop(owner)
+	drop_zone = null
 	owner.z_index = 0
 	dragging = false
 	emit_signal("drag_ended", owner)
-	
-	if drop_zone: drop_zone.request_drop(owner)
 
 func register_drop_zone(d: DropZone) -> void:
 	drop_zone = d

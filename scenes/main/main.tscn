@@ -8,6 +8,8 @@
 [ext_resource type="Shader" uid="uid://dp3lgf7lykufk" path="res://shaders/vcr.gdshader" id="6_ow5a4"]
 [ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="6_yyfjg"]
 [ext_resource type="Script" uid="uid://cl5yn6116qkw2" path="res://core/game_manager.gd" id="7_hujxm"]
+[ext_resource type="Texture2D" uid="uid://olud8dpxye4j" path="res://assets/ui/arrow.png" id="10_a8run"]
+[ext_resource type="PackedScene" uid="uid://5l4hlbf13et7" path="res://hud/hud.tscn" id="11_ouso4"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_ow5a4"]
 noise_type = 4
@@ -18,14 +20,15 @@ fractal_lacunarity = 2.4
 fractal_gain = -0.06
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hujxm"]
-width = 1
+width = 200
+height = 200
 noise = SubResource("FastNoiseLite_ow5a4")
 seamless = true
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_yyfjg"]
 shader = ExtResource("6_ow5a4")
 shader_parameter/scale = Vector2(1, 1)
-shader_parameter/strength = 1.0
+shader_parameter/strength = 3.0
 shader_parameter/fps = 6.0
 shader_parameter/noise = SubResource("NoiseTexture2D_hujxm")
 
@@ -68,8 +71,9 @@ emission_shape_offset = Vector3(320, 180, 0)
 emission_shape = 3
 emission_box_extents = Vector3(320, 180, 1)
 gravity = Vector3(0, 0, 0)
+scale_min = 4.0
+scale_max = 4.0
 scale_curve = SubResource("CurveTexture_l3cfh")
-color = Color(0.56078434, 0.9098039, 1, 1)
 color_ramp = SubResource("GradientTexture1D_iuonh")
 
 [sub_resource type="Environment" id="Environment_ow5a4"]
@@ -77,18 +81,22 @@ background_mode = 3
 ssao_radius = 8.24
 ssao_intensity = 6.77
 glow_enabled = true
-glow_levels/3 = 1.05
-glow_levels/5 = 0.16
-glow_levels/7 = 0.17
-glow_intensity = 0.25
+glow_levels/1 = 0.5
+glow_levels/2 = 0.6
+glow_levels/3 = 0.9
+glow_levels/4 = 0.05
+glow_levels/5 = 0.1
+glow_levels/7 = 0.1
+glow_intensity = 0.1
 glow_hdr_threshold = 0.04
 adjustment_enabled = true
 adjustment_contrast = 1.03
 adjustment_saturation = 1.1
 
-[node name="Main" type="Node2D" unique_id=1247881097 node_paths=PackedStringArray("camera")]
+[node name="Main" type="Node2D" unique_id=1247881097 node_paths=PackedStringArray("camera", "turn_arrow")]
 script = ExtResource("1_l3cfh")
 camera = NodePath("Camera2D")
+turn_arrow = NodePath("Visuals/TurnArrow")
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=1884324124]
 layer = -1
@@ -102,7 +110,12 @@ offset_bottom = 360.0
 texture = ExtResource("2_6q06x")
 stretch_mode = 1
 
+[node name="PointLight2D" type="PointLight2D" parent="Background" unique_id=210458777]
+position = Vector2(320, 179)
+texture_scale = 3.78
+
 [node name="Stars" type="GPUParticles2D" parent="Background" unique_id=1323026414]
+modulate = Color(0.08627451, 0.08235294, 0.19215687, 1)
 z_index = -1
 amount = 100
 lifetime = 10.0
@@ -111,6 +124,7 @@ process_material = SubResource("ParticleProcessMaterial_6q06x")
 metadata/_edit_lock_ = true
 
 [node name="Stars2" type="GPUParticles2D" parent="Background" unique_id=994513518]
+modulate = Color(0.08627451, 0.08235294, 0.19215687, 1)
 z_index = -1
 amount = 50
 lifetime = 10.0
@@ -119,6 +133,7 @@ process_material = SubResource("ParticleProcessMaterial_k2fmo")
 metadata/_edit_lock_ = true
 
 [node name="Stars3" type="GPUParticles2D" parent="Background" unique_id=131352892]
+modulate = Color(0.08627451, 0.08235294, 0.19215687, 1)
 z_index = -1
 amount = 25
 lifetime = 10.0
@@ -127,7 +142,7 @@ process_material = SubResource("ParticleProcessMaterial_l3cfh")
 metadata/_edit_lock_ = true
 
 [node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
-position = Vector2(320, 360)
+position = Vector2(320, 300)
 
 [node name="HandLeft" parent="." unique_id=342436484 instance=ExtResource("2_k2fmo")]
 position = Vector2(0, 180)
@@ -196,11 +211,11 @@ DEV_layout_max_width_overwrite = 150.0
 
 [node name="CardView7" parent="HandRight" unique_id=689027390 instance=ExtResource("6_yyfjg")]
 
-[node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
-position = Vector2(252, 155)
-
 [node name="DiscardPile" parent="." unique_id=1939346024 instance=ExtResource("4_l3cfh")]
 position = Vector2(320, 180)
+
+[node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
+position = Vector2(201, 155)
 
 [node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("hand", "draw_pile_node", "discard_pile_node")]
 script = ExtResource("7_hujxm")
@@ -214,8 +229,21 @@ environment = SubResource("Environment_ow5a4")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1670420092]
 position = Vector2(320, 180)
+offset = Vector2(-1.1079034, -1.3143055)
 
-[connection signal="draw_requested" from="DrawPile" to="GameManager" method="_on_draw_pile_draw_requested"]
+[node name="Visuals" type="Node2D" parent="." unique_id=395039280]
+
+[node name="TurnArrow" type="Sprite2D" parent="Visuals" unique_id=1031837384]
+modulate = Color(1, 1, 1, 0.11764706)
+position = Vector2(320.00003, 180)
+rotation = 34.74975
+scale = Vector2(1.8, 1.8)
+texture = ExtResource("10_a8run")
+
+[node name="Hud" parent="." unique_id=1792151263 instance=ExtResource("11_ouso4")]
+
 [connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_discard_pile_play_requested"]
+[connection signal="draw_requested" from="DrawPile" to="GameManager" method="_on_draw_pile_draw_requested"]
 [connection signal="cards_drawn" from="GameManager" to="Hand" method="_on_game_manager_cards_drawn"]
 [connection signal="cards_played" from="GameManager" to="Hand" method="_on_game_manager_cards_played"]
+[connection signal="play_denied" from="GameManager" to="Hand" method="_on_game_manager_play_denied"]
