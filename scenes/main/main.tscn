@@ -229,20 +229,21 @@ environment = SubResource("Environment_ow5a4")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1670420092]
 position = Vector2(320, 180)
-offset = Vector2(-1.1079034, -1.3143055)
+offset = Vector2(-1.2623808, -4.079514)
 
 [node name="Visuals" type="Node2D" parent="." unique_id=395039280]
 
 [node name="TurnArrow" type="Sprite2D" parent="Visuals" unique_id=1031837384]
 modulate = Color(1, 1, 1, 0.11764706)
 position = Vector2(320.00003, 180)
-rotation = 34.74975
+rotation = 3.0224788
 scale = Vector2(1.8, 1.8)
 texture = ExtResource("10_a8run")
 
 [node name="Hud" parent="." unique_id=1792151263 instance=ExtResource("11_ouso4")]
 
 [connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_discard_pile_play_requested"]
+[connection signal="draw_requested" from="DrawPile" to="." method="_on_draw_pile_draw_requested"]
 [connection signal="draw_requested" from="DrawPile" to="GameManager" method="_on_draw_pile_draw_requested"]
 [connection signal="cards_drawn" from="GameManager" to="Hand" method="_on_game_manager_cards_drawn"]
 [connection signal="cards_played" from="GameManager" to="Hand" method="_on_game_manager_cards_played"]
