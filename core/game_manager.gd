@@ -96,11 +96,32 @@ func _can_play(card: CardData) -> bool:
 		return false
 	
 	if card.hue == CardData.Hue.WILD: return true
-	if card.hue == last_card.hue: return true
+	if card.hue == _hue_manager.hue: return true
 	if card.effect != CardData.Effect.NULL and card.effect == last_card.effect: return true
-	if card.number != -1 and card.number == last_card.number: return true
+	if card.number >= 0 and card.number == last_card.number: return true
 
 	return false
+
+func _can_combo(starter: CardData, next_card: CardData) -> bool:
+	if next_card.hue == CardData.Hue.WILD:
+		if next_card.effect == starter.effect:
+			return true
+		else:
+			return false
+	
+	if next_card.number >= 0: 
+		if next_card.number == starter.number: 
+			return true
+		else: 
+			return false
+
+	if next_card.effect == starter.effect:
+		return true:
+	else:
+		return false
+
+	push_warning("Reached code end and returned true for safety (game_manager.gd at _can_combo).")
+	return true
 
 # -------------------------
 # Handlers
@@ -154,11 +175,17 @@ func _on_draw_pile_draw_requested() -> void:
 # -------------------------
 # Hand
 
-func _on_hand_selection_changed(card_data: Array[CardData]) -> void:
+func _on_hand_selection_changed(card_data: Array[CardData], combo_starter: CardData = null) -> void:
 	var available_cards : Array[CardData]
 	
-	for card in card_data:
-		if _can_play(card): available_cards.append(card)
+	if combo_starter:
+		for card in card_data:
+			if card == combo_starter: continue
+			else:
+				if _can_combo(combo_starter, card): available_cards.append(card)
+	else:
+		for card in card_data:
+			if _can_play(card): available_cards.append(card)
 	
 	_hand.update_available_cards(available_cards)
 

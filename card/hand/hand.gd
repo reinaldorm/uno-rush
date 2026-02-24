@@ -21,11 +21,11 @@ var moving_card : CardView = null
 func start(cards: Array[CardData]) -> void:
 	_add_cards(cards)
 	_arrange()
-	emit_signal("selection_changed", _card_data)
+	_request_available_cards()
 
-func update_available_cards(card_data: Array[CardData]) -> void:
+func update_available_cards(available_cards: Array[CardData]) -> void:
 	for card in _card_views: card.set_playable(false)
-	for data in card_data:
+	for data in available_cards:
 		var view = _get_view_by_data(data)
 		if view: view.set_playable(true)
 
@@ -45,10 +45,10 @@ func _process(_delta: float) -> void:
 	if moving_card: _sort_moving_card(moving_card)
 
 func _arrange() -> void:
-	layout_component.arrange(_card_views)
+	layout_component.request_arrange(_card_views)
 
 func _arrange_new(cards: Array[CardView]) -> void:
-	await layout_component.arrange_new(_card_views, cards)
+	await layout_component.request_arrange_new(_card_views, cards)
 	_arrange()
 
 func _add_cards(cards: Array[CardData]) -> Array[CardView]:
@@ -76,6 +76,21 @@ func _add_cards(cards: Array[CardData]) -> Array[CardView]:
 		
 	return new_cards
 
+func _select_card(card: CardView) -> void:
+	if _selected_cards.has(card_view):
+		_selected_cards.erase(card_view)
+		card_view.set_selected(false)
+		
+		for i in range(_selected_cards.size()):
+			var card := _selected_cards[i]
+			card.set_selected(true, i + 1)
+		
+	else: 
+		_selected_cards.append(card_view)
+		card_view.set_selected(true, _selected_cards.size())
+	
+	_request_available_cards()
+
 func _sort_moving_card(view: CardView) -> void:
 	var old_index := _card_views.find(view)
 
@@ -84,6 +99,17 @@ func _sort_moving_card(view: CardView) -> void:
 	var new_index := _card_views.find(view)
 
 	if old_index != new_index: _arrange()
+
+func _request_available_cards() -> void:
+	# TODO ------------------------------------------------
+	# Guarantee player only see available cards when on turn
+	# This may change in the future if off-turn plays be implemented
+	# TODO ------------------------------------------------
+
+	if _selected_cards.size():
+		emit_signal("selection_changed", _card_data, _selected_cards[0])
+	else:
+		emit_signal("selection_changed", _card_data, null)
 
 # -------------------------
 # Handlers
@@ -100,11 +126,14 @@ func _on_game_manager_cards_played(card_data: Array[CardData]) -> void:
 			_card_data.erase(data)
 			if _card_views.has(view): _card_views.erase(view)
 	_arrange()
+	_selected_cards = []
 	emit_signal("selection_changed", _card_data)
 
 func _on_game_manager_cards_drawn(card_data: Array[CardData]) -> void:
 	var new_cards = _add_cards(card_data)
-	_arrange_new(new_cards)
+	await _arrange_new(new_cards)
+	_selected_cards = []
+	emit_signal("selection_changed", _card_data)
 
 func _on_game_manager_play_denied(__card_data: Array[CardData]) -> void:
 	_arrange()
@@ -131,17 +160,7 @@ func _on_card_drop_zone_exited(draggable: Node2D, _drop_zone: DropZone) -> void:
 			moving_card = draggable
 
 func _on_card_mouse_left_down(card_view: CardView) -> void:
-	if _selected_cards.has(card_view):
-		_selected_cards.erase(card_view)
-		card_view.set_selected(false)
-		
-		for i in range(_selected_cards.size()):
-			var card := _selected_cards[i]
-			card.set_selected(true, i + 1)
-		
-	else: 
-		_selected_cards.append(card_view)
-		card_view.set_selected(true, _selected_cards.size())
+	_select_card(card_view)
 	_arrange()
 
 # -------------

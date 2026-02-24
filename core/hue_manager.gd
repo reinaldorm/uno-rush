@@ -7,11 +7,9 @@ signal hue_selected
 
 var hue : CardData.Hue
 
-
 # -------------------------
 # Public API
 # -------------------------
-
 
 func initialize(_hue: CardData.Hue) -> void:
 	hue = _hue
@@ -29,12 +27,8 @@ func prompt_hue_selection() -> Signal:
 # -------------------------
 
 func _run_hue_selection_flow() -> void:
-	hue_selection_node.show()
+	hue_selection_node.start_selection()
 
-	await get_tree().create_timer(1).timeout
-	## TODO
-	hue = CardData.Hue.RED
-	hue_selection_node.hide()
-	## TODO
-
+func _on_hue_selected(_hue: CardData.Hue) -> void:
+	hue = _hue
 	emit_signal("hue_selected")

@@ -18,7 +18,19 @@ signal arrange_ended()
 # Public API
 # -------------------------
 
-func arrange(cards: Array[CardView]) -> void:
+func request_arrange(cards: Array[CardView]) -> Signal:
+	_arrange(cards)
+	return arrange_ended
+
+func request_arrange_new(cards: Array[CardView], new_cards: Array[CardView]) -> Signal:
+	_arrange_new(cards, new_cards)
+	return arrange_ended
+
+# -------------------------
+# Internal
+# -------------------------
+
+func _arrange(cards: Array[CardView]) -> void:
 	var active_cards : Array[CardView] = []
 	
 	for c in cards: active_cards.append(c)
@@ -47,8 +59,10 @@ func arrange(cards: Array[CardView]) -> void:
 			tween.tween_property(card, "scale", Vector2.ONE, 0.5)
 		
 		tween.tween_property(card, "rotation", final_rotation, 1)
+	
+	emit_signal("arrange_ended")
 
-func arrange_new(cards: Array[CardView], new_cards: Array[CardView]) -> Signal:
+func _arrange_new(cards: Array[CardView], new_cards: Array[CardView]) -> void:
 	var old_cards : Array[CardView]
 	
 	for card in cards: 
@@ -78,12 +92,9 @@ func arrange_new(cards: Array[CardView], new_cards: Array[CardView]) -> Signal:
 		await card.animate_flip()
 	
 	await get_tree().create_timer(0.75).timeout
-	emit_signal("arrange_ended")
-	return arrange_ended
 
-# -------------------------
-# Internal
-# -------------------------
+	emit_signal("arrange_ended")
+
 
 func _get_ratio(value: float, of: float) -> float:
 	return value / of 

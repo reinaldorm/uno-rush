@@ -8,6 +8,7 @@ signal mouse_left_up(card_view: CardView)
 
 @export var _card_sheet : Sprite2D
 @export var _card_sprite : Sprite2D
+
 @export var _selection_transform : Node2D
 @export var _hover_transform : Node2D
 @export var _fx_transform : Node2D
@@ -34,7 +35,7 @@ var _tick := 0.0
 # -------------------------
 
 func setup(card_data: CardData, draggable: bool, flipped:= false) -> void:
-	data = card_data
+	data = card_dataw
 	
 	_card_sheet.frame_coords = _get_texture_coord()
 	
@@ -96,11 +97,13 @@ func _toggle_playable(state: bool) -> void:
 	if state:
 		var tween = animate("fx")
 		tween.set_loops()
-		# tween.tween_property(_fx_transform, ^"rotation", )
-
-		pass
+		tween.tween_property(_fx_transform, "rotation", -0.25, 0.1)
+		tween.tween_property(_fx_transform, "rotation", 0.25, 0.1)
+		tween.tween_property(_fx_transform, "rotation", 0, 0.1)
+		tween.set_interval(1)
 	else:
-		pass
+		if _tween_channels["fx"]: _tween_channels["fx"].kill()
+	
 	_card_sheet.material.set_shader_parameter("disabled", not state)
 
 func _toggle_input_helpers(to: bool) -> void:
