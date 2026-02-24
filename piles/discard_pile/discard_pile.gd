@@ -24,6 +24,10 @@ func start(first_card: CardData) -> void:
 	cards_node.add_child(c)
 
 func accept_play_request() -> void:
+	particles.restart()
+	var last_card := requested_cards[requested_cards.size() - 1]
+	_emit_particles(last_card.data.hue)
+	
 	for card in requested_cards: _add_card_to_pile(card)
 	requested_cards = []
 	particles.emitting = true
@@ -39,7 +43,7 @@ func _toggle_playable(value: bool) -> void:
 	if value: animation_player.play("show_bubbles")
 	else: animation_player.play_backwards("show_bubbles")
 
-func _new_tween(e:= Tween.EASE_OUT, t:= Tween.TransitionType.TRANS_EXPO) -> Tween:
+func _new_tween(e:= Tween.EASE_OUT, t:= Tween.TRANS_EXPO) -> Tween:
 	if _tween: _tween.kill()
 
 	_tween = create_tween()
@@ -51,6 +55,10 @@ func _new_tween(e:= Tween.EASE_OUT, t:= Tween.TransitionType.TRANS_EXPO) -> Twee
 func _add_card_to_pile(card_view: CardView):
 	card_view.reparent(cards_node)
 	card_view.position = Vector2.ZERO
+
+func _emit_particles(hue: CardData.Hue) -> void:
+	#print(particles.process_material.color)
+	pass
 
 # -------------------------
 # Handlers

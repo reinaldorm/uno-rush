@@ -1,6 +1,8 @@
 extends Node2D
 class_name Hand
 
+signal selection_changed(card_data: Array[CardData])
+
 @export var card_scene : PackedScene
 @export var layout_component : HandLayoutComponent
 
@@ -19,6 +21,14 @@ var moving_card : CardView = null
 func start(cards: Array[CardData]) -> void:
 	_add_cards(cards)
 	_arrange()
+	emit_signal("selection_changed", _card_data)
+
+func update_available_cards(card_data: Array[CardData]) -> void:
+	for card in _card_views: card.set_playable(false)
+	for data in card_data:
+		print("hi")
+		var view = _get_view_by_data(data)
+		if view: view.set_playable(true)
 
 # -------------------------
 # Internal
@@ -29,7 +39,7 @@ func _ready() -> void:
 	for child in get_children():
 		if child is CardView:
 			_card_views.append(child)
-			child.setup(CardData.create(randi_range(0, CardData.COLOR.size() - 1), randi_range(0, 9)), false, true)
+			#child.setup(CardData.create(randi_range(0, CardData.COLOR.size() - 1), randi_range(0, 9)), false, true)
 	_arrange()
 
 func _process(_delta: float) -> void:
@@ -67,16 +77,14 @@ func _add_cards(cards: Array[CardData]) -> Array[CardView]:
 		
 	return new_cards
 
-func _sort_moving_card(card_view: CardView) -> void:
-	var old_index := _card_views.find(card_view)
+func _sort_moving_card(view: CardView) -> void:
+	var old_index := _card_views.find(view)
 
-	_card_views.sort_custom(func(a, b):
-		return a.position.x < b.position.x)
+	_card_views.sort_custom(func(a: CardView, b: CardView): return a.position.x < b.position.x)
 
-	var new_index := _card_views.find(card_view)
+	var new_index := _card_views.find(view)
 
-	if old_index != new_index:
-		_arrange()
+	if old_index != new_index: _arrange()
 
 # -------------------------
 # Handlers
@@ -89,16 +97,17 @@ func _sort_moving_card(card_view: CardView) -> void:
 func _on_game_manager_cards_played(card_data: Array[CardData]) -> void:
 	for data in card_data:
 		if _card_data.has(data):
-			_card_data.erase(data)
 			var view := _get_view_by_data(data)
+			_card_data.erase(data)
 			if _card_views.has(view): _card_views.erase(view)
 	_arrange()
+	emit_signal("selection_changed", _card_data)
 
 func _on_game_manager_cards_drawn(card_data: Array[CardData]) -> void:
 	var new_cards = _add_cards(card_data)
 	_arrange_new(new_cards)
 
-func _on_game_manager_play_denied(_card_data: Array[CardData]) -> void:
+func _on_game_manager_play_denied(__card_data: Array[CardData]) -> void:
 	_arrange()
 
 # -------------
@@ -143,3 +152,11 @@ func _on_card_mouse_left_down(card_view: CardView) -> void:
 func _get_view_by_data(data: CardData) -> CardView:
 	for view in _card_views: if view.data == data: return view
 	return null
+
+# -------------
+# Debug
+# -------------
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_up"):
+		emit_signal("selection_changed", _card_data)

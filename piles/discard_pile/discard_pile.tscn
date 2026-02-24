@@ -31,13 +31,13 @@ curve = SubResource("Curve_lq65o")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xxae7"]
 particle_flag_disable_z = true
-radial_velocity_min = 99.99998
-radial_velocity_max = 199.99997
-gravity = Vector3(0, 200, 0)
+radial_velocity_min = 24.999977
+radial_velocity_max = 49.999977
+gravity = Vector3(0, 0, 0)
 radial_accel_min = 16.999998
 radial_accel_max = 32.909996
 scale_curve = SubResource("CurveTexture_6vir3")
-color = Color(0.70980394, 0.85490197, 0.99607843, 1)
+color = Color(2.097214, 0.5005711, 0.5873451, 1)
 anim_offset_max = 1.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kccp7"]
@@ -169,7 +169,9 @@ material = SubResource("CanvasItemMaterial_lq65o")
 emitting = false
 amount = 50
 texture = ExtResource("5_kccp7")
+lifetime = 2.0
 one_shot = true
+speed_scale = 2.0
 explosiveness = 1.0
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_xxae7")

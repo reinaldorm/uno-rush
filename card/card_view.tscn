@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://nmsbi5c21cxq" path="res://card/card_view.gd" id="1_2nlio"]
 [ext_resource type="Texture2D" uid="uid://dehqyg61rlqbt" path="res://card/assets/sheet.png" id="2_4bpaw"]
+[ext_resource type="Shader" uid="uid://b1fgbs4nkik7e" path="res://shaders/shine.gdshader" id="2_ui2he"]
 [ext_resource type="Script" uid="uid://cw12ktjdt7lyy" path="res://interactions/drag/drag_component.gd" id="3_f2o64"]
 [ext_resource type="Shader" uid="uid://c2kfwnkkt8ge8" path="res://shaders/card.gdshader" id="3_rcv2q"]
 [ext_resource type="Texture2D" uid="uid://cohf4d6rq1y6b" path="res://card/assets/card_back.png" id="4_jbm5u"]
@@ -10,7 +11,24 @@
 [ext_resource type="Texture2D" uid="uid://dypa4dqlg2fh8" path="res://card/assets/select_bubble.png" id="6_rcv2q"]
 [ext_resource type="Texture2D" uid="uid://s6mthum6wajb" path="res://card/assets/order_bubble.png" id="7_qvwpc"]
 
+[sub_resource type="Gradient" id="Gradient_bssyu"]
+colors = PackedColorArray(0.91764706, 0.9372549, 0, 1, 1, 1, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_r8rk4"]
+noise_type = 3
+frequency = 0.0443
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_lh0ho"]
+noise = SubResource("FastNoiseLite_r8rk4")
+color_ramp = SubResource("Gradient_bssyu")
+seamless = true
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_m3lw8"]
+resource_local_to_scene = true
+shader = ExtResource("2_ui2he")
+shader_parameter/speed = 2.0
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_lh0ho")
+shader_parameter/disabled = true
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_m3lw8"]
 viewport_path = NodePath("SubViewport")

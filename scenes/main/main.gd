@@ -24,4 +24,5 @@ func _zoom_to_pos(pos: Vector2) -> void:
 	_tween.tween_property(camera, "global_position", pos, 1)
 	
 func _on_draw_pile_draw_requested() -> void:
-	_zoom_to_pos($DrawPile.global_position + Vector2(0, 25))
+	#_zoom_to_pos($DrawPile.global_position + Vector2(0, 25))
+	pass

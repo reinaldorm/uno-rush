@@ -29,7 +29,12 @@ var is_selected := false
 func setup(card_data: CardData, draggable: bool, flipped:= false) -> void:
 	data = card_data
 	
-	_card_sheet.frame_coords = Vector2i(data.number, data.color)
+	if card_data.number >= 0:
+		_card_sheet.frame_coords = Vector2i(data.number, data.hue)
+	elif card_data.hue == CardData.Hue.WILD:
+		_card_sheet.frame_coords = Vector2i(0, data.hue)
+	elif card_data.effect != null:
+		_card_sheet.frame_coords = Vector2i(8 + data.effect, data.hue)
 	
 	if not draggable: drag_component.queue_free()
 	set_flip(flipped)
@@ -66,17 +71,24 @@ func set_draggable() -> void:
 
 func set_selected(state: bool, order := -1) -> void:
 	is_selected = state
-	_select(state)
+	_toggle_select(state)
 	_ordering_label.text = str(order)
+
+func set_playable(state: bool) -> void:
+	_toggle_playable(state)
 
 # -------------------------
 # Internal
 # -------------------------
 
-func _select(state: bool) -> void:
+func _toggle_select(state: bool) -> void:
 	var tween = animate("utility")
 	if state: tween.tween_property(_ordering_visual, "position:y", -40.0, 0.75)
 	else: tween.tween_property(_ordering_visual, "position:y", -15.0, 0.75)
+
+func _toggle_playable(state: bool) -> void:
+	_card_sheet.material.set_shader_parameter("disabled", not state)
+	if state: print("CARD")
 
 # -------------------------
 # Handlers
