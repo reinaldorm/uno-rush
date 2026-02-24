@@ -26,7 +26,6 @@ func start(cards: Array[CardData]) -> void:
 func update_available_cards(card_data: Array[CardData]) -> void:
 	for card in _card_views: card.set_playable(false)
 	for data in card_data:
-		print("hi")
 		var view = _get_view_by_data(data)
 		if view: view.set_playable(true)
 

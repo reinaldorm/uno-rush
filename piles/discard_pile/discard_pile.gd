@@ -55,6 +55,7 @@ func _new_tween(e:= Tween.EASE_OUT, t:= Tween.TRANS_EXPO) -> Tween:
 func _add_card_to_pile(card_view: CardView):
 	card_view.reparent(cards_node)
 	card_view.position = Vector2.ZERO
+	card_view.drag_component.disable()
 
 func _emit_particles(hue: CardData.Hue) -> void:
 	#print(particles.process_material.color)

@@ -3,8 +3,7 @@
 
 shader_type canvas_item;
 
-uniform float _alpha: hint_range(0.0, 1.0, 0.1) = 1.0;
-uniform vec3 _color_ow;
+uniform vec2 rect_size;
 
 // Camera FOV
 uniform float fov : hint_range(1, 179) = 90;
@@ -46,7 +45,7 @@ void vertex(){
 	p.xy *= v * inv_rot_mat[2].z;
 	o = v * inv_rot_mat[2].xy;
 
-	VERTEX += (UV - 0.5) / TEXTURE_PIXEL_SIZE * t * (1.0 - inset);
+	VERTEX += (UV - 0.5) * rect_size * t * (1.0 - inset);
 }
 
 void fragment(){
@@ -54,6 +53,4 @@ void fragment(){
 	vec2 uv = (p.xy / p.z).xy - o;
     COLOR = texture(TEXTURE, uv + 0.5);
 	COLOR.a *= step(max(abs(uv.x), abs(uv.y)), 0.5);
-	COLOR.a *= _alpha;
-	COLOR.rgb += _color_ow;
 }

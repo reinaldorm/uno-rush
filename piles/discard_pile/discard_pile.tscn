@@ -10,6 +10,8 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6vir3"]
 shader = ExtResource("3_lq65o")
+shader_parameter/_alpha = 1.0
+shader_parameter/_color_ow = Vector3(0, 0, 0)
 shader_parameter/fov = 90.0
 shader_parameter/cull_back = true
 shader_parameter/y_rot = 0.0

@@ -5,11 +5,8 @@
 [ext_resource type="Shader" uid="uid://b1fgbs4nkik7e" path="res://shaders/shine.gdshader" id="2_ui2he"]
 [ext_resource type="Script" uid="uid://cw12ktjdt7lyy" path="res://interactions/drag/drag_component.gd" id="3_f2o64"]
 [ext_resource type="Shader" uid="uid://c2kfwnkkt8ge8" path="res://shaders/card.gdshader" id="3_rcv2q"]
-[ext_resource type="Texture2D" uid="uid://cohf4d6rq1y6b" path="res://card/assets/card_back.png" id="4_jbm5u"]
-[ext_resource type="FontFile" uid="uid://bb0nad1sip4d4" path="res://assets/fonts/bold_pixels.ttf" id="4_ush2r"]
 [ext_resource type="Texture2D" uid="uid://d2n812qqvhhi7" path="res://card/assets/drag_bubble.png" id="5_m3lw8"]
 [ext_resource type="Texture2D" uid="uid://dypa4dqlg2fh8" path="res://card/assets/select_bubble.png" id="6_rcv2q"]
-[ext_resource type="Texture2D" uid="uid://s6mthum6wajb" path="res://card/assets/order_bubble.png" id="7_qvwpc"]
 
 [sub_resource type="Gradient" id="Gradient_bssyu"]
 colors = PackedColorArray(0.91764706, 0.9372549, 0, 1, 1, 1, 0, 1)
@@ -28,23 +25,17 @@ resource_local_to_scene = true
 shader = ExtResource("2_ui2he")
 shader_parameter/speed = 2.0
 shader_parameter/noise_tex = SubResource("NoiseTexture2D_lh0ho")
-shader_parameter/disabled = true
+shader_parameter/disabled = false
+shader_parameter/amount = 0.40000000596048
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_m3lw8"]
 viewport_path = NodePath("SubViewport")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_jbm5u"]
-resource_local_to_scene = true
-shader = ExtResource("3_rcv2q")
-shader_parameter/fov = 45.00000209
-shader_parameter/cull_back = true
-shader_parameter/y_rot = 0.0
-shader_parameter/x_rot = 7.500008906250002
-shader_parameter/inset = 0.0
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qvwpc"]
 resource_local_to_scene = true
 shader = ExtResource("3_rcv2q")
+shader_parameter/_alpha = 1.0
+shader_parameter/_color_ow = Vector3(0, 0, 0)
 shader_parameter/fov = 45.00000209
 shader_parameter/cull_back = true
 shader_parameter/y_rot = 0.0
@@ -181,36 +172,13 @@ length = 0.001
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CardTexture:material:shader_parameter/y_rot")
+tracks/0/path = NodePath("SelectionTransform/HoverTransform/FXTransform/CardTexture:material:shader_parameter/y_rot")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "handle_modes": PackedInt32Array(0),
 "points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0)
-}
-tracks/1/type = "bezier"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("CardBackTexture:material:shader_parameter/y_rot")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("CardBackTexture:visible")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_ui2he"]
@@ -219,36 +187,13 @@ length = 2.0
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CardTexture:material:shader_parameter/y_rot")
+tracks/0/path = NodePath("SelectionTransform/HoverTransform/FXTransform/CardTexture:material:shader_parameter/y_rot")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "handle_modes": PackedInt32Array(2, 0, 0),
 "points": PackedFloat32Array(-89.99999, -0.25, 0, 0.25, 0, -89.99999, -0.25, 0, 0.25, 0, 8.55e-06, -0.16666667, -15, 0, 0),
 "times": PackedFloat32Array(0, 1, 2)
-}
-tracks/1/type = "bezier"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("CardBackTexture:material:shader_parameter/y_rot")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 90, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 1)
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("CardBackTexture:visible")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bssyu"]
@@ -257,14 +202,14 @@ _data = {
 &"flip": SubResource("Animation_ui2he")
 }
 
-[node name="CardView" type="Node2D" unique_id=1218889746 node_paths=PackedStringArray("drag_component", "_card_sheet", "_card_sprite", "_back_sprite", "_ordering_visual", "_ordering_label", "_bubbles_player", "_card_player")]
+[node name="CardView" type="Node2D" unique_id=1218889746 node_paths=PackedStringArray("drag_component", "_card_sheet", "_card_sprite", "_selection_transform", "_hover_transform", "_fx_transform", "_bubbles_player", "_card_player")]
 script = ExtResource("1_2nlio")
 drag_component = NodePath("DragComponent")
 _card_sheet = NodePath("SubViewport/CardSheet")
-_card_sprite = NodePath("CardTexture")
-_back_sprite = NodePath("CardBackTexture")
-_ordering_visual = NodePath("OrderingVisual")
-_ordering_label = NodePath("OrderingVisual/RichTextLabel")
+_card_sprite = NodePath("SelectionTransform/HoverTransform/FXTransform/CardTexture")
+_selection_transform = NodePath("SelectionTransform")
+_hover_transform = NodePath("SelectionTransform/HoverTransform")
+_fx_transform = NodePath("SelectionTransform/HoverTransform/FXTransform")
 _bubbles_player = NodePath("BubblesPlayer")
 _card_player = NodePath("CardPlayer")
 size = Vector2(40, 60)
@@ -281,37 +226,19 @@ texture = ExtResource("2_4bpaw")
 hframes = 13
 vframes = 5
 
-[node name="OrderingVisual" type="Node2D" parent="." unique_id=1412425943]
-position = Vector2(0, -15)
+[node name="SelectionTransform" type="Node2D" parent="." unique_id=1445043032]
 
-[node name="OrderBubble" type="Sprite2D" parent="OrderingVisual" unique_id=360553973]
-texture = ExtResource("7_qvwpc")
+[node name="HoverTransform" type="Node2D" parent="SelectionTransform" unique_id=744790851]
 
-[node name="RichTextLabel" type="RichTextLabel" parent="OrderingVisual" unique_id=1109449050]
-offset_left = -20.0
-offset_top = -22.0
-offset_right = 20.0
-offset_bottom = 18.0
-theme_override_colors/default_color = Color(0.16470589, 0.18431373, 0.30588236, 1)
-theme_override_fonts/normal_font = ExtResource("4_ush2r")
-theme_override_font_sizes/normal_font_size = 9
-text = "10"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="FXTransform" type="Node2D" parent="SelectionTransform/HoverTransform" unique_id=272217689]
 
-[node name="CardShadow" type="Sprite2D" parent="." unique_id=2041923596]
+[node name="CardShadow" type="Sprite2D" parent="SelectionTransform/HoverTransform/FXTransform" unique_id=2041923596]
 modulate = Color(0.011764706, 0.011764706, 0.011764706, 0.043137256)
 position = Vector2(0, 7.000001)
 scale = Vector2(2.5, 2.5)
 texture = SubResource("ViewportTexture_m3lw8")
 
-[node name="CardBackTexture" type="Sprite2D" parent="." unique_id=844476132]
-visible = false
-material = SubResource("ShaderMaterial_jbm5u")
-scale = Vector2(2.5, 2.5)
-texture = ExtResource("4_jbm5u")
-
-[node name="CardTexture" type="Sprite2D" parent="." unique_id=2110238940]
+[node name="CardTexture" type="Sprite2D" parent="SelectionTransform/HoverTransform/FXTransform" unique_id=2110238940]
 material = SubResource("ShaderMaterial_qvwpc")
 scale = Vector2(2.5, 2.5)
 texture = SubResource("ViewportTexture_m3lw8")
@@ -370,10 +297,7 @@ speed_scale = 10.0
 libraries/ = SubResource("AnimationLibrary_bssyu")
 speed_scale = 10.0
 
-[connection signal="drag_ended" from="DragComponent" to="." method="_on_drag_ended"]
 [connection signal="drag_started" from="DragComponent" to="." method="_on_drag_started"]
-[connection signal="drop_zone_entered" from="DragComponent" to="." method="_on_drop_zone_entered"]
-[connection signal="drop_zone_exited" from="DragComponent" to="." method="_on_drop_zone_exited"]
 [connection signal="gui_input" from="Button" to="." method="_on_button_input"]
 [connection signal="mouse_entered" from="Button" to="." method="_on_card_entered"]
 [connection signal="mouse_exited" from="Button" to="." method="_on_card_exited"]

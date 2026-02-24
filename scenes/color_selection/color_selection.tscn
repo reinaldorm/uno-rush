@@ -1,0 +1,179 @@
+[gd_scene format=3 uid="uid://dmedcufah270y"]
+
+[ext_resource type="Script" uid="uid://8t323sph5xg5" path="res://scenes/color_selection/color_selection.gd" id="1_5jnvq"]
+[ext_resource type="Shader" uid="uid://db8far0wnetwl" path="res://shaders/light_shaft.gdshader" id="2_tdiwh"]
+[ext_resource type="Texture2D" uid="uid://8h13r6dc8udx" path="res://scenes/color_selection/assets/red_texture.png" id="3_tj4ln"]
+[ext_resource type="Texture2D" uid="uid://xllid4fhicip" path="res://scenes/color_selection/assets/green_texture.png" id="4_3642w"]
+[ext_resource type="Texture2D" uid="uid://drt5rnen71300" path="res://scenes/color_selection/assets/blue_texture.png" id="5_vy1da"]
+[ext_resource type="Texture2D" uid="uid://bjkdf7c43kcjv" path="res://scenes/color_selection/assets/yellow_texture.png" id="6_ctpbj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tdiwh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vc6ft"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tj4ln"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3642w"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vy1da"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ctpbj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ay66n"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7as17"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_okwi5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fkkb6"]
+shader = ExtResource("2_tdiwh")
+shader_parameter/Angle_deg = 30.0
+shader_parameter/Brightness = 1.50000007125
+shader_parameter/Band_Soft = 0.030000001425
+shader_parameter/Stage_Count = 2
+shader_parameter/Stage1_Duration = 1.0
+shader_parameter/Stage2_Duration = 1.5
+shader_parameter/Stage3_Duration = 1.0
+shader_parameter/Stage1_Width = 0.050000002375
+shader_parameter/Stage2_Width = 0.050000002375
+shader_parameter/Stage3_Width = 0.12
+shader_parameter/Stage1_LeftToRight = true
+shader_parameter/Stage2_LeftToRight = false
+shader_parameter/Stage3_LeftToRight = true
+shader_parameter/One_Shot = false
+shader_parameter/OneShot_Delay = 0.0
+shader_parameter/Phase_Offset = 0.0
+shader_parameter/Wiggle_Angle = false
+shader_parameter/Wiggle_Amount_deg = 0.0
+shader_parameter/Shine_Pause = 2.000000095
+
+[node name="ColorSelection" type="Control" unique_id=276911866]
+z_index = 1000
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5jnvq")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1042256984]
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.007843138, 0.007843138, 0.047058824, 0.47843137)
+
+[node name="Buttons" type="Control" parent="." unique_id=130771289]
+anchors_preset = 0
+offset_left = 320.0
+offset_top = 141.0
+offset_right = 320.0
+offset_bottom = 141.0
+
+[node name="RedButton" type="Button" parent="Buttons" unique_id=286998795]
+custom_minimum_size = Vector2(40, 60)
+layout_mode = 0
+offset_left = -96.0
+offset_top = -57.0
+offset_right = -56.0
+offset_bottom = 3.0
+rotation = -0.2617994
+theme_override_styles/normal = SubResource("StyleBoxEmpty_tdiwh")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_vc6ft")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_tj4ln")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_3642w")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_vy1da")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_ctpbj")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_ay66n")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_7as17")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_okwi5")
+metadata/color = "green"
+
+[node name="Sprite2D" type="Sprite2D" parent="Buttons/RedButton" unique_id=1285137614]
+material = SubResource("ShaderMaterial_fkkb6")
+position = Vector2(19.999998, 28.999996)
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("3_tj4ln")
+
+[node name="GreenButton" type="Button" parent="Buttons" unique_id=1246834591]
+custom_minimum_size = Vector2(40, 60)
+layout_mode = 0
+offset_left = -48.0
+offset_top = -69.0
+offset_right = -8.0
+offset_bottom = -9.0
+rotation = -0.1308997
+theme_override_styles/normal = SubResource("StyleBoxEmpty_tdiwh")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_vc6ft")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_tj4ln")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_3642w")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_vy1da")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_ctpbj")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_ay66n")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_7as17")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_okwi5")
+metadata/color = "green"
+
+[node name="Sprite2D" type="Sprite2D" parent="Buttons/GreenButton" unique_id=2026685304]
+material = SubResource("ShaderMaterial_fkkb6")
+position = Vector2(19.999998, 28.999996)
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("4_3642w")
+
+[node name="BlueButton" type="Button" parent="Buttons" unique_id=1026323505]
+custom_minimum_size = Vector2(40, 60)
+layout_mode = 0
+offset_left = 8.0
+offset_top = -74.0
+offset_right = 48.0
+offset_bottom = -14.0
+rotation = 0.1308997
+theme_override_styles/normal = SubResource("StyleBoxEmpty_tdiwh")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_vc6ft")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_tj4ln")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_3642w")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_vy1da")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_ctpbj")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_ay66n")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_7as17")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_okwi5")
+metadata/color = "green"
+
+[node name="Sprite2D" type="Sprite2D" parent="Buttons/BlueButton" unique_id=577975080]
+material = SubResource("ShaderMaterial_fkkb6")
+position = Vector2(19.999998, 28.999996)
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("5_vy1da")
+
+[node name="YellowButton" type="Button" parent="Buttons" unique_id=1273119247]
+custom_minimum_size = Vector2(40, 60)
+layout_mode = 0
+offset_left = 56.0
+offset_top = -64.0
+offset_right = 96.0
+offset_bottom = -4.0
+rotation = 0.2617994
+theme_override_styles/normal = SubResource("StyleBoxEmpty_tdiwh")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_vc6ft")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_tj4ln")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_3642w")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_vy1da")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_ctpbj")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_ay66n")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_7as17")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_okwi5")
+metadata/color = "green"
+
+[node name="Sprite2D" type="Sprite2D" parent="Buttons/YellowButton" unique_id=996557120]
+material = SubResource("ShaderMaterial_fkkb6")
+position = Vector2(19.999998, 28.999996)
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("6_ctpbj")
+
+[connection signal="pressed" from="Buttons/RedButton" to="." method="_on_hue_selected" binds= ["red"]]
+[connection signal="pressed" from="Buttons/GreenButton" to="." method="_on_hue_selected" binds= ["green"]]
+[connection signal="pressed" from="Buttons/BlueButton" to="." method="_on_hue_selected" binds= ["blue"]]
+[connection signal="pressed" from="Buttons/YellowButton" to="." method="_on_hue_selected" binds= ["yellow"]]

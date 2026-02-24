@@ -8,19 +8,26 @@ signal mouse_left_up(card_view: CardView)
 
 @export var _card_sheet : Sprite2D
 @export var _card_sprite : Sprite2D
-@export var _back_sprite : Sprite2D
-@export var _ordering_visual : Node2D
-@export var _ordering_label : RichTextLabel
+@export var _selection_transform : Node2D
+@export var _hover_transform : Node2D
+@export var _fx_transform : Node2D
+
 @export var _bubbles_player : AnimationPlayer
 @export var _card_player : AnimationPlayer
 
 @export var size : Vector2
 
 var data : CardData
-
-var _graphics_sprite : Sprite2D
-var _tween_channels : Dictionary[String, Tween] = { "layout": null, "graphics": null, "utility": null }
 var is_selected := false
+
+var _tween_channels : Dictionary[String, Tween] = { 
+	"fx": null,
+	"layout": null, 
+	"hover": null ,
+	"selection": null
+}
+
+var _tick := 0.0
 
 # -------------------------
 # Public API
@@ -29,12 +36,7 @@ var is_selected := false
 func setup(card_data: CardData, draggable: bool, flipped:= false) -> void:
 	data = card_data
 	
-	if card_data.number >= 0:
-		_card_sheet.frame_coords = Vector2i(data.number, data.hue)
-	elif card_data.hue == CardData.Hue.WILD:
-		_card_sheet.frame_coords = Vector2i(0, data.hue)
-	elif card_data.effect != null:
-		_card_sheet.frame_coords = Vector2i(8 + data.effect, data.hue)
+	_card_sheet.frame_coords = _get_texture_coord()
 	
 	if not draggable: drag_component.queue_free()
 	set_flip(flipped)
@@ -54,25 +56,17 @@ func animate_flip(backwards := false) -> Signal:
 	return _card_player.animation_finished
 
 func set_flip(backwards := false) -> void:
-	var _transform : Transform2D
-	if _graphics_sprite: 
-		_graphics_sprite.hide()
-		_transform = Transform2D(_graphics_sprite.transform)
-	
-	if backwards: _graphics_sprite = _back_sprite
-	else: _graphics_sprite = _card_sprite
-
-	if _transform: _graphics_sprite.transform = _transform
-
-	_graphics_sprite.show()
+	if backwards: 
+		_card_sheet.frame_coords = Vector2(11, 4)
+	else:
+		_card_sheet.frame_coords = _get_texture_coord()
 
 func set_draggable() -> void:
 	pass;
 
-func set_selected(state: bool, order := -1) -> void:
+func set_selected(state: bool, _order := -1) -> void:
 	is_selected = state
 	_toggle_select(state)
-	_ordering_label.text = str(order)
 
 func set_playable(state: bool) -> void:
 	_toggle_playable(state)
@@ -81,14 +75,55 @@ func set_playable(state: bool) -> void:
 # Internal
 # -------------------------
 
+func _idle() -> void:
+	pass
+
+func _process(delta: float) -> void:
+	_tick += delta
+
+	_idle()
+
 func _toggle_select(state: bool) -> void:
-	var tween = animate("utility")
-	if state: tween.tween_property(_ordering_visual, "position:y", -40.0, 0.75)
-	else: tween.tween_property(_ordering_visual, "position:y", -15.0, 0.75)
+	var tween = animate("selection")
+	tween.set_parallel()
+	
+	if state:
+		tween.tween_property(_selection_transform, "scale", Vector2(1.1, 1.1), 1.0)
+	else:
+		tween.tween_property(_selection_transform, "scale", Vector2(1.0, 1.0), 1.0)
 
 func _toggle_playable(state: bool) -> void:
+	if state:
+		var tween = animate("fx")
+		tween.set_loops()
+		# tween.tween_property(_fx_transform, ^"rotation", )
+
+		pass
+	else:
+		pass
 	_card_sheet.material.set_shader_parameter("disabled", not state)
-	if state: print("CARD")
+
+func _toggle_input_helpers(to: bool) -> void:
+	if to:
+		_bubbles_player.play("show_bubbles")
+	else:
+		_bubbles_player.play_backwards(("show_bubbles"))
+
+func _get_texture_coord() -> Vector2i:
+	var texture_coord := Vector2i(0, 0)
+
+	if data.number >= 0:
+		texture_coord = Vector2i(data.number, data.hue)
+	elif data.hue == CardData.Hue.WILD:
+		texture_coord = Vector2i(0, data.hue)
+		if data.effect == CardData.Effect.DRAW:
+			texture_coord = Vector2i(1, data.hue)
+		else:
+			texture_coord = Vector2i(0, data.hue)
+	elif data.effect != null:
+		texture_coord = Vector2i(9 + data.effect + 1, data.hue)
+
+	return texture_coord
 
 # -------------------------
 # Handlers
@@ -96,43 +131,30 @@ func _toggle_playable(state: bool) -> void:
 
 func _on_drag_started(_o: Node2D) -> void:
 	if _tween_channels["layout"]: _tween_channels["layout"].kill()
-	var tween = animate("graphics")
-	tween.tween_property(_graphics_sprite, "scale", Vector2(2.0, 2.0), 0.4)
-
-func _on_drag_ended(_o: Node2D) -> void:
-	var tween = animate("graphics")
-	tween.tween_property(_graphics_sprite, "scale", Vector2(2.5, 2.5), 0.4)
-
-func _on_drop_zone_entered(_card_view: Node2D, _drop_zone: DropZone) -> void:
-	## Waiting new animation system to be tested
-	#animate_scale()
-	pass
-
-func _on_drop_zone_exited(_card_view: Node2D, _drop_zone: DropZone) -> void:
-	## Waiting new animation system to be tested
-	#animate_scale(Vector2(2.0, 2.0))
-	pass
 
 func _on_card_entered() -> void:
 	if drag_component and drag_component.dragging: return
-	_bubbles_player.play("show_bubbles")
-	var tween = animate("graphics")
+
+	_toggle_input_helpers(true)
+
+	var tween = animate("hover")
 	
-	_graphics_sprite.scale = Vector2(2.25, 2.25)
-	_graphics_sprite.rotation = 0.15
+	_hover_transform.rotation = 0.25
 	
 	tween.set_parallel()
-	tween.tween_property(_graphics_sprite, "scale", Vector2(2.5, 2.5), 1.0)
-	tween.tween_property(_graphics_sprite, "rotation", 0.0, 1.0)
+	tween.tween_property(_hover_transform, "scale", Vector2(1.1, 1.1), 1.0)
+	tween.tween_property(_hover_transform, "rotation", 0.0, 1.0)
 
 func _on_card_exited() -> void:
 	if drag_component and drag_component.dragging: return
-	_bubbles_player.play_backwards("show_bubbles")
-	var tween = animate("graphics")
+	
+	_toggle_input_helpers(false)
+
+	var tween = animate("hover")
 	
 	tween.set_parallel()
-	tween.tween_property(_graphics_sprite, "scale", Vector2(2.5, 2.5), 0.5)
-	tween.tween_property(_graphics_sprite, "rotation", 0.0, 0.5)
+	tween.tween_property(_hover_transform, "scale", Vector2(1.0, 1.0), 1.0)
+	tween.tween_property(_hover_transform, "rotation", 0.0, 1.0)
 
 func _on_button_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -142,6 +164,6 @@ func _on_button_input(event: InputEvent) -> void:
 			emit_signal("mouse_left_up", self)
 		elif event.is_action_pressed("mouse_right"):
 			if drag_component: drag_component.begin_drag()
-			_bubbles_player.play_backwards("show_bubbles")
+			_toggle_input_helpers(false)
 		elif event.is_action_released("mouse_right"):
 			if drag_component: drag_component.end_drag()

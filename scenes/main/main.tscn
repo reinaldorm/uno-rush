@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://olud8dpxye4j" path="res://assets/ui/arrow.png" id="10_a8run"]
 [ext_resource type="Script" uid="uid://d0nv5vi28moja" path="res://core/hue_manager.gd" id="10_th5th"]
 [ext_resource type="PackedScene" uid="uid://5l4hlbf13et7" path="res://hud/hud.tscn" id="11_ouso4"]
+[ext_resource type="PackedScene" uid="uid://dmedcufah270y" path="res://scenes/color_selection/color_selection.tscn" id="12_blune"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_ow5a4"]
 noise_type = 4
@@ -99,6 +100,59 @@ script = ExtResource("1_l3cfh")
 camera = NodePath("Camera2D")
 turn_arrow = NodePath("Visuals/TurnArrow")
 
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1670420092]
+position = Vector2(320, 180)
+offset = Vector2(-1.0915272, -1.595975)
+
+[node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
+position = Vector2(320, 300)
+
+[node name="DiscardPile" parent="." unique_id=1939346024 instance=ExtResource("4_l3cfh")]
+position = Vector2(320, 180)
+
+[node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
+position = Vector2(201, 155)
+
+[node name="Visuals" type="Node2D" parent="." unique_id=395039280]
+position = Vector2(1, 0)
+
+[node name="TurnArrow" type="Sprite2D" parent="Visuals" unique_id=1031837384]
+modulate = Color(1, 1, 1, 0.11764706)
+position = Vector2(320.00003, 180)
+rotation = 62.797726
+scale = Vector2(1.8, 1.8)
+texture = ExtResource("10_a8run")
+
+[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("_turn_manager", "_hue_manager", "_discard_pile_node", "_draw_pile_node", "_hand")]
+script = ExtResource("7_hujxm")
+_turn_manager = NodePath("../TurnManager")
+_hue_manager = NodePath("../HueManager")
+_discard_pile_node = NodePath("../DiscardPile")
+_draw_pile_node = NodePath("../DrawPile")
+_hand = NodePath("../Hand")
+metadata/_custom_type_script = "uid://cl5yn6116qkw2"
+
+[node name="TurnManager" type="Node" parent="." unique_id=521513583]
+script = ExtResource("9_blune")
+metadata/_custom_type_script = "uid://bjhn4w8s1fm5h"
+
+[node name="HueManager" type="Node" parent="." unique_id=2066351292 node_paths=PackedStringArray("hue_selection_node")]
+script = ExtResource("10_th5th")
+hue_selection_node = NodePath("ColorSelection")
+metadata/_custom_type_script = "uid://d0nv5vi28moja"
+
+[node name="ColorSelection" parent="HueManager" unique_id=89294147 instance=ExtResource("12_blune")]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -180.0
+offset_right = -320.0
+offset_bottom = -180.0
+
 [node name="Background" type="CanvasLayer" parent="." unique_id=1884324124]
 layer = -1
 
@@ -138,49 +192,10 @@ visibility_rect = Rect2(0, 0, 640, 360)
 process_material = SubResource("ParticleProcessMaterial_l3cfh")
 metadata/_edit_lock_ = true
 
-[node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
-position = Vector2(320, 300)
-
-[node name="DiscardPile" parent="." unique_id=1939346024 instance=ExtResource("4_l3cfh")]
-position = Vector2(320, 180)
-
-[node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
-position = Vector2(201, 155)
-
-[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("_turn_manager", "_hue_manager", "_discard_pile_node", "_draw_pile_node", "_hand")]
-script = ExtResource("7_hujxm")
-_turn_manager = NodePath("../TurnManager")
-_hue_manager = NodePath("../HueManager")
-_discard_pile_node = NodePath("../DiscardPile")
-_draw_pile_node = NodePath("../DrawPile")
-_hand = NodePath("../Hand")
-metadata/_custom_type_script = "uid://cl5yn6116qkw2"
-
-[node name="TurnManager" type="Node" parent="." unique_id=521513583]
-script = ExtResource("9_blune")
-metadata/_custom_type_script = "uid://bjhn4w8s1fm5h"
-
-[node name="HueManager" type="Node" parent="." unique_id=2066351292]
-script = ExtResource("10_th5th")
-metadata/_custom_type_script = "uid://d0nv5vi28moja"
+[node name="Hud" parent="." unique_id=1792151263 instance=ExtResource("11_ouso4")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1605705152]
 environment = SubResource("Environment_ow5a4")
-
-[node name="Camera2D" type="Camera2D" parent="." unique_id=1670420092]
-position = Vector2(320, 180)
-offset = Vector2(-0.90087306, 1.9214611)
-
-[node name="Visuals" type="Node2D" parent="." unique_id=395039280]
-
-[node name="TurnArrow" type="Sprite2D" parent="Visuals" unique_id=1031837384]
-modulate = Color(1, 1, 1, 0.11764706)
-position = Vector2(320.00003, 180)
-rotation = 57.32461
-scale = Vector2(1.8, 1.8)
-texture = ExtResource("10_a8run")
-
-[node name="Hud" parent="." unique_id=1792151263 instance=ExtResource("11_ouso4")]
 
 [connection signal="selection_changed" from="Hand" to="GameManager" method="_on_hand_selection_changed"]
 [connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_discard_pile_play_requested"]

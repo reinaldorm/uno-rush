@@ -39,12 +39,12 @@ func arrange(cards: Array[CardView]) -> void:
 		
 		if card.is_selected: final_position.y -= 10.0
 		
-		var tween = card.animate("layout").set_parallel()
+		var tween = card.animate("layout", Tween.EASE_OUT, Tween.TRANS_EXPO).set_parallel()
 		
 		if not card.drag_component.dragging and not card.drag_component.drop_zone: 
 			card.z_index = i
-			tween.tween_property(card, "position", final_position, 1)
-			tween.tween_property(card, "scale", Vector2.ONE, 1)
+			tween.tween_property(card, "position", final_position, 0.5)
+			tween.tween_property(card, "scale", Vector2.ONE, 0.5)
 		
 		tween.tween_property(card, "rotation", final_rotation, 1)
 

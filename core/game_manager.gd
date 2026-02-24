@@ -14,7 +14,7 @@ signal drawn_denied()
 
 var _discard_pile : Array[CardData] = []
 var _draw_pile : Array[CardData] = []
-var _payload := 0
+var _draw_stack := 0
 
 # -------------------------
 # Public API
@@ -32,8 +32,7 @@ func start() -> void:
 	
 	var player_deck : Array[CardData] = []
 	
-	for i in range(7):
-		player_deck.append(_draw_pile.pop_back())
+	for i in range(7): player_deck.append(_draw_pile.pop_back())
 	
 	_hand.start(player_deck)
 
@@ -79,13 +78,13 @@ func _create_deck() -> Array[CardData]:
 	
 	return new_deck
 
-func _request_play_availability(card: CardData) -> bool:
+func _can_play(card: CardData) -> bool:
 	## `card` will be the card which to evaluate.
 	## `last_card` is necessary here should we evaluate combo legibility.
 
 	var last_card := _discard_pile[_discard_pile.size() - 1]
 
-	if _payload:
+	if _draw_stack:
 		if card.hue == CardData.Hue.WILD and card.effect == CardData.Effect.DRAW: return true
 
 		if last_card.hue == CardData.Hue.WILD:
@@ -111,24 +110,35 @@ func _request_play_availability(card: CardData) -> bool:
 # Discard Pile
 
 func _on_discard_pile_play_requested(cards: Array[CardData]) -> void:
-	var request_response := _request_play_availability(cards[0])
-	#var last_card := _discard_pile[_discard_pile.size() - 1]
+	var can_play := _can_play(cards[0])
+	var last_card := _get_last_played()
+	var first_card := cards[0]
 	
-	if request_response:
+	if can_play:
 		_discard_pile_node.accept_play_request()
 		_discard_pile.append_array(cards)
-		emit_signal("cards_played", cards)
 		
-		#print("Played, hue: [" + str(cards[0].hue) + "] " + 
-		#"number: [" + str(cards[0].number) + "] " + 
-		#"effect: [" + str(cards[0].effect) + "]" )
-		#
-		#print("Last, hue: [" + str(last_card.hue) + "] " + 
-		#"number: [" + str(last_card.number) + "] " + 
-		#"effect: [" + str(last_card.effect) + "]" )
+		## Update game current HUE
+		if first_card.hue == CardData.Hue.WILD:
+			await _hue_manager.prompt_hue_selection()
+		else: 
+			_hue_manager.set_hue(last_card.hue)
+	
+		## Check for any effect and apply
+		if first_card.effect != CardData.Effect.NULL:
+			if first_card.effect == CardData.Effect.DRAW:
+				for card in cards: _draw_stack += card.effect_parameter
+			if first_card.effect == CardData.Effect.REVERSE:
+				_turn_manager.set_reverses(cards.size())
+			if first_card.effect == CardData.Effect.SKIP:
+				_turn_manager.set_skips(cards.size())
+
+		await _turn_manager.advance_turn()
+		
+		emit_signal("cards_played", cards)
 	else:
-		emit_signal("play_denied", cards)
 		_discard_pile_node.deny_play_request()
+		emit_signal("play_denied", cards)
 
 # -------------------------
 # Draw Pile
@@ -148,7 +158,9 @@ func _on_hand_selection_changed(card_data: Array[CardData]) -> void:
 	var available_cards : Array[CardData]
 	
 	for card in card_data:
-		if _request_play_availability(card): available_cards.append(card)
+		if _can_play(card): available_cards.append(card)
 	
 	_hand.update_available_cards(available_cards)
-	print(available_cards)
+
+func _get_last_played() -> CardData:
+	return _discard_pile[_discard_pile.size() - 1]

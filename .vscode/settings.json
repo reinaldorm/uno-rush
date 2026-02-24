@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    "**.git**": true,
+    "**.editorconfig**": true,
+    "sicon.svg**": true,
+    "project.godot": true,
+    ".godot": true
+  }
+}
