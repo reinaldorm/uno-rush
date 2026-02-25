@@ -145,7 +145,9 @@ func _on_discard_pile_play_requested(cards: Array[CardData]) -> void:
 		# visual transition and clear its queued cards
 		_discard_pile.append_array(cards)
 
+		print("GameManager: Waiting on discard_pile animation to end...")
 		await _discard_pile_node.confirm_play()
+		print("GameManager: Animation ended, following through...")
 
 		## Update game current HUE
 		if first_card.hue == CardData.Hue.WILD:

@@ -8,11 +8,10 @@ signal play_routine_ended()
 
 @export var animation_player : AnimationPlayer
 @export var _particles : GPUParticles2D
-@export var cards_node : Node2D
 @export var _area_outline : Sprite2D
 @export var _drop_zone : DropZone
+@export var _cards_node : Node2D
 
-var card_pile : Array[CardView] = []
 var requested_cards : Array[CardView]
 
 var _tween : Tween
@@ -24,8 +23,7 @@ var _tween : Tween
 func start(first_card: CardData) -> void:
 	var c : CardView = card_scene.instantiate()
 	c.setup(first_card, false)
-	card_pile.append(c)
-	cards_node.add_child(c)
+	_cards_node.add_child(c)
 
 # Called by the GameManager when a previously requested play has been
 # validated and may be committed. The pile will accept the cards and
@@ -53,7 +51,7 @@ func reject_play() -> void:
 # -------------------------
 
 func _add_card_to_pile(card_view: CardView):
-	card_view.reparent(cards_node)
+	card_view.reparent(_cards_node)
 	card_view.position = Vector2.ZERO
 	card_view.drag_component.queue_free()
 
@@ -63,18 +61,18 @@ func _add_card_to_pile(card_view: CardView):
 func _animate_play_sequence(played_cards: Array[CardView]) -> void:
 	var tween := _new_tween().set_parallel()
 
-	for idx in range(card_pile.size()):
-		var c : CardView = card_pile[idx]
-		var target_angle = idx * TAU / card_pile.size()
+	for idx in range(played_cards.size()):
+		var c : CardView = played_cards[idx]
+		var target_angle = idx * TAU / played_cards.size()
 		var target_pos = Vector2(
-			cards_node.size.x * 0.5 * cos(target_angle),
-			cards_node.size.y * 0.5 * sin(target_angle)
+			c.size.x * 0.5 * cos(target_angle),
+			c.size.y * 0.5 * sin(target_angle)
 		)
 		tween.tween_property(c, "position", target_pos, 0.25)
 
 	await tween.finished
 
-	for card in card_pile:
+	for card in played_cards:
 		await _play_card_animation(card)
 
 	emit_signal("play_routine_ended")
@@ -84,21 +82,20 @@ func _animate_play_sequence(played_cards: Array[CardView]) -> void:
 
 # play the animation for a single card in the pile. the caller
 # waits on the returned signal so cards animate sequentially.
+
 func _play_card_animation(card_view: CardView) -> Signal:
 	_play_particles(card_view.data.hue)
 
 	var tween = card_view.animate("fx")
 	var center_dir = (Vector2.ZERO - card_view.position).normalized()
 
-	tween.tween_property(card_view, "position", -center_dir * 20, 0.25)
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(card_view, "position", Vector2.ZERO, 0.75)
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.tween_property(card_view, "position", -center_dir * 20, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card_view, "position", Vector2.ZERO, 0.75).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 	return tween.finished
 
 func _play_particles(hue: CardData.Hue) -> void:
-	_particles.reset()
+	_particles.restart()
 
 	var _color_matched : Color = _particles.get_metadata(hue)
 	_particles.modulate = _color_matched
@@ -169,7 +166,9 @@ func _on_card_drop_requested(draggable: Node2D) -> void:
 		emit_signal("play_requested", cards_to_request)
 
 func _on_mouse_entered() -> void:
-	_toggle_playable(true)
+	# _toggle_playable(true)
+	print("DiscardPile: Mouse entered `discard_pile` area")
 
 func _on_mouse_exited() -> void:
-	_toggle_playable(false)
+	# _toggle_playable(false)
+	print("DiscardPile: Mouse exited `discard_pile` area")

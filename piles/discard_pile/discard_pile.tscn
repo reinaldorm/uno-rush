@@ -145,14 +145,14 @@ _data = {
 &"show_bubbles": SubResource("Animation_kccp7")
 }
 
-[node name="DiscardPile" type="Node2D" unique_id=411543129 node_paths=PackedStringArray("animation_player", "particles", "cards_node", "_area_outline", "_drop_zone")]
+[node name="DiscardPile" type="Node2D" unique_id=411543129 node_paths=PackedStringArray("animation_player", "_particles", "_area_outline", "_drop_zone", "_cards_node")]
 script = ExtResource("1_twh83")
 card_scene = ExtResource("2_kccp7")
 animation_player = NodePath("AnimationPlayer")
-particles = NodePath("Visuals/GPUParticles2D")
-cards_node = NodePath("Cards")
+_particles = NodePath("Visuals/GPUParticles2D")
 _area_outline = NodePath("Visuals/Outline")
 _drop_zone = NodePath("DropZone")
+_cards_node = NodePath("Cards")
 
 [node name="Visuals" type="Node2D" parent="." unique_id=1194200993]
 

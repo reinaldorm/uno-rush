@@ -21,38 +21,35 @@ signal drop_resolved(response: bool)
 # Public API
 # -------------------------
 
-func request_drop(draggable: Node2D) -> GDScriptFunctionState:
-	"""
-	Ask the zone whether the given `draggable` may be dropped here.
-	
-	This method emits `drop_requested` and then *awaits* the next
-	`drop_resolved` signal from **this instance**. Callers should use it
-	like the following:
+func request_drop(draggable: Node2D) -> bool:
+	# Ask the zone whether the given `draggable` may be dropped here.
 
-	    var ok: bool = await zone.request_drop(draggable)
+	# This method emits `drop_requested` and then *awaits* the next
+	# `drop_resolved` signal from **this instance**. Callers should use it
+	# like the following:
 
-	The returned state resolves to the boolean response. Returning an
-	awaitable (rather than the raw signal) makes the API self-documenting
-	and prevents external code from accidentally awaiting the wrong
-	signal. It also avoids the previous pitfall where two concurrent
-	draggables would share a single `drop_resolved` signal object and
-	both be resumed by the first resolution.
-	"""
+	# var ok: bool = await zone.request_drop(draggable)
+
+	# The returned state resolves to the boolean response. Returning an
+	# awaitable (rather than the raw signal) makes the API self-documenting
+	# and prevents external code from accidentally awaiting the wrong
+	# signal. It also avoids the previous pitfall where two concurrent
+	# draggables would share a single `drop_resolved` signal object and
+	# both be resumed by the first resolution.
+
 	emit_signal("drop_requested", draggable)
 	# waiting here creates a fresh, per-call awaitable that unwraps the
 	# boolean; it automatically filters out any earlier emissions.
-	var args = await(self, "drop_resolved")
-	return args[0] as bool
+	var response = await self.drop_resolved
+	return response as bool
 
 func resolve_drop(response: bool) -> void:
-	"""
-	Inform any awaiting caller of the drop decision.
-	
-	Because `request_drop()` now awaits the signal internally, callers
-	receive the value directly and there is no need to return the signal
-	object. This method is typically invoked by whatever logic handles
-	`drop_requested` (e.g. a game manager or the zone's owner).
-	"""
+	# Inform any awaiting caller of the drop decision.
+
+	# Because `request_drop()` now awaits the signal internally, callers
+	# receive the value directly and there is no need to return the signal
+	# object. This method is typically invoked by whatever logic handles
+	# `drop_requested` (e.g. a game manager or the zone's owner).
 	emit_signal("drop_resolved", response)
 	# debugging aid only; remove or guard in non-debug builds if it
 	# becomes noisy.
@@ -66,8 +63,8 @@ func resolve_drop(response: bool) -> void:
 func _ready() -> void:
 	# connect explicitly by name so that the script can be attached to a
 	# different node type without silently failing; keeps the API clear.
-	connect("area_entered", self, "_on_area_entered")
-	connect("area_exited", self, "_on_area_exited")
+	area_entered.connect(_on_area_entered)
+	area_exited.connect(_on_area_exited)
 
 # -------------------------
 # Handlers
