@@ -141,8 +141,11 @@ func _on_discard_pile_play_requested(cards: Array[CardData]) -> void:
 	var first_card := cards[0]
 
 	if can_play:
-		_discard_pile_node.accept_play_request()
+		# let the pile know the play has been approved so it can commit the
+		# visual transition and clear its queued cards
 		_discard_pile.append_array(cards)
+
+		await _discard_pile_node.confirm_play()
 
 		## Update game current HUE
 		if first_card.hue == CardData.Hue.WILD:
@@ -164,7 +167,7 @@ func _on_discard_pile_play_requested(cards: Array[CardData]) -> void:
 		emit_signal("cards_played", cards)
 		print("GameManager: Play routine ended successfully.")
 	else:
-		_discard_pile_node.deny_play_request()
+		_discard_pile_node.reject_play()
 		emit_signal("play_denied", cards)
 		print("GameManager: Play routine ended unsuccessfully.")
 

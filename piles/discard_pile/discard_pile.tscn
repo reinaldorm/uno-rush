@@ -221,6 +221,6 @@ speed_scale = 5.0
 
 [connection signal="drag_component_entered" from="DropZone" to="." method="_on_drag_component_entered"]
 [connection signal="drag_component_exited" from="DropZone" to="." method="_on_drag_component_exited"]
-[connection signal="drop_requested" from="DropZone" to="." method="_on_drop_requested"]
+[connection signal="drop_requested" from="DropZone" to="." method="_on_card_drop_requested"]
 [connection signal="mouse_entered" from="Button" to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="Button" to="." method="_on_mouse_exited"]

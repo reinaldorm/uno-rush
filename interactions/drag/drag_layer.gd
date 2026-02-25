@@ -31,8 +31,11 @@ func end_drag(draggable: Node2D) -> void:
 	if draggable.drag_component.drop_zone:
 		print("Drag component captured drop_zone and trying to drop...")
 
-		await draggable.drag_component.drop_zone.request_drop(draggable)
-		print("After awaiting, `drag_layer`")
+		# `request_drop()` now returns a boolean result after the zone
+		# resolves the request. awaiting it directly keeps the calling code
+		# simple and avoids having to manually track or connect to a signal.
+		var response: bool = await draggable.drag_component.drop_zone.request_drop(draggable)
+		print("After awaiting, `drag_layer` got response=", response)
 
 		# if not response:
 		# 	print("Drag component got denied, restoring to parent...")
@@ -56,9 +59,3 @@ func restore_to_original_parent(draggable: Node2D) -> void:
 		original_parent.restore_card(draggable)
 
 	draggable.z_index = 0
-
-## Debug
-##
-
-func _on_drop_resolved(response: bool) -> void:
-	print("DEBUG at `drag_layer`", response)
