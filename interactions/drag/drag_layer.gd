@@ -11,42 +11,54 @@ var _active_drags: Array[Node2D] = []
 func begin_drag(draggable: Node2D) -> void:
 	if not is_instance_valid(draggable):
 		return
-	
-	# Prevent duplicates
-	if _active_drags.has(draggable):
-		return
-	
-	# Store original parent + index (so the draggable can restore itself later)
-	draggable.set_meta("drag_original_parent", draggable.get_parent())
-	draggable.set_meta("drag_original_index", draggable.get_index())
-	
-	# Reparent to drag layer
-	draggable.reparent(self)
-	draggable.z_index = 1000
-	
+
+	if _active_drags.has(draggable): return
 	_active_drags.append(draggable)
 
+	draggable.set_meta("drag_original_parent", draggable.get_parent())
+	draggable.set_meta("drag_original_index", draggable.get_index())
+
+	draggable.drag_component.connect("drag_ended", end_drag)
+
+	draggable.reparent(self)
+	draggable.z_index = 1000
+
 func end_drag(draggable: Node2D) -> void:
-	if not _active_drags.has(draggable):
-		return
-	
+	if not _active_drags.has(draggable): return
+
 	_active_drags.erase(draggable)
-	
-	# Visual reset (domain logic decides final parent)
+
+	if draggable.drag_component.drop_zone:
+		print("Drag component captured drop_zone and trying to drop...")
+
+		await draggable.drag_component.drop_zone.request_drop(draggable)
+		print("After awaiting, `drag_layer`")
+
+		# if not response:
+		# 	print("Drag component got denied, restoring to parent...")
+		# 	restore_to_original_parent(draggable)
+		# else:
+		# 	print("Drag component got accept, resolve left to `drop_zone` owner.")
+	else:
+		print("Drag component did not captured drop_zone and was ended.\nRestoring to parent.")
+		restore_to_original_parent(draggable)
+
 	draggable.z_index = 0
-	restore_to_original_parent(draggable)
+
+	draggable.drag_component.disconnect("drag_ended", end_drag)
 
 func restore_to_original_parent(draggable: Node2D) -> void:
-	if not is_instance_valid(draggable):
-		return
-	
+	if not is_instance_valid(draggable): return
+
 	var original_parent = draggable.get_meta("drag_original_parent", null)
-	var original_index = draggable.get_meta("drag_original_index", -1)
-	
-	if original_parent and is_instance_valid(original_parent):
-		original_parent.restore(draggable)
-		
-		if original_index >= 0 and original_index < original_parent.get_child_count():
-			original_parent.move_child(draggable, original_index)
-	
+
+	if original_parent:
+		original_parent.restore_card(draggable)
+
 	draggable.z_index = 0
+
+## Debug
+##
+
+func _on_drop_resolved(response: bool) -> void:
+	print("DEBUG at `drag_layer`", response)

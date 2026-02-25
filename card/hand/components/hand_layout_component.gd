@@ -69,7 +69,7 @@ func _arrange_new(cards: Array[CardView], new_cards: Array[CardView]) -> void:
 		if not new_cards.has(card): old_cards.append(card)
 		else: old_cards.append(null)
 	
-	arrange(old_cards)
+	_arrange(old_cards)
 	
 	var total := new_cards.size()
 	var tweens : Array[Tween] = []

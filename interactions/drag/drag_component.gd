@@ -5,27 +5,23 @@ var dragging := false
 var disabled := false
 var drop_zone : DropZone = null
 
-signal drag_entered()
-signal drag_exited()
-signal drag_started(o: Node2D)
-signal drag_ended(o: Node2D)
+signal drag_started(draggable: Node2D)
+signal drag_ended(draggable: Node2D)
 signal drop_zone_entered(draggable: Node2D, drop_zone: DropZone)
 signal drop_zone_exited(draggable: Node2D, drop_zone: DropZone)
 
 # -------------------------
 # Public API
-# -------------------------
+# --------------------																	-----
 
 func begin_drag() -> void:
-	if disabled: return
-	owner.z_index = 1000
 	dragging = true
 	emit_signal("drag_started", owner)
+	get_tree().call_group("drag_layer", "begin_drag", owner)
 
 func end_drag() -> void:
-	if drop_zone: drop_zone.request_drop(owner)
-	drop_zone = null
-	owner.z_index = 0
+	if not dragging: return
+
 	dragging = false
 	emit_signal("drag_ended", owner)
 
@@ -36,12 +32,6 @@ func register_drop_zone(d: DropZone) -> void:
 func unregister_drop_zone(_d: DropZone) -> void:
 	emit_signal("drop_zone_exited", owner, drop_zone)
 	drop_zone = null
-
-func disable() -> void:
-	disabled = true
- 
-func restore() -> void:
-	pass
 
 # -------------------------
 # Internal

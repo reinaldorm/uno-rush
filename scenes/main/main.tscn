@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://clbegaov7rk68" path="res://piles/draw_pile/draw_pile.tscn" id="3_k2fmo"]
 [ext_resource type="PackedScene" uid="uid://do5kc56ios2tk" path="res://piles/discard_pile/discard_pile.tscn" id="4_l3cfh"]
 [ext_resource type="Shader" uid="uid://dp3lgf7lykufk" path="res://shaders/vcr.gdshader" id="6_ow5a4"]
+[ext_resource type="PackedScene" uid="uid://bge1wr6a45a8d" path="res://interactions/drag/drag_layer.tscn" id="6_th5th"]
 [ext_resource type="Script" uid="uid://cl5yn6116qkw2" path="res://core/game_manager.gd" id="7_hujxm"]
 [ext_resource type="Script" uid="uid://bjhn4w8s1fm5h" path="res://core/turn_manager.gd" id="9_blune"]
 [ext_resource type="Texture2D" uid="uid://olud8dpxye4j" path="res://assets/ui/arrow.png" id="10_a8run"]
@@ -102,7 +103,7 @@ turn_arrow = NodePath("Visuals/TurnArrow")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1670420092]
 position = Vector2(320, 180)
-offset = Vector2(-1.0915272, -1.595975)
+offset = Vector2(-3.4799752, -3.8545425)
 
 [node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
 position = Vector2(320, 300)
@@ -119,9 +120,11 @@ position = Vector2(1, 0)
 [node name="TurnArrow" type="Sprite2D" parent="Visuals" unique_id=1031837384]
 modulate = Color(1, 1, 1, 0.11764706)
 position = Vector2(320.00003, 180)
-rotation = 62.797726
+rotation = 20.716757
 scale = Vector2(1.8, 1.8)
 texture = ExtResource("10_a8run")
+
+[node name="DragLayer" parent="." unique_id=1888223450 groups=["drag_layer"] instance=ExtResource("6_th5th")]
 
 [node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("_turn_manager", "_hue_manager", "_discard_pile_node", "_draw_pile_node", "_hand")]
 script = ExtResource("7_hujxm")
@@ -160,7 +163,8 @@ layer = -1
 z_index = -1
 texture_repeat = 3
 material = SubResource("ShaderMaterial_yyfjg")
-offset_right = 640.0
+offset_left = -1.0
+offset_right = 639.0
 offset_bottom = 360.0
 texture = ExtResource("2_6q06x")
 stretch_mode = 1

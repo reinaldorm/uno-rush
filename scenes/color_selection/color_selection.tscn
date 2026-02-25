@@ -47,7 +47,7 @@ shader_parameter/Wiggle_Angle = false
 shader_parameter/Wiggle_Amount_deg = 0.0
 shader_parameter/Shine_Pause = 2.000000095
 
-[node name="ColorSelection" type="Control" unique_id=276911866]
+[node name="ColorSelection" type="Control" unique_id=276911866 node_paths=PackedStringArray("_select_timer")]
 z_index = 1000
 layout_mode = 3
 anchors_preset = 15
@@ -56,6 +56,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_5jnvq")
+_select_timer = NodePath("SelectTimer")
+_select_max_time = 10.0
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1042256984]
 custom_minimum_size = Vector2(640, 360)
@@ -173,7 +175,4 @@ position = Vector2(19.999998, 28.999996)
 scale = Vector2(2.5, 2.5)
 texture = ExtResource("6_ctpbj")
 
-[connection signal="pressed" from="Buttons/RedButton" to="." method="_on_hue_selected" binds= ["red"]]
-[connection signal="pressed" from="Buttons/GreenButton" to="." method="_on_hue_selected" binds= ["green"]]
-[connection signal="pressed" from="Buttons/BlueButton" to="." method="_on_hue_selected" binds= ["blue"]]
-[connection signal="pressed" from="Buttons/YellowButton" to="." method="_on_hue_selected" binds= ["yellow"]]
+[node name="SelectTimer" type="Timer" parent="." unique_id=1032477249]

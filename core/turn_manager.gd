@@ -27,7 +27,7 @@ func set_skips(amount: int) -> void:
 
 func _update_turn() -> void:
 	print("pretending advancing turn...")
-	await get_tree().create_timer(1).timeout
+	await get_tree().create_timer(3).timeout
 	print("pretended successfully!")
 	
 	emit_signal("turn_advanced")

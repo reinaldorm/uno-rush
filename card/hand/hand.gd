@@ -1,7 +1,7 @@
 extends Node2D
 class_name Hand
 
-signal selection_changed(card_data: Array[CardData])
+signal selection_changed(card_data: Array[CardData], first_card: CardData)
 
 @export var card_scene : PackedScene
 @export var layout_component : HandLayoutComponent
@@ -29,6 +29,20 @@ func update_available_cards(available_cards: Array[CardData]) -> void:
 		var view = _get_view_by_data(data)
 		if view: view.set_playable(true)
 
+func restore_card(card_view: CardView) -> void:
+
+	if _card_data.has(card_view.data):
+		card_view.reparent(self)
+
+		var _index = card_view.get_meta("drag_original_index")
+		_card_views.insert(_index - 1, card_view)
+		move_child(card_view, _index)
+
+		card_view.drag_component.drag_started.connect(_on_card_drag_started)
+		card_view.mouse_left_down.connect(_on_card_mouse_left_down)
+
+	_arrange()
+
 # -------------------------
 # Internal
 # -------------------------
@@ -53,42 +67,37 @@ func _arrange_new(cards: Array[CardView]) -> void:
 
 func _add_cards(cards: Array[CardData]) -> Array[CardView]:
 	var new_cards : Array[CardView] = []
-	
+
 	for data in cards:
 		var card_view : CardView = card_scene.instantiate()
-		
+
 		new_cards.append(card_view)
 		_card_data.append(data)
 		card_view.setup(data, true)
-		
+
 		add_child(card_view)
 		_card_views.append(card_view)
-		
-		card_view.drag_component.drag_started.connect(_on_card_drag_started)
-		card_view.drag_component.drag_ended.connect(_on_card_drag_ended)
-		
-		card_view.drag_component.drop_zone_entered.connect(_on_card_drop_zone_entered)
-		card_view.drag_component.drop_zone_exited.connect(_on_card_drop_zone_exited)
 
+		card_view.drag_component.drag_started.connect(_on_card_drag_started)
 		card_view.mouse_left_down.connect(_on_card_mouse_left_down)
-		
+
 		card_view.scale = Vector2.ZERO
-		
+
 	return new_cards
 
-func _select_card(card: CardView) -> void:
+func _select_card(card_view: CardView) -> void:
 	if _selected_cards.has(card_view):
 		_selected_cards.erase(card_view)
 		card_view.set_selected(false)
-		
+
 		for i in range(_selected_cards.size()):
 			var card := _selected_cards[i]
 			card.set_selected(true, i + 1)
-		
-	else: 
+
+	else:
 		_selected_cards.append(card_view)
 		card_view.set_selected(true, _selected_cards.size())
-	
+
 	_request_available_cards()
 
 func _sort_moving_card(view: CardView) -> void:
@@ -107,7 +116,7 @@ func _request_available_cards() -> void:
 	# TODO ------------------------------------------------
 
 	if _selected_cards.size():
-		emit_signal("selection_changed", _card_data, _selected_cards[0])
+		emit_signal("selection_changed", _card_data, _selected_cards[0].data)
 	else:
 		emit_signal("selection_changed", _card_data, null)
 
@@ -125,15 +134,15 @@ func _on_game_manager_cards_played(card_data: Array[CardData]) -> void:
 			var view := _get_view_by_data(data)
 			_card_data.erase(data)
 			if _card_views.has(view): _card_views.erase(view)
-	_arrange()
 	_selected_cards = []
-	emit_signal("selection_changed", _card_data)
+	_request_available_cards()
+	_arrange()
 
 func _on_game_manager_cards_drawn(card_data: Array[CardData]) -> void:
 	var new_cards = _add_cards(card_data)
 	await _arrange_new(new_cards)
 	_selected_cards = []
-	emit_signal("selection_changed", _card_data)
+	_request_available_cards()
 
 func _on_game_manager_play_denied(__card_data: Array[CardData]) -> void:
 	_arrange()
@@ -142,22 +151,15 @@ func _on_game_manager_play_denied(__card_data: Array[CardData]) -> void:
 # Card Handlers
 # -------------
 
-func _on_card_drag_started(_draggable: Node2D) -> void:
-	moving_card = _draggable
+func _on_card_drag_started(draggable: Node2D) -> void:
+	draggable.drag_component.drag_started.disconnect(_on_card_drag_started)
+	draggable.mouse_left_down.disconnect(_on_card_mouse_left_down)
+	_card_views.erase(draggable)
+	_arrange()
 
 func _on_card_drag_ended(_draggable: Node2D) -> void:
 	moving_card = null
 	_arrange()
-
-func _on_card_drop_zone_entered(draggable: Node2D, _drop_zone: DropZone) -> void:
-	if draggable is CardView:
-		if _card_views.has(draggable):
-			moving_card = null
-
-func _on_card_drop_zone_exited(draggable: Node2D, _drop_zone: DropZone) -> void:
-	if draggable is CardView:
-		if _card_data.has(draggable.data): 
-			moving_card = draggable
 
 func _on_card_mouse_left_down(card_view: CardView) -> void:
 	_select_card(card_view)
@@ -177,4 +179,4 @@ func _get_view_by_data(data: CardData) -> CardView:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_up"):
-		emit_signal("selection_changed", _card_data)
+		_request_available_cards()

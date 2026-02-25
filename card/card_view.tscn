@@ -7,6 +7,7 @@
 [ext_resource type="Shader" uid="uid://c2kfwnkkt8ge8" path="res://shaders/card.gdshader" id="3_rcv2q"]
 [ext_resource type="Texture2D" uid="uid://d2n812qqvhhi7" path="res://card/assets/drag_bubble.png" id="5_m3lw8"]
 [ext_resource type="Texture2D" uid="uid://dypa4dqlg2fh8" path="res://card/assets/select_bubble.png" id="6_rcv2q"]
+[ext_resource type="Script" uid="uid://bgadywqyw6ite" path="res://interactions/input/input_component.gd" id="8_qvwpc"]
 
 [sub_resource type="Gradient" id="Gradient_bssyu"]
 colors = PackedColorArray(0.91764706, 0.9372549, 0, 1, 1, 1, 0, 1)
@@ -25,7 +26,7 @@ resource_local_to_scene = true
 shader = ExtResource("2_ui2he")
 shader_parameter/speed = 2.0
 shader_parameter/noise_tex = SubResource("NoiseTexture2D_lh0ho")
-shader_parameter/disabled = false
+shader_parameter/disabled = true
 shader_parameter/amount = 0.40000000596048
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_m3lw8"]
@@ -45,16 +46,6 @@ shader_parameter/inset = 0.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ncspy"]
 size = Vector2(22, 30)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ncspy"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m3lw8"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rcv2q"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jbm5u"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qvwpc"]
-
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ush2r"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ui2he"]
@@ -64,8 +55,6 @@ size = Vector2(22, 30)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r8rk4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lh0ho"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dyg78"]
 
 [sub_resource type="Animation" id="Animation_rcv2q"]
 length = 0.001
@@ -264,30 +253,25 @@ metadata/_custom_type_script = "uid://cw12ktjdt7lyy"
 visible = false
 shape = SubResource("RectangleShape2D_ncspy")
 
-[node name="Button" type="Button" parent="." unique_id=1824798269]
+[node name="InputComponent" type="Button" parent="." unique_id=568720812]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -20.0
-offset_top = -30.0
+offset_top = -28.0
 offset_right = 20.0
-offset_bottom = 30.0
+offset_bottom = 28.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_default_cursor_shape = 2
-theme_override_styles/normal = SubResource("StyleBoxEmpty_ncspy")
-theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_m3lw8")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_rcv2q")
-theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_jbm5u")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_qvwpc")
-theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_ush2r")
-theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_ui2he")
-theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_bssyu")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ush2r")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_ui2he")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_bssyu")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_r8rk4")
-theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_lh0ho")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_dyg78")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_lh0ho")
+script = ExtResource("8_qvwpc")
+metadata/_custom_type_script = "uid://bgadywqyw6ite"
 
 [node name="BubblesPlayer" type="AnimationPlayer" parent="." unique_id=728558901]
 libraries/ = SubResource("AnimationLibrary_qvwpc")
@@ -298,6 +282,8 @@ libraries/ = SubResource("AnimationLibrary_bssyu")
 speed_scale = 10.0
 
 [connection signal="drag_started" from="DragComponent" to="." method="_on_drag_started"]
-[connection signal="gui_input" from="Button" to="." method="_on_button_input"]
-[connection signal="mouse_entered" from="Button" to="." method="_on_card_entered"]
-[connection signal="mouse_exited" from="Button" to="." method="_on_card_exited"]
+[connection signal="mouse_entered" from="InputComponent" to="." method="_on_card_entered"]
+[connection signal="mouse_exited" from="InputComponent" to="." method="_on_card_exited"]
+[connection signal="mouse_left_down" from="InputComponent" to="." method="_on_input_component_mouse_left_down"]
+[connection signal="mouse_right_down" from="InputComponent" to="DragComponent" method="begin_drag"]
+[connection signal="mouse_right_up" from="InputComponent" to="DragComponent" method="end_drag"]

@@ -4,6 +4,10 @@
     "**.editorconfig**": true,
     "sicon.svg**": true,
     "project.godot": true,
-    ".godot": true
-  }
+    ".godot": true,
+    "**/**.tscn": true,
+    "**/**.uid": true
+  },
+  "cSpell.words": ["mult", "reparent"],
+  "files.autoSave": "onWindowChange"
 }

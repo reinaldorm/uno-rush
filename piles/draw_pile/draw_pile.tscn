@@ -9,6 +9,8 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4vc22"]
 shader = ExtResource("2_5ogxb")
+shader_parameter/_alpha = 1.0
+shader_parameter/_color_ow = Vector3(0, 0, 0)
 shader_parameter/fov = 30.0000013775
 shader_parameter/cull_back = true
 shader_parameter/y_rot = 0.0
@@ -169,7 +171,7 @@ pile_card_sprite = NodePath("PileCard")
 animation_player = NodePath("AnimationPlayer")
 
 [node name="Shadow" type="Sprite2D" parent="." unique_id=1851579545]
-modulate = Color(0.012617188, 0.012617188, 0.012617188, 0.4)
+modulate = Color(0.011764706, 0.011764706, 0.011764706, 0.23529412)
 position = Vector2(4.7683716e-07, 31)
 scale = Vector2(2.5, 2.5)
 texture = ExtResource("3_jp8xb")
