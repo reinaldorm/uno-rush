@@ -176,3 +176,6 @@ scale = Vector2(2.5, 2.5)
 texture = ExtResource("6_ctpbj")
 
 [node name="SelectTimer" type="Timer" parent="." unique_id=1032477249]
+one_shot = true
+
+[connection signal="timeout" from="SelectTimer" to="." method="_on_select_timeout"]

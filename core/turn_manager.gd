@@ -12,7 +12,7 @@ func initialize(_turn: int) -> void:
 	turn = _turn
 
 func advance_turn() -> Signal:
-	_update_turn()	
+	_update_turn()
 	return turn_advanced
 
 func set_reverses(amount: int) -> void:
@@ -26,8 +26,7 @@ func set_skips(amount: int) -> void:
 # -------------------------
 
 func _update_turn() -> void:
-	print("pretending advancing turn...")
-	await get_tree().create_timer(3).timeout
-	print("pretended successfully!")
-	
+	print("TurnManager: Pretending advancing turn...")
+	await get_tree().create_timer(1).timeout
+
 	emit_signal("turn_advanced")

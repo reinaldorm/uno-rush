@@ -27,8 +27,10 @@ func prompt_hue_selection() -> Signal:
 # -------------------------
 
 func _run_hue_selection_flow() -> void:
+	print("HueManager: Starting hue selection flow...")
 	hue_selection_node.start_selection()
 
 func _on_hue_selected(_hue: CardData.Hue) -> void:
+	print("HueManager: Hue selected: ", _hue)
 	hue = _hue
 	emit_signal("hue_selected")

@@ -103,24 +103,27 @@ turn_arrow = NodePath("Visuals/TurnArrow")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1670420092]
 position = Vector2(320, 180)
-offset = Vector2(-3.4799752, -3.8545425)
-
-[node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
-position = Vector2(320, 300)
+offset = Vector2(-1.1435971, -0.4213736)
+zoom = Vector2(0.95, 0.95)
 
 [node name="DiscardPile" parent="." unique_id=1939346024 instance=ExtResource("4_l3cfh")]
-position = Vector2(320, 180)
+position = Vector2(320, 150.6665)
 
 [node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
-position = Vector2(201, 155)
+position = Vector2(188.00002, 136)
+rotation = -0.1055778
+
+[node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
+position = Vector2(320, 308)
+DEV_layout_max_width_overwrite = 500.0
 
 [node name="Visuals" type="Node2D" parent="." unique_id=395039280]
 position = Vector2(1, 0)
 
 [node name="TurnArrow" type="Sprite2D" parent="Visuals" unique_id=1031837384]
 modulate = Color(1, 1, 1, 0.11764706)
-position = Vector2(320.00003, 180)
-rotation = 20.716757
+position = Vector2(320.00003, 150.6665)
+rotation = 33.37148
 scale = Vector2(1.8, 1.8)
 texture = ExtResource("10_a8run")
 
@@ -155,6 +158,7 @@ offset_left = -320.0
 offset_top = -180.0
 offset_right = -320.0
 offset_bottom = -180.0
+_select_max_time = 3.0
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=1884324124]
 layer = -1
@@ -201,10 +205,10 @@ metadata/_edit_lock_ = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1605705152]
 environment = SubResource("Environment_ow5a4")
 
-[connection signal="selection_changed" from="Hand" to="GameManager" method="_on_hand_selection_changed"]
-[connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_discard_pile_play_requested"]
-[connection signal="draw_requested" from="DrawPile" to="." method="_on_draw_pile_draw_requested"]
-[connection signal="draw_requested" from="DrawPile" to="GameManager" method="_on_draw_pile_draw_requested"]
+[connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_play_requested"]
+[connection signal="draw_requested" from="DrawPile" to="GameManager" method="_on_draw_requested"]
+[connection signal="selection_changed" from="Hand" to="GameManager" method="_on_selection_changed"]
 [connection signal="cards_drawn" from="GameManager" to="Hand" method="_on_game_manager_cards_drawn"]
 [connection signal="cards_played" from="GameManager" to="Hand" method="_on_game_manager_cards_played"]
 [connection signal="play_denied" from="GameManager" to="Hand" method="_on_game_manager_play_denied"]
+[connection signal="hue_selected" from="HueManager/ColorSelection" to="HueManager" method="_on_hue_selected"]

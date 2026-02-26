@@ -20,18 +20,22 @@ func begin_drag() -> void:
 	get_tree().call_group("drag_layer", "begin_drag", owner)
 
 func end_drag() -> void:
-	if not dragging: return
-
 	dragging = false
 	emit_signal("drag_ended", owner)
 
 func register_drop_zone(d: DropZone) -> void:
+	if not dragging:
+		print("DragComponent: Cannot register drop zone while not dragging")
+		return
+
 	drop_zone = d
 	emit_signal("drop_zone_entered", owner, drop_zone)
+	print("DragComponent: Registered drop zone")
 
 func unregister_drop_zone(_d: DropZone) -> void:
 	emit_signal("drop_zone_exited", owner, drop_zone)
 	drop_zone = null
+	print("DragComponent: Unregistered drop zone")
 
 # -------------------------
 # Internal

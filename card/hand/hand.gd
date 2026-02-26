@@ -6,13 +6,10 @@ signal selection_changed(card_data: Array[CardData], first_card: CardData)
 @export var card_scene : PackedScene
 @export var layout_component : HandLayoutComponent
 
-@export_category("DEV_ENV")
-@export var DEV_layout_max_width_overwrite := 300.0
-
 var _card_data : Array[CardData] = []
 var _card_views : Array[CardView] = []
-var _selected_cards : Array[CardView] = []
-var moving_card : CardView = null
+var _dragging_card : CardView = null
+var selected_cards : Array[CardView] = []
 
 # -------------------------
 # Public API
@@ -41,6 +38,11 @@ func restore_card(card_view: CardView) -> void:
 		card_view.drag_component.drag_started.connect(_on_card_drag_started)
 		card_view.mouse_left_down.connect(_on_card_mouse_left_down)
 
+	if card_view == _dragging_card:
+		_dragging_card.set_selected(false)
+		_dragging_card = null
+
+	selected_cards = []
 	_arrange()
 
 # -------------------------
@@ -56,7 +58,10 @@ func _ready() -> void:
 	_arrange()
 
 func _process(_delta: float) -> void:
-	if moving_card: _sort_moving_card(moving_card)
+	# _sort_dragging_card is not properly handling _dragging_card yet
+	# TODO: Fix _sort_dragging_card
+	# if _dragging_card: _sort_dragging_card(_dragging_card)
+	pass
 
 func _arrange() -> void:
 	layout_component.request_arrange(_card_views)
@@ -86,21 +91,22 @@ func _add_cards(cards: Array[CardData]) -> Array[CardView]:
 	return new_cards
 
 func _select_card(card_view: CardView) -> void:
-	if _selected_cards.has(card_view):
-		_selected_cards.erase(card_view)
+	if selected_cards.has(card_view):
+		selected_cards.erase(card_view)
 		card_view.set_selected(false)
 
-		for i in range(_selected_cards.size()):
-			var card := _selected_cards[i]
+		for i in range(selected_cards.size()):
+			var card := selected_cards[i]
 			card.set_selected(true, i + 1)
 
 	else:
-		_selected_cards.append(card_view)
-		card_view.set_selected(true, _selected_cards.size())
+		selected_cards.append(card_view)
+		card_view.set_selected(true, selected_cards.size())
 
 	_request_available_cards()
+	_arrange()
 
-func _sort_moving_card(view: CardView) -> void:
+func _sort_dragging_card(view: CardView) -> void:
 	var old_index := _card_views.find(view)
 
 	_card_views.sort_custom(func(a: CardView, b: CardView): return a.position.x < b.position.x)
@@ -115,10 +121,13 @@ func _request_available_cards() -> void:
 	# This may change in the future if off-turn plays be implemented
 	# TODO ------------------------------------------------
 
-	if _selected_cards.size():
-		emit_signal("selection_changed", _card_data, _selected_cards[0].data)
+	if selected_cards.size() > 0:
+		var selected_cards_data : Array[CardData] = []
+		for card in selected_cards: selected_cards_data.append(card.data)
+
+		emit_signal("selection_changed", selected_cards_data, true)
 	else:
-		emit_signal("selection_changed", _card_data, null)
+		emit_signal("selection_changed", _card_data, false)
 
 # -------------------------
 # Handlers
@@ -134,14 +143,15 @@ func _on_game_manager_cards_played(card_data: Array[CardData]) -> void:
 			var view := _get_view_by_data(data)
 			_card_data.erase(data)
 			if _card_views.has(view): _card_views.erase(view)
-	_selected_cards = []
+	selected_cards = []
+	_dragging_card = null
 	_request_available_cards()
 	_arrange()
 
 func _on_game_manager_cards_drawn(card_data: Array[CardData]) -> void:
 	var new_cards = _add_cards(card_data)
 	await _arrange_new(new_cards)
-	_selected_cards = []
+	selected_cards = []
 	_request_available_cards()
 
 func _on_game_manager_play_denied(__card_data: Array[CardData]) -> void:
@@ -154,16 +164,19 @@ func _on_game_manager_play_denied(__card_data: Array[CardData]) -> void:
 func _on_card_drag_started(draggable: Node2D) -> void:
 	draggable.drag_component.drag_started.disconnect(_on_card_drag_started)
 	draggable.mouse_left_down.disconnect(_on_card_mouse_left_down)
+
+	selected_cards = []
+	_select_card(draggable)
 	_card_views.erase(draggable)
+	_dragging_card = draggable
 	_arrange()
 
 func _on_card_drag_ended(_draggable: Node2D) -> void:
-	moving_card = null
+	_dragging_card = null
 	_arrange()
 
 func _on_card_mouse_left_down(card_view: CardView) -> void:
 	_select_card(card_view)
-	_arrange()
 
 # -------------
 # Utilities
@@ -180,3 +193,6 @@ func _get_view_by_data(data: CardData) -> CardView:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_up"):
 		_request_available_cards()
+
+@export_category("DEV_ENV")
+@export var DEV_layout_max_width_overwrite := 300.0

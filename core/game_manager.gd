@@ -2,8 +2,9 @@ extends Node
 class_name GameManager
 
 signal cards_played(card: Array[CardData])
-signal play_denied(card: Array[CardData])
 signal cards_drawn(card: Array[CardData])
+
+signal play_denied(card: Array[CardData])
 signal draw_denied()
 
 @export var _turn_manager : TurnManager
@@ -19,6 +20,12 @@ var _draw_stack := 0
 const INITIAL_HAND_SIZE = 7
 const DRAW_TWO_AMOUNT = 2
 const DRAW_FOUR_AMOUNT = 4
+
+enum PlayRequestType {
+	PRESS,
+	DROP,
+	DEV
+}
 
 # -------------------------
 # Public API
@@ -107,20 +114,25 @@ func _can_play(card: CardData) -> bool:
 
 	return false
 
-func _can_combo(starter: CardData, next_card: CardData) -> bool:
+func _can_combo(cards: Array[CardData]) -> bool:
+	var starter = cards[0]
+
+	return cards.slice(1, cards.size()).all(func(next_card: CardData): return _can_play_with_next(starter, next_card))
+
+func _can_play_with_next(previous: CardData, next_card: CardData) -> bool:
 	if next_card.hue == CardData.Hue.WILD:
-		if next_card.effect == starter.effect:
+		if next_card.effect == previous.effect:
 			return true
 		else:
 			return false
 
 	if next_card.number >= 0:
-		if next_card.number == starter.number:
+		if next_card.number == previous.number:
 			return true
 		else:
 			return false
 
-	if next_card.effect == starter.effect:
+	if next_card.effect == previous.effect:
 		return true
 	else:
 		return false
@@ -128,55 +140,102 @@ func _can_combo(starter: CardData, next_card: CardData) -> bool:
 func _get_last_played() -> CardData:
 	return _discard_pile[_discard_pile.size() - 1]
 
+func _apply_effects(cards_to_play: Array[CardData]) -> void:
+	var first_card := cards_to_play[0]
+
+	if first_card.effect == CardData.Effect.DRAW:
+		for card in cards_to_play:
+			_draw_stack += card.effect_parameter
+
+	if first_card.effect == CardData.Effect.REVERSE:
+		_turn_manager.set_reverses(cards_to_play.size())
+
+	if first_card.effect == CardData.Effect.SKIP:
+		_turn_manager.set_skips(cards_to_play.size())
+
+func _run_play_validation() -> bool:
+	# PLACEHOLDER
+	# TODO: Implement play validation logic
+	return true
+
 # -------------------------
 # Handlers
 # -------------------------
 
 # -------------------------
 # Discard Pile
+# Methods for handling discard pile signals/requests
 
-func _on_discard_pile_play_requested(cards: Array[CardData]) -> void:
-	var can_play := _can_play(cards[0])
-	var last_card := _get_last_played()
-	var first_card := cards[0]
+func _on_play_requested(type: PlayRequestType) -> void:
+
+	# FUNCTION WAY TOO BIG!!!
+	# TODO: Refactor into smaller functions
+
+	var card_views := _hand.selected_cards
+	var cards_to_play : Array[CardData] = []
+
+	for card in card_views: cards_to_play.append(card.data)
+
+	if cards_to_play.size() == 0:
+		print("GameManager: No cards selected for play")
+		return
+
+	var can_play : bool = false
+
+	if card_views.size() == 1:
+		can_play = _can_play(cards_to_play[0])
+	else:
+		var can_play_first = _can_play(cards_to_play[0])
+
+		if can_play_first: can_play = _can_combo(cards_to_play)
+
+	if type == PlayRequestType.PRESS:
+		print("GameManager: Play requested via press")
+	elif type == PlayRequestType.DROP:
+		print("GameManager: Play requested via drop")
+
+
+	var first_card = cards_to_play[0]
 
 	if can_play:
+		_discard_pile.append_array(cards_to_play)
 		# let the pile know the play has been approved so it can commit the
 		# visual transition and clear its queued cards
-		_discard_pile.append_array(cards)
+		var last_card := _get_last_played()
 
 		print("GameManager: Waiting on discard_pile animation to end...")
-		await _discard_pile_node.confirm_play()
+		await _discard_pile_node.confirm_play(card_views)
 		print("GameManager: Animation ended, following through...")
 
 		## Update game current HUE
 		if first_card.hue == CardData.Hue.WILD:
+			print("GameManager: Wild card! prompting hue selection...")
 			await _hue_manager.prompt_hue_selection()
 		else:
 			_hue_manager.set_hue(last_card.hue)
 
-		## Check for any effect and apply
 		if first_card.effect != CardData.Effect.NULL:
-			if first_card.effect == CardData.Effect.DRAW:
-				for card in cards: _draw_stack += card.effect_parameter
-			if first_card.effect == CardData.Effect.REVERSE:
-				_turn_manager.set_reverses(cards.size())
-			if first_card.effect == CardData.Effect.SKIP:
-				_turn_manager.set_skips(cards.size())
+			_apply_effects(cards_to_play)
 
 		await _turn_manager.advance_turn()
 
-		emit_signal("cards_played", cards)
+		emit_signal("cards_played", cards_to_play)
 		print("GameManager: Play routine ended successfully.")
 	else:
 		_discard_pile_node.reject_play()
-		emit_signal("play_denied", cards)
+		emit_signal("play_denied", cards_to_play)
 		print("GameManager: Play routine ended unsuccessfully.")
 
 # -------------------------
 # Draw Pile
+# Methods for handling draw pile signals/requests
 
-func _on_draw_pile_draw_requested() -> void:
+func _on_draw_requested() -> void:
+
+	## TODO
+	## Waiting Turn implementation logic
+	## Function currently accepts any request for drawing new cards as seen below.
+
 	var drawn_cards : Array[CardData]
 
 	if _draw_stack:
@@ -188,18 +247,16 @@ func _on_draw_pile_draw_requested() -> void:
 
 # -------------------------
 # Hand
+# Methods for handling hand signals/requests
 
-func _on_hand_selection_changed(card_data: Array[CardData], combo_starter) -> void:
-	var available_cards : Array[CardData]
+func _on_selection_changed(cards: Array[CardData], has_selection: bool) -> void:
+	var available_cards : Array[CardData] = []
 
-
-	if combo_starter and _can_play(combo_starter):
-		for card in card_data:
-			if card == combo_starter: available_cards.append(card)
-			else:
-				if _can_combo(combo_starter, card): available_cards.append(card)
+	if has_selection:
+		if _can_combo(cards): available_cards.append_array(cards)
 	else:
-		for card in card_data:
+		for card in cards:
 			if _can_play(card): available_cards.append(card)
 
+	print("GameManager: Selection changed")
 	_hand.update_available_cards(available_cards)

@@ -75,6 +75,24 @@ func set_selected(state: bool, _order := -1) -> void:
 func set_playable(state: bool) -> void:
 	_toggle_playable(state)
 
+func reset() -> void:
+	for tween in _tween_channels.values():
+		if tween: tween.kill()
+
+	_toggle_playable(false)
+	_toggle_select(false)
+
+	_selection_transform.scale = Vector2(1.0, 1.0)
+	_selection_transform.rotation = 0.0
+
+	_hover_transform.scale = Vector2(1.0, 1.0)
+	_hover_transform.rotation = 0.0
+
+	_fx_transform.scale = Vector2(1.0, 1.0)
+	_fx_transform.rotation = 0.0
+
+	scale = Vector2(1.0, 1.0)
+
 # -------------------------
 # Internal
 # -------------------------
