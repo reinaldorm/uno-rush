@@ -62,10 +62,10 @@ _select_max_time = 10.0
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1042256984]
 custom_minimum_size = Vector2(640, 360)
 layout_mode = 0
-offset_right = 640.0
-offset_bottom = 360.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -129.77777
+offset_top = -73.0
+offset_right = 769.7778
+offset_bottom = 433.0
 color = Color(0.007843138, 0.007843138, 0.047058824, 0.47843137)
 
 [node name="Buttons" type="Control" parent="." unique_id=130771289]

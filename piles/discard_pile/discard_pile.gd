@@ -80,14 +80,15 @@ func _set_playable(playable: bool) -> void:
 # Animations
 
 func _play_card_animation(card_view: CardView) -> void:
-	# _play_particles(card_view.data.hue)
-
 	var tween = card_view.animate("fx").set_parallel()
 
-	tween.tween_property(card_view, "position", Vector2.ZERO, 0.75).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-	tween.tween_property(card_view, "scale", Vector2.ONE, 0.75).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	tween.tween_property(card_view, "position", Vector2.ZERO, 0.75).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_IN)
+	tween.tween_property(card_view, "scale", Vector2.ONE, 0.75).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_IN)
 
 	await tween.finished
+
+	card_view.rotation = randf_range(-0.25, 0.25)
+
 
 func _play_particles(hue: CardData.Hue) -> void:
 	_particles.restart()
