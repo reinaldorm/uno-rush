@@ -41,9 +41,9 @@ func unregister_drop_zone(_d: DropZone) -> void:
 # Internal
 # -------------------------
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if dragging:
-		owner.global_position = owner.global_position.lerp(get_global_mouse_position(), 0.5)
+		owner.global_position = owner.global_position.lerp(get_global_mouse_position(), 1 - 0.0000005 ** delta)
 
 func _ready() -> void:
 	owner = owner as Node2D

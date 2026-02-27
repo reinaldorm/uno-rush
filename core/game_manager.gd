@@ -186,45 +186,35 @@ func _on_play_requested(type: PlayRequestType) -> void:
 		can_play = _can_play(cards_to_play[0])
 	else:
 		var can_play_first = _can_play(cards_to_play[0])
-
 		if can_play_first: can_play = _can_combo(cards_to_play)
-
-	if type == PlayRequestType.PRESS:
-		print("GameManager: Play requested via press")
-	elif type == PlayRequestType.DROP:
-		print("GameManager: Play requested via drop")
-
 
 	var first_card = cards_to_play[0]
 
 	if can_play:
 		_discard_pile.append_array(cards_to_play)
-		# let the pile know the play has been approved so it can commit the
-		# visual transition and clear its queued cards
+
 		var last_card := _get_last_played()
 
-		print("GameManager: Waiting on discard_pile animation to end...")
 		await _discard_pile_node.confirm_play(card_views)
-		print("GameManager: Animation ended, following through...")
 
-		## Update game current HUE
 		if first_card.hue == CardData.Hue.WILD:
-			print("GameManager: Wild card! prompting hue selection...")
 			await _hue_manager.prompt_hue_selection()
-		else:
-			_hue_manager.set_hue(last_card.hue)
+		else: _hue_manager.set_hue(last_card.hue)
 
-		if first_card.effect != CardData.Effect.NULL:
-			_apply_effects(cards_to_play)
+		if first_card.effect != CardData.Effect.NULL: _apply_effects(cards_to_play)
+
+		_draw_pile_node.update_draw_stack(_draw_stack)
 
 		await _turn_manager.advance_turn()
 
 		emit_signal("cards_played", cards_to_play)
-		print("GameManager: Play routine ended successfully.")
+
+		print("GameManager: Play routine ended, accepted.")
 	else:
 		_discard_pile_node.reject_play()
 		emit_signal("play_denied", cards_to_play)
-		print("GameManager: Play routine ended unsuccessfully.")
+
+		print("GameManager: Play routine ended, rejected.")
 
 # -------------------------
 # Draw Pile

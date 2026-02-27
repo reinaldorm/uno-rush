@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://rbnfkf3gx2uy" path="res://card/assets/play_bubble.png" id="4_pn0yc"]
 [ext_resource type="Texture2D" uid="uid://dtmex3jq2n2md" path="res://assets/effects/star_sheet.png" id="5_kccp7"]
 [ext_resource type="Script" uid="uid://cn2y722rub2qw" path="res://interactions/drop/drop_zone.gd" id="5_pn0yc"]
+[ext_resource type="AudioStream" uid="uid://d4kl1wf08m2sf" path="res://assets/sfx/card_play.mp3" id="8_6vir3"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6vir3"]
 shader = ExtResource("3_lq65o")
@@ -33,6 +34,8 @@ curve = SubResource("Curve_lq65o")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xxae7"]
 particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(39.62, 31.87, 1)
 radial_velocity_min = 24.999977
 radial_velocity_max = 49.999977
 gravity = Vector3(0, 0, 0)
@@ -145,7 +148,7 @@ _data = {
 &"show_bubbles": SubResource("Animation_kccp7")
 }
 
-[node name="DiscardPile" type="Node2D" unique_id=411543129 node_paths=PackedStringArray("animation_player", "_particles", "_area_outline", "_drop_zone", "_cards_node")]
+[node name="DiscardPile" type="Node2D" unique_id=411543129 node_paths=PackedStringArray("animation_player", "_particles", "_area_outline", "_drop_zone", "_cards_node", "_audio_player")]
 script = ExtResource("1_twh83")
 card_scene = ExtResource("2_kccp7")
 animation_player = NodePath("AnimationPlayer")
@@ -153,6 +156,7 @@ _particles = NodePath("Visuals/GPUParticles2D")
 _area_outline = NodePath("Visuals/Outline")
 _drop_zone = NodePath("DropZone")
 _cards_node = NodePath("Cards")
+_audio_player = NodePath("AudioStreamPlayer")
 
 [node name="Visuals" type="Node2D" parent="." unique_id=1194200993]
 
@@ -175,6 +179,7 @@ texture = ExtResource("5_kccp7")
 one_shot = true
 speed_scale = 2.0
 explosiveness = 1.0
+randomness = 0.25
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_xxae7")
 metadata/RED = Color(1, 0, 0, 1)
@@ -222,6 +227,11 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_hqmra")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=605576003]
 libraries/ = SubResource("AnimationLibrary_lq65o")
 speed_scale = 5.0
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=273038317]
+stream = ExtResource("8_6vir3")
+volume_db = -3.0
+max_polyphony = 3
 
 [connection signal="drag_component_entered" from="DropZone" to="." method="_on_drag_component_entered"]
 [connection signal="drag_component_exited" from="DropZone" to="." method="_on_drag_component_exited"]

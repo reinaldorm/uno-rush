@@ -1,6 +1,7 @@
 TODO ------------------------------------------------
 
-## [ ] ****BUG**** Hue selection may get stuck during flow and prevent GameManager from advancing playing logic.
+## [ x ] ****BUG**** Hue selection may get stuck during flow and prevent GameManager from advancing playing logic.
+- FIXED: `selection_timer` inside `color_selection.gd` was not set to oneshot.
 
 TODO ------------------------------------------------
 

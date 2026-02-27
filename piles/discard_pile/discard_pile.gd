@@ -4,6 +4,8 @@ class_name DiscardPile
 signal play_requested(card: CardView)
 signal play_routine_ended()
 
+@export var fx_manager : FXManager
+
 @export var card_scene : PackedScene
 
 @export var animation_player : AnimationPlayer
@@ -11,6 +13,7 @@ signal play_routine_ended()
 @export var _area_outline : Sprite2D
 @export var _drop_zone : DropZone
 @export var _cards_node : Node2D
+@export var _audio_player : AudioStreamPlayer
 
 var _tween_channels : Dictionary[String, Tween] = {
 	"play": null,
@@ -62,14 +65,34 @@ func _animate_play_sequence(played_cards: Array[CardView]) -> void:
 			70 * sin(target_angle - PI / 2)
 		)
 
-		tween.tween_property(c, "position", target_pos, 0.75)
-		tween.tween_property(c, "scale", Vector2(1.2, 1.2), 0.75)
+		tween.tween_property(c, "position", target_pos, 0.5)
+		tween.tween_property(c, "scale", Vector2(1.2, 1.2), 0.5)
 
 	await tween.finished
 
-	for card in played_cards:
+	for i in range(played_cards.size()):
+		var card = played_cards[i]
 		await _play_card_animation(card)
+		_audio_player.pitch_scale = 1.0 + i * 0.1
+		_audio_player.play()
+
 		_play_particles(card.data.hue)
+		fx_manager.play_camera_zoom_shake()
+
+		var fx_tween = card.animate("fx").set_parallel()
+
+		card._fx_transform.scale = Vector2(1.2, 1.2)
+
+		fx_tween.tween_property(card._fx_transform, "scale", Vector2(1.0, 1.0), 0.35)
+
+		var shader_color : Vector3 = _area_outline.material.get_shader_parameter("_color_ow")
+		var shader_alpha : float = _area_outline.material.get_shader_parameter("_alpha")
+
+		_set_shader_parameters(_area_outline.material, "_alpha", shader_alpha)
+		_set_shader_parameters(_area_outline.material, "_color_ow", shader_color)
+		_area_outline.scale = Vector2(3.5, 3.5)
+
+		_animate_outline_state(Vector2(3.0, 3.0), 0.25, Vector3(1.0, 1.0, 1.0))
 
 	emit_signal("play_routine_ended")
 
@@ -82,13 +105,12 @@ func _set_playable(playable: bool) -> void:
 func _play_card_animation(card_view: CardView) -> void:
 	var tween = card_view.animate("fx").set_parallel()
 
-	tween.tween_property(card_view, "position", Vector2.ZERO, 0.75).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_IN)
-	tween.tween_property(card_view, "scale", Vector2.ONE, 0.75).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_IN)
+	tween.tween_property(card_view, "position", Vector2.ZERO, 0.35).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
+	tween.tween_property(card_view, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
+
+	tween.set_parallel(false)
 
 	await tween.finished
-
-	card_view.rotation = randf_range(-0.25, 0.25)
-
 
 func _play_particles(hue: CardData.Hue) -> void:
 	_particles.restart()
@@ -99,46 +121,29 @@ func _play_particles(hue: CardData.Hue) -> void:
 	_particles.emitting = true
 
 func _toggle_playable(playable: bool) -> void:
-	# This function is WAY too long and should be desmembrated into smaller functions.
-	# TODO: Refactor this function into smaller functions.
 	if playable:
-		var tween := _animate("outline").set_trans(Tween.TRANS_ELASTIC).set_parallel()
-
-		var shader_color : Vector3 = _area_outline.material.get_shader_parameter("_color_ow")
-		var shader_alpha : float = _area_outline.material.get_shader_parameter("_alpha")
-
-		tween.tween_property(_area_outline, "scale", Vector2(3.5, 3.5), 1)
-
-		tween.tween_method(func(value: float):
-			_area_outline.material.set_shader_parameter("_alpha", value),
-			shader_alpha,
-			1.0,
-			1)
-
-		tween.tween_method(func(value: Vector3):
-			_area_outline.material.set_shader_parameter("_color_ow", value),
-			shader_color,
-			Vector3(1.0, 0.75, 0.0),
-			1)
+		_animate_outline_state(Vector2(3.5, 3.5), 1.0, Vector3(1.0, 0.75, 0.0))
 	else:
-		var tween := _animate("outline").set_trans(Tween.TRANS_ELASTIC).set_parallel()
+		_animate_outline_state(Vector2(3.0, 3.0), 0.25, Vector3(1.0, 1.0, 1.0))
 
-		var shader_color : Vector3 = _area_outline.material.get_shader_parameter("_color_ow")
-		var shader_alpha : float = _area_outline.material.get_shader_parameter("_alpha")
+func _animate_outline_state(target_scale: Vector2, target_alpha: float, target_color: Vector3) -> void:
+	var tween := _animate("outline").set_trans(Tween.TRANS_ELASTIC).set_parallel()
+	var shader_material := _area_outline.material as ShaderMaterial
 
-		tween.tween_property(_area_outline, "scale", Vector2(3.0, 3.0), 1)
+	assert(shader_material != null, "DiscardPile outline material must be a ShaderMaterial")
 
-		tween.tween_method(func(value: float):
-			_area_outline.material.set_shader_parameter("_alpha", value),
-			shader_alpha,
-			0.25,
-			1)
+	var initial_state := _get_shader_parameters(shader_material, ["_color_ow", "_alpha"])
 
-		tween.tween_method(func(value: Vector3):
-			_area_outline.material.set_shader_parameter("_color_ow", value),
-			shader_color,
-			Vector3(1.0, 1.0, 1.0),
-			1)
+	tween.tween_property(_area_outline, "scale", target_scale, 1)
+	_tween_shader_parameter(tween, shader_material, "_alpha", initial_state["_alpha"] as float, target_alpha)
+	_tween_shader_parameter(tween, shader_material, "_color_ow", initial_state["_color_ow"] as Vector3, target_color)
+
+func _tween_shader_parameter( tween: Tween, shader_material: ShaderMaterial, parameter_name: String, from_value: Variant, to_value: Variant, duration := 1.0) -> void:
+	tween.tween_method(func(value: Variant):
+		shader_material.set_shader_parameter(parameter_name, value),
+		from_value,
+		to_value,
+		duration)
 
 func _animate(channel: String, e:= Tween.EASE_OUT, t:= Tween.TRANS_EXPO) -> Tween:
 	if _tween_channels[channel]: _tween_channels[channel].kill()
@@ -181,3 +186,18 @@ func _on_mouse_exited() -> void:
 
 func _on_button_pressed():
 	emit_signal("play_requested", GameManager.PlayRequestType.PRESS)
+
+# -------------------------
+# Handlers
+# -------------------------
+
+func _get_shader_parameters(shader_material: ShaderMaterial, parameter_names: Array[String]) -> Dictionary[String, Variant]:
+	var result : Dictionary[String, Variant] = {}
+
+	for parameter_name in parameter_names:
+		result[parameter_name] = shader_material.get_shader_parameter(parameter_name)
+
+	return result
+
+func _set_shader_parameters(shader_material: ShaderMaterial, parameter: String, value: Variant):
+	shader_material.set_shader_parameter(parameter, value)

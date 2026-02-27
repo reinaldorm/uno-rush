@@ -3,10 +3,12 @@ class_name DrawPile
 
 signal draw_requested()
 
-@export var card_scene: PackedScene
+@export var _card_scene: PackedScene
+@export var _top_sprite: Sprite2D
+@export var _animation_player: AnimationPlayer
 
-@export var animation_player: AnimationPlayer
 
+var _draw_stack: int = 0
 var _tween: Tween
 
 # -------------------------
@@ -20,30 +22,30 @@ func deny_draw() -> void:
 	print("DrawPile: Draw Denied")
 
 func update_draw_stack(new_stack: int) -> void:
-	pass
+	for i in range(new_stack):
+		var card = _card_scene.instantiate()
+		card.position = Vector2(0, i * 50)
+		add_child(card)
 
 # -------------------------
 # Internal
 # -------------------------
-
-func _new_tween(e:= Tween.EASE_OUT, t:= Tween.TransitionType.TRANS_EXPO) -> Tween:
-	if _tween: _tween.kill()
-
-	_tween = create_tween()
-	_tween.set_ease(e)
-	_tween.set_trans(t)
-
-	return _tween
 
 # -------------------------
 # Handlers
 # -------------------------
 
 func _on_button_mouse_entered() -> void:
-	animation_player.play("hover")
+	_animation_player.play("hover")
 
 func _on_button_mouse_exited() -> void:
-	animation_player.play_backwards("hover")
+	_animation_player.play_backwards("hover")
 
 func _on_button_pressed() -> void:
 	emit_signal("draw_requested")
+
+func _on_camera_shake() -> void:
+	var tween = TweenHelper.new_tween(_tween, self).set_ease(Tween.EASE_OUT).set_trans(Tween.TransitionType.TRANS_QUINT)
+
+	_top_sprite.scale = Vector2(2.75, 2.75)
+	tween.tween_property(_top_sprite, "scale", Vector2(2.5, 2.5), 0.5)

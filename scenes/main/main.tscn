@@ -104,14 +104,15 @@ turn_arrow = NodePath("Visuals/TurnArrow")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1670420092]
 position = Vector2(320, 180)
-offset = Vector2(4.9012456, -12.770105)
+offset = Vector2(0.36522257, 10.838856)
 zoom = Vector2(0.95, 0.95)
 
-[node name="DiscardPile" parent="." unique_id=1939346024 instance=ExtResource("4_l3cfh")]
+[node name="DiscardPile" parent="." unique_id=1939346024 node_paths=PackedStringArray("fx_manager") instance=ExtResource("4_l3cfh")]
 position = Vector2(320, 150.6665)
+fx_manager = NodePath("../FXManager")
 
 [node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
-position = Vector2(188.00002, 136)
+position = Vector2(211, 174)
 rotation = -0.1055778
 
 [node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
@@ -123,8 +124,8 @@ position = Vector2(1, 0)
 
 [node name="TurnArrow" type="Sprite2D" parent="Visuals" unique_id=1031837384]
 modulate = Color(1, 1, 1, 0.11764706)
-position = Vector2(320.00003, 150.6665)
-rotation = 25.027653
+position = Vector2(321, 150.99998)
+rotation = -30.659378
 scale = Vector2(1.8, 1.8)
 texture = ExtResource("10_a8run")
 
@@ -217,7 +218,9 @@ environment = SubResource("Environment_ow5a4")
 [connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_play_requested"]
 [connection signal="draw_requested" from="DrawPile" to="GameManager" method="_on_draw_requested"]
 [connection signal="selection_changed" from="Hand" to="GameManager" method="_on_selection_changed"]
+[connection signal="camera_shook" from="FXManager" to="DrawPile" method="_on_camera_shake"]
 [connection signal="cards_drawn" from="GameManager" to="Hand" method="_on_game_manager_cards_drawn"]
 [connection signal="cards_played" from="GameManager" to="Hand" method="_on_game_manager_cards_played"]
 [connection signal="play_denied" from="GameManager" to="Hand" method="_on_game_manager_play_denied"]
+[connection signal="turn_advanced" from="TurnManager" to="." method="_on_turn_manager_turn_advanced"]
 [connection signal="hue_selected" from="HueManager/ColorSelection" to="HueManager" method="_on_hue_selected"]

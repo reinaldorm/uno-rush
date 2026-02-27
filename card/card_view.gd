@@ -89,7 +89,9 @@ func reset() -> void:
 	_hover_transform.rotation = 0.0
 
 	_fx_transform.scale = Vector2(1.0, 1.0)
-	_fx_transform.rotation = 0.0
+	_fx_transform.rotation = 0.
+
+
 
 	scale = Vector2(1.0, 1.0)
 

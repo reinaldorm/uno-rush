@@ -6,7 +6,7 @@ var direction := 1
 var _reverses_left := 0
 var _skips_left := 0
 
-signal turn_advanced()
+signal turn_advanced(direction: int)
 
 func initialize(_turn: int) -> void:
 	turn = _turn
@@ -27,6 +27,6 @@ func set_skips(amount: int) -> void:
 
 func _update_turn() -> void:
 	print("TurnManager: Pretending advancing turn...")
-	await get_tree().create_timer(1).timeout
+	await get_tree().create_timer(0.25).timeout
 
-	emit_signal("turn_advanced")
+	emit_signal("turn_advanced", direction)
