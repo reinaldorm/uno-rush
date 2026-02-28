@@ -11,21 +11,21 @@ config_version=5
 [application]
 
 config/name="uno-rush"
-run/main_scene="uid://dvet35xoth03y"
+run/main_scene="uid://bjrq8cweo0l21"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 TweenHelper="*uid://bqquuvmmd11qm"
+NetworkManager="*uid://bewkc2whwfxy1"
 
 [display]
 
 window/size/viewport_width=640
 window/size/viewport_height=360
-window/size/mode=2
-window/size/window_width_override=1920
-window/size/window_height_override=1080
+window/size/window_width_override=1280
+window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/max_fps=0
 

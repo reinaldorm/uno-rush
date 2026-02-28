@@ -22,7 +22,7 @@ func _process(delta: float) -> void:
 	turn_arrow.rotation += delta * 0.1
 
 func _idle() -> void:
-	var m_offset = (get_global_mouse_position() - camera.global_position) * 0.05
+	var m_offset = (get_global_mouse_position() - camera.global_position) * 0.01
 	camera.offset = camera.offset.lerp( Vector2(cos(_tick  * 0.75) * 1.5, sin(_tick  * 0.75) * 1.5) + m_offset, 0.1)
 
 # -------------------------

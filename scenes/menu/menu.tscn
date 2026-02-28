@@ -1,0 +1,237 @@
+[gd_scene format=3 uid="uid://bjrq8cweo0l21"]
+
+[ext_resource type="Shader" uid="uid://dp3lgf7lykufk" path="res://shaders/vcr.gdshader" id="1_mcvr8"]
+[ext_resource type="Script" uid="uid://bpj72abfl34fk" path="res://scenes/menu/menu.gd" id="1_y1o0p"]
+[ext_resource type="Texture2D" uid="uid://duhia0n1f648k" path="res://assets/background/tile_black.png" id="2_mcvr8"]
+[ext_resource type="FontFile" uid="uid://bwlxp6kod573k" path="res://assets/fonts/monogram.ttf" id="3_e0arn"]
+[ext_resource type="Texture2D" uid="uid://bdlstv3xjk405" path="res://assets/logo.png" id="4_037ec"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_037ec"]
+noise_type = 4
+seed = 2
+frequency = 0.0973
+fractal_type = 0
+fractal_lacunarity = 2.4
+fractal_gain = -0.06
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hujxm"]
+width = 200
+height = 200
+noise = SubResource("FastNoiseLite_037ec")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y1o0p"]
+shader = ExtResource("1_mcvr8")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 3.0
+shader_parameter/fps = 6.0
+shader_parameter/noise = SubResource("NoiseTexture2D_hujxm")
+
+[sub_resource type="Environment" id="Environment_e0arn"]
+background_mode = 3
+ssao_radius = 8.24
+ssao_intensity = 6.77
+glow_enabled = true
+glow_levels/1 = 0.5
+glow_levels/2 = 0.6
+glow_levels/3 = 0.9
+glow_levels/4 = 0.05
+glow_levels/5 = 0.1
+glow_levels/7 = 0.1
+glow_intensity = 0.1
+glow_hdr_threshold = 0.04
+adjustment_enabled = true
+adjustment_contrast = 1.03
+adjustment_saturation = 1.1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y1o0p"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r8yej"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3y2rt"]
+
+[node name="Menu" type="Control" unique_id=1469747293]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_y1o0p")
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=290225234]
+layer = -1
+
+[node name="Background" type="TextureRect" parent="Background" unique_id=1904272372]
+z_index = -1
+texture_repeat = 3
+material = SubResource("ShaderMaterial_y1o0p")
+offset_left = -1.0
+offset_right = 639.0
+offset_bottom = 360.0
+texture = ExtResource("2_mcvr8")
+stretch_mode = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=426110719]
+environment = SubResource("Environment_e0arn")
+
+[node name="HostGame" type="Button" parent="." unique_id=202087863]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -13.5
+offset_right = 40.0
+offset_bottom = 13.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="HostGame" unique_id=367219936]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HostGame/PanelContainer" unique_id=260101667]
+layout_mode = 2
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_e0arn")
+bbcode_enabled = true
+text = "[wave freq=3]Host Game[/wave]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="JoinGame" type="Button" parent="." unique_id=120960872]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = 18.5
+offset_right = 40.0
+offset_bottom = 45.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="JoinGame" unique_id=1412808505]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="JoinGame/PanelContainer" unique_id=2031318613]
+layout_mode = 2
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_e0arn")
+bbcode_enabled = true
+text = "[wave freq=2]Join Game[/wave]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Options" type="Button" parent="." unique_id=762630648]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = 50.5
+offset_right = 40.0
+offset_bottom = 77.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="Options" unique_id=1786505747]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Options/PanelContainer" unique_id=821776500]
+layout_mode = 2
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_e0arn")
+bbcode_enabled = true
+text = "[wave freq=2.5]Options[/wave]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Logo" type="TextureRect" parent="." unique_id=341944464]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -146.0
+offset_right = -43.0
+offset_bottom = -122.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(5.375, 5.375)
+texture = ExtResource("4_037ec")
+
+[node name="PanelContainer" type="VBoxContainer" parent="." unique_id=808439156]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -47.0
+offset_top = -50.5
+offset_right = 47.0
+offset_bottom = -13.5
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer" unique_id=1987905441]
+layout_mode = 2
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_e0arn")
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[wave freq=1 amp=2]Enter username[/wave]"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Panel" type="Panel" parent="PanelContainer" unique_id=1451818267]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="PanelContainer/Panel" unique_id=1336840303]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_right = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("3_e0arn")
+theme_override_font_sizes/font_size = 10
+theme_override_styles/normal = SubResource("StyleBoxEmpty_y1o0p")
+theme_override_styles/read_only = SubResource("StyleBoxEmpty_r8yej")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_3y2rt")
+alignment = 1
+
+[connection signal="pressed" from="HostGame" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="JoinGame" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Options" to="." method="_on_options_pressed"]

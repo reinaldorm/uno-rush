@@ -7,6 +7,8 @@ signal cards_drawn(card: Array[CardData])
 signal play_denied(card: Array[CardData])
 signal draw_denied()
 
+@export var client_controller : ClientController
+
 @export var _turn_manager : TurnManager
 @export var _hue_manager : HueManager
 @export var _discard_pile_node : DiscardPile
@@ -21,232 +23,55 @@ const INITIAL_HAND_SIZE = 7
 const DRAW_TWO_AMOUNT = 2
 const DRAW_FOUR_AMOUNT = 4
 
-enum PlayRequestType {
-	PRESS,
-	DROP,
-	DEV
-}
-
 # -------------------------
 # Public API
 # -------------------------
 
 func start() -> void:
-	var deck := _create_deck()
-	deck.shuffle()
-	_draw_pile = deck
-
-	var first_card = _draw_pile.pop_back()
-	_hue_manager.set_hue(first_card.hue)
-
-	_discard_pile.append(first_card)
-	_discard_pile_node.start(first_card)
-
-	var player_deck : Array[CardData] = []
-
-	for i in range(INITIAL_HAND_SIZE): player_deck.append(_draw_pile.pop_back())
-
-	_hand.start(player_deck)
+	print("GameManager: Started")
 
 # -------------------------
 # Internal
 # -------------------------
 
 func _ready() -> void:
-	start()
-
-func _create_deck() -> Array[CardData]:
-	var new_deck : Array[CardData]
-
-	## One 0 card for each color
-	for color in range(4):
-		var data := CardData.create_numbered(color, 0)
-		new_deck.append(data)
-
-	## Two of each numbered card from 1-9 for each color
-	for color in range(4):
-		for i in range(2):
-			for number in range(1, 9):
-				var data := CardData.create_numbered(color, number)
-				new_deck.append(data)
-
-	## Two of each special card (SKIP, REVERSE, DRAW) for each color
-	for color in range(4):
-		for i in range(2):
-			var data_skip := CardData.create_special(color, CardData.Effect.SKIP)
-			var data_reverse := CardData.create_special(color, CardData.Effect.REVERSE)
-			var data_draw := CardData.create_special(color, CardData.Effect.DRAW, 2)
-
-			new_deck.append(data_skip)
-			new_deck.append(data_reverse)
-			new_deck.append(data_draw)
-
-	## Four of each special wild card (WILD, WILD FOUR) for each color
-	for color in range(4):
-		var data_wild := CardData.create_special(CardData.Hue.WILD, CardData.Effect.NULL)
-		var data_wild_four := CardData.create_special(CardData.Hue.WILD, CardData.Effect.DRAW, 4)
-		new_deck.append(data_wild)
-		new_deck.append(data_wild_four)
-
-	return new_deck
-
-func _can_play(card: CardData) -> bool:
-	## `card` will be the card which to evaluate.
-	## `last_card` is necessary here should we evaluate combo legibility.
-
-	var last_card := _discard_pile[_discard_pile.size() - 1]
-
-	if _draw_stack:
-		if card.hue == CardData.Hue.WILD and card.effect == CardData.Effect.DRAW: return true
-
-		if _hue_manager.hue == CardData.Hue.WILD:
-			if card.effect == CardData.Effect.DRAW:
-				if card.hue == _hue_manager.hue: return true
-		else:
-			if card.effect == CardData.Effect.DRAW: return true
-
-		return false
-
-	if card.hue == CardData.Hue.WILD: return true
-	if card.hue == _hue_manager.hue: return true
-	if card.effect != CardData.Effect.NULL and card.effect == last_card.effect: return true
-	if card.number >= 0 and card.number == last_card.number: return true
-
-	return false
-
-func _can_combo(cards: Array[CardData]) -> bool:
-	var starter = cards[0]
-
-	return cards.slice(1, cards.size()).all(func(next_card: CardData): return _can_play_with_next(starter, next_card))
-
-func _can_play_with_next(previous: CardData, next_card: CardData) -> bool:
-	if next_card.hue == CardData.Hue.WILD:
-		if next_card.effect == previous.effect:
-			return true
-		else:
-			return false
-
-	if next_card.number >= 0:
-		if next_card.number == previous.number:
-			return true
-		else:
-			return false
-
-	if next_card.effect == previous.effect:
-		return true
-	else:
-		return false
-
-func _get_last_played() -> CardData:
-	return _discard_pile[_discard_pile.size() - 1]
-
-func _apply_effects(cards_to_play: Array[CardData]) -> void:
-	var first_card := cards_to_play[0]
-
-	if first_card.effect == CardData.Effect.DRAW:
-		for card in cards_to_play:
-			_draw_stack += card.effect_parameter
-
-	if first_card.effect == CardData.Effect.REVERSE:
-		_turn_manager.set_reverses(cards_to_play.size())
-
-	if first_card.effect == CardData.Effect.SKIP:
-		_turn_manager.set_skips(cards_to_play.size())
-
-func _run_play_validation() -> bool:
-	# PLACEHOLDER
-	# TODO: Implement play validation logic
-	return true
+	client_controller.on_cards_played.connect(_on_cards_played)
+	pass
 
 # -------------------------
 # Handlers
 # -------------------------
 
-# -------------------------
-# Discard Pile
+
+# Network Handlers
+# Methods for handling network events
+
+func _on_cards_played() -> void:
+	pass
+
+# Discard Pile Handlers
 # Methods for handling discard pile signals/requests
 
-func _on_play_requested(type: PlayRequestType) -> void:
+# Function triggered by in-game event, acknolodge by GameManager
+# and sent for Server validation
+#
+func _on_play_requested() -> void:
+	var cards : Array[CardData] = []
 
-	# FUNCTION WAY TOO BIG!!!
-	# TODO: Refactor into smaller functions
+	for view in _hand.selected_cards: cards.append(view.data)
 
-	var card_views := _hand.selected_cards
-	var cards_to_play : Array[CardData] = []
+	if not cards.size(): _discard_pile_node.deny_play()
 
-	for card in card_views: cards_to_play.append(card.data)
+	client_controller.request_play_cards(cards)
 
-	if cards_to_play.size() == 0:
-		print("GameManager: No cards selected for play")
-		return
-
-	var can_play : bool = false
-
-	if card_views.size() == 1:
-		can_play = _can_play(cards_to_play[0])
-	else:
-		var can_play_first = _can_play(cards_to_play[0])
-		if can_play_first: can_play = _can_combo(cards_to_play)
-
-	var first_card = cards_to_play[0]
-
-	if can_play:
-		_discard_pile.append_array(cards_to_play)
-
-		var last_card := _get_last_played()
-
-		await _discard_pile_node.confirm_play(card_views)
-
-		if first_card.hue == CardData.Hue.WILD:
-			await _hue_manager.prompt_hue_selection()
-		else: _hue_manager.set_hue(last_card.hue)
-
-		if first_card.effect != CardData.Effect.NULL: _apply_effects(cards_to_play)
-
-		_draw_pile_node.update_draw_stack(_draw_stack)
-
-		await _turn_manager.advance_turn()
-
-		emit_signal("cards_played", cards_to_play)
-
-		print("GameManager: Play routine ended, accepted.")
-	else:
-		_discard_pile_node.reject_play()
-		emit_signal("play_denied", cards_to_play)
-
-		print("GameManager: Play routine ended, rejected.")
-
-# -------------------------
-# Draw Pile
+# Draw Pile Handlers
 # Methods for handling draw pile signals/requests
 
 func _on_draw_requested() -> void:
+	client_controller.request_draw_cards()
 
-	## TODO
-	## Waiting Turn implementation logic
-	## Function currently accepts any request for drawing new cards as seen below.
-
-	var drawn_cards : Array[CardData]
-
-	if _draw_stack:
-		for i in range(_draw_stack): drawn_cards.append(_draw_pile.pop_back())
-	else:
-		drawn_cards.append(_draw_pile.pop_back())
-
-	emit_signal("cards_drawn", drawn_cards)
-
-# -------------------------
-# Hand
+# Hand Handlers
 # Methods for handling hand signals/requests
 
-func _on_selection_changed(cards: Array[CardData], has_selection: bool) -> void:
-	var available_cards : Array[CardData] = []
-
-	if has_selection:
-		if _can_combo(cards): available_cards.append_array(cards)
-	else:
-		for card in cards:
-			if _can_play(card): available_cards.append(card)
-
+func _on_selection_changed() -> void:
 	print("GameManager: Selection changed")
-	_hand.update_available_cards(available_cards)

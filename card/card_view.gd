@@ -42,7 +42,7 @@ func setup(card_data: CardData, draggable: bool, flipped:= false) -> void:
 	if not draggable: drag_component.queue_free()
 	set_flip(flipped)
 
-## Animation APIA
+## Animation API
 ## -------------------------
 
 func animate(channel: String, e:= Tween.EASE_OUT, t:= Tween.TRANS_ELASTIC) -> Tween:
@@ -90,8 +90,6 @@ func reset() -> void:
 
 	_fx_transform.scale = Vector2(1.0, 1.0)
 	_fx_transform.rotation = 0.
-
-
 
 	scale = Vector2(1.0, 1.0)
 

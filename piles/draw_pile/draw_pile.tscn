@@ -141,11 +141,12 @@ _data = {
 &"hover": SubResource("Animation_g1psd")
 }
 
-[node name="DrawPile" type="Node2D" unique_id=338390635 node_paths=PackedStringArray("_top_sprite", "_animation_player")]
+[node name="DrawPile" type="Node2D" unique_id=338390635 node_paths=PackedStringArray("_top_sprite", "_animation_player", "_views_node")]
 script = ExtResource("1_5owy3")
-_card_scene = ExtResource("2_4vc22")
+_card_view_scene = ExtResource("2_4vc22")
 _top_sprite = NodePath("TopCard")
 _animation_player = NodePath("AnimationPlayer")
+_views_node = NodePath("Views")
 
 [node name="Shadow" type="Sprite2D" parent="." unique_id=1851579545]
 modulate = Color(0.011764706, 0.011764706, 0.011764706, 0.23529412)
@@ -162,6 +163,8 @@ texture = ExtResource("3_jp8xb")
 material = SubResource("ShaderMaterial_4vc22")
 scale = Vector2(2.5, 2.5)
 texture = ExtResource("1_mvv51")
+
+[node name="Views" type="Node2D" parent="." unique_id=1431979432]
 
 [node name="DrawBubble" type="AnimatedSprite2D" parent="." unique_id=2115223348]
 position = Vector2(0, -30)

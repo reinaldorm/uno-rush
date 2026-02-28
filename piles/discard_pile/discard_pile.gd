@@ -169,7 +169,7 @@ func _on_card_drop_requested(draggable: Node2D) -> void:
 	# user tried to drop a card onto the discard pile; forward the
 	# underlying data to the game manager via the public signal.
 
-	if draggable is CardView: emit_signal("play_requested", GameManager.PlayRequestType.DROP)
+	if draggable is CardView: emit_signal("play_requested")
 
 	# TODO
 	# Should no execute this directly, this animation should be turned into a method
@@ -185,7 +185,7 @@ func _on_mouse_exited() -> void:
 	_set_playable(false)
 
 func _on_button_pressed():
-	emit_signal("play_requested", GameManager.PlayRequestType.PRESS)
+	emit_signal("play_requested")
 
 # -------------------------
 # Handlers

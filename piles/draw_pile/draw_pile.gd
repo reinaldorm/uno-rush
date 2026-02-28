@@ -6,7 +6,7 @@ signal draw_requested()
 @export var _card_view_scene: PackedScene
 @export var _top_sprite: Sprite2D
 @export var _animation_player: AnimationPlayer
-@export var _views_node = Node2D
+@export var _views_node : Node2D
 
 var _views_arr : Array[CardView] = []
 var _draw_stack: int = 0
@@ -30,21 +30,46 @@ func update_draw_stack(new_stack: int) -> void:
 	if new_stack == _draw_stack: return
 
 	for i in range(new_stack):
-		var view = _card_view_scene.instantiate()
-		view.position = Vector2(0, i * 50)
+		var view : CardView = _card_view_scene.instantiate()
+
+		view.set_flip(true)
+
+		view.scale = Vector2(0.0, 0.0)
+
 		_views_node.add_child(view)
+		_views_arr.append(view)
+
+	_tween = TweenHelper.new_tween(_tween, self).set_parallel()
+	_tween.set_trans(Tween.TRANS_ELASTIC)
+	_tween.set_ease(Tween.EASE_OUT)
+
+	for i in range(_views_arr.size()):
+		var view = _views_arr[i]
+		add_view_to_stack(view)
+		_tween.tween_property(view, "scale", Vector2(0.5, 0.5), 1.0).set_delay(i * 0.05)
 
 # -------------------------
 # Internal
 # -------------------------
 
-func _idle(delta: float) -> void:
-	_views_node.rotation += _tick
+func _process(delta: float) -> void:
+	_tick += delta
 
-	var angle_up := _views_node.get_angle_to(Vector.UP)
+	_idle()
 
-	for view in _views_arr: 
-		view.rotation = angle_up
+func _idle() -> void:
+	_views_node.rotation = _tick
+
+	for view in _views_arr:
+		view.rotation = -_views_node.rotation
+
+func add_view_to_stack(view: CardView) -> void:
+	var angle_dif = TAU / _views_arr.size()
+
+	view.position = Vector2(
+		cos(angle_dif * _views_arr.find(view)) * 40,
+		sin(angle_dif * _views_arr.find(view)) * 40
+	)
 
 # -------------------------
 # Handlers

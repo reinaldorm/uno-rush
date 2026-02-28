@@ -214,6 +214,7 @@ position = Vector2(8, 12)
 texture = ExtResource("2_4bpaw")
 hframes = 13
 vframes = 5
+frame = 62
 
 [node name="SelectionTransform" type="Node2D" parent="." unique_id=1445043032]
 

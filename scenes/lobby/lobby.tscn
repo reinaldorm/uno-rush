@@ -1,0 +1,430 @@
+[gd_scene format=3 uid="uid://dr0bgt15w583p"]
+
+[ext_resource type="Shader" uid="uid://dp3lgf7lykufk" path="res://shaders/vcr.gdshader" id="1_h2fxu"]
+[ext_resource type="Script" uid="uid://dtp86pnfgcao4" path="res://scenes/lobby/lobby.gd" id="1_l1n8d"]
+[ext_resource type="Texture2D" uid="uid://duhia0n1f648k" path="res://assets/background/tile_black.png" id="2_rpul7"]
+[ext_resource type="Texture2D" uid="uid://8h13r6dc8udx" path="res://scenes/color_selection/assets/red_texture.png" id="3_iytm0"]
+[ext_resource type="FontFile" uid="uid://bwlxp6kod573k" path="res://assets/fonts/monogram.ttf" id="3_u5spv"]
+[ext_resource type="Texture2D" uid="uid://bdlstv3xjk405" path="res://assets/logo.png" id="4_eou1g"]
+[ext_resource type="Texture2D" uid="uid://xllid4fhicip" path="res://scenes/color_selection/assets/green_texture.png" id="4_l1n8d"]
+[ext_resource type="Texture2D" uid="uid://drt5rnen71300" path="res://scenes/color_selection/assets/blue_texture.png" id="5_m8hcm"]
+[ext_resource type="Texture2D" uid="uid://bjkdf7c43kcjv" path="res://scenes/color_selection/assets/yellow_texture.png" id="6_5l4x7"]
+[ext_resource type="Texture2D" uid="uid://cd40jerrwodxi" path="res://assets/cursor/press_hand.png" id="8_m8hcm"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_037ec"]
+noise_type = 4
+seed = 2
+frequency = 0.0973
+fractal_type = 0
+fractal_lacunarity = 2.4
+fractal_gain = -0.06
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hujxm"]
+width = 200
+height = 200
+noise = SubResource("FastNoiseLite_037ec")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y1o0p"]
+shader = ExtResource("1_h2fxu")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 3.0
+shader_parameter/fps = 6.0
+shader_parameter/noise = SubResource("NoiseTexture2D_hujxm")
+
+[sub_resource type="Environment" id="Environment_e0arn"]
+background_mode = 3
+ssao_radius = 8.24
+ssao_intensity = 6.77
+glow_enabled = true
+glow_levels/1 = 0.5
+glow_levels/2 = 0.6
+glow_levels/3 = 0.9
+glow_levels/4 = 0.05
+glow_levels/5 = 0.1
+glow_levels/7 = 0.1
+glow_intensity = 0.1
+glow_hdr_threshold = 0.04
+adjustment_enabled = true
+adjustment_contrast = 1.03
+adjustment_saturation = 1.1
+
+[sub_resource type="Animation" id="Animation_m8hcm"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/HostIndicator:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(394, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_5l4x7"]
+resource_name = "idle"
+length = 2.0
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/CardVisual:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(0.3077861, 0.3077861, 0.3077861),
+"update": 0,
+"values": [-0.2617994, 0.2617994, -0.2617994]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Visuals/CardVisual2:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(0.46651655, 0.46651655, 0.46651655),
+"update": 0,
+"values": [0.2617993877991494, -0.2617993877991494, 0.2617993877991494]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Visuals/CardVisual4:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(0.46651655, 0.46651655, 0.46651655),
+"update": 0,
+"values": [0.2617993877991494, -0.2617993877991494, 0.2617993877991494]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Visuals/CardVisual3:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1.464086, 1.464086, 1.464086),
+"update": 0,
+"values": [-0.2617994, 0.2617994, -0.2617994]
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Visuals/HostIndicator:position:x")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0, 2, 0),
+"points": PackedFloat32Array(400, -0.25, 0, 0.4, -12.948273, 397.56284, -0.10627527, 2.1089907, 0.5, -9.922302, 400, -0.70000005, -0.35684204, 0.6, -10.47287),
+"times": PackedFloat32Array(0, 0.9, 2)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_a0ps3"]
+_data = {
+&"RESET": SubResource("Animation_m8hcm"),
+&"idle": SubResource("Animation_5l4x7")
+}
+
+[node name="Lobby" type="Control" unique_id=1469747293 node_paths=PackedStringArray("_players_node")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l1n8d")
+_players_node = NodePath("Players")
+
+[node name="StartGame" type="Button" parent="." unique_id=202087863]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -51.0
+offset_right = 40.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="StartGame" unique_id=367219936]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="StartGame/PanelContainer" unique_id=260101667]
+layout_mode = 2
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_u5spv")
+bbcode_enabled = true
+text = "[wave freq=3]Start Game[/wave]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Players" type="Control" parent="." unique_id=328570083]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -45.0
+offset_top = -46.0
+offset_right = 45.0
+offset_bottom = 46.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Player1" type="PanelContainer" parent="Players" unique_id=1830803743]
+custom_minimum_size = Vector2(90, 20)
+layout_mode = 0
+offset_left = 16.0
+offset_right = 106.0
+offset_bottom = 20.0
+mouse_filter = 1
+
+[node name="PlayerName" type="RichTextLabel" parent="Players/Player1" unique_id=248659656]
+layout_mode = 2
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_u5spv")
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[wave freq=3 amp=2]reinaldohrm[/wave]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player2" type="PanelContainer" parent="Players" unique_id=1382411672]
+custom_minimum_size = Vector2(90, 20)
+layout_mode = 0
+offset_left = -8.0
+offset_top = 24.0
+offset_right = 82.0
+offset_bottom = 44.0
+mouse_filter = 1
+
+[node name="PlayerName" type="RichTextLabel" parent="Players/Player2" unique_id=667574812]
+layout_mode = 2
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_u5spv")
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[wave freq=3 amp=2]Waiting player..[/wave]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player3" type="PanelContainer" parent="Players" unique_id=1489924079]
+custom_minimum_size = Vector2(90, 20)
+layout_mode = 0
+offset_left = 18.0
+offset_top = 48.0
+offset_right = 108.0
+offset_bottom = 68.0
+mouse_filter = 1
+
+[node name="PlayerName" type="RichTextLabel" parent="Players/Player3" unique_id=778187618]
+layout_mode = 2
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_u5spv")
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[wave freq=3 amp=2]Waiting player..[/wave]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Player4" type="PanelContainer" parent="Players" unique_id=1684485207]
+custom_minimum_size = Vector2(90, 20)
+layout_mode = 0
+offset_left = -9.0
+offset_top = 72.0
+offset_right = 81.0
+offset_bottom = 92.0
+mouse_filter = 1
+
+[node name="PlayerName" type="RichTextLabel" parent="Players/Player4" unique_id=1809937212]
+layout_mode = 2
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_u5spv")
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[wave freq=3 amp=2]Waiting player..[/wave]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Visuals" type="Control" parent="." unique_id=1373620633]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Logo" type="TextureRect" parent="Visuals" unique_id=341944464]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -28.0
+offset_top = 234.0
+offset_right = 4.0
+offset_bottom = 258.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(5.375, 5.375)
+texture = ExtResource("4_eou1g")
+
+[node name="CardVisual" type="TextureRect" parent="Visuals" unique_id=856724532]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 248.99997
+offset_top = 114.999985
+offset_right = 268.99997
+offset_bottom = 134.99998
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.25803626
+pivot_offset = Vector2(10, 10)
+texture = ExtResource("3_iytm0")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="CardVisual2" type="TextureRect" parent="Visuals" unique_id=2054098835]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 338.99997
+offset_top = 138.00002
+offset_right = 358.99997
+offset_bottom = 158.00002
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 0.24162267
+pivot_offset = Vector2(10, 10)
+texture = ExtResource("4_l1n8d")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="CardVisual3" type="TextureRect" parent="Visuals" unique_id=1974438396]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 251.00006
+offset_top = 162.00002
+offset_right = 271.00006
+offset_bottom = 182.00002
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.102869935
+pivot_offset = Vector2(10, 10)
+texture = ExtResource("5_m8hcm")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="CardVisual4" type="TextureRect" parent="Visuals" unique_id=460940944]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 338.0001
+offset_top = 186.00003
+offset_right = 358.0001
+offset_bottom = 206.00003
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 0.24162267
+pivot_offset = Vector2(10, 10)
+texture = ExtResource("6_5l4x7")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="HostIndicator" type="Control" parent="Visuals" unique_id=1561333961]
+anchors_preset = 0
+offset_left = 394.0
+offset_top = 134.0
+offset_right = 448.0
+offset_bottom = 154.0
+
+[node name="TextureRect" type="TextureRect" parent="Visuals/HostIndicator" unique_id=1832036845]
+layout_mode = 0
+offset_left = -14.0
+offset_top = 18.0
+offset_right = 2.0
+offset_bottom = 38.0
+rotation = -1.5707964
+texture = ExtResource("8_m8hcm")
+
+[node name="PlayerName" type="RichTextLabel" parent="Visuals/HostIndicator" unique_id=2145445231]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = 42.0
+offset_bottom = 14.0
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_u5spv")
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[rainbow][wave freq=5 amp=10]Host [/wave][/rainbow]"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Information" type="RichTextLabel" parent="." unique_id=313500468]
+layout_mode = 0
+offset_left = 513.0
+offset_top = 315.0
+offset_right = 627.0
+offset_bottom = 349.0
+mouse_filter = 1
+theme_override_fonts/normal_font = ExtResource("3_u5spv")
+bbcode_enabled = true
+text = "Waiting for host.."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=290225234]
+layer = -1
+
+[node name="Background" type="TextureRect" parent="Background" unique_id=1904272372]
+z_index = -1
+texture_repeat = 3
+material = SubResource("ShaderMaterial_y1o0p")
+offset_left = -1.0
+offset_right = 639.0
+offset_bottom = 360.0
+texture = ExtResource("2_rpul7")
+stretch_mode = 1
+metadata/_edit_lock_ = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=426110719]
+environment = SubResource("Environment_e0arn")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=338447434]
+libraries/ = SubResource("AnimationLibrary_a0ps3")
+autoplay = &"idle"
+
+[connection signal="pressed" from="StartGame" to="." method="_on_start_pressed"]

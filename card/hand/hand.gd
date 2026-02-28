@@ -54,6 +54,7 @@ func _ready() -> void:
 	for child in get_children():
 		if child is CardView:
 			_card_views.append(child)
+			child.set_flip(true)
 			#child.setup(CardData.create(randi_range(0, CardData.COLOR.size() - 1), randi_range(0, 9)), false, true)
 	_arrange()
 

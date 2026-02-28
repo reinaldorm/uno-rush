@@ -2,41 +2,114 @@
 
 [ext_resource type="FontFile" uid="uid://bwlxp6kod573k" path="res://assets/fonts/monogram.ttf" id="1_6ca3a"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_6ca3a"]
+line_spacing = -1.995
+font = ExtResource("1_6ca3a")
+font_size = 8
+
 [node name="Hud" type="CanvasLayer" unique_id=827020285]
 
-[node name="RichTextLabel" type="RichTextLabel" parent="." unique_id=956734558]
-offset_right = 85.0
-offset_bottom = 40.0
+[node name="PlayerLeft" type="RichTextLabel" parent="." unique_id=1985710432]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -314.0
+offset_right = -229.0
+offset_bottom = 17.0
+grow_horizontal = 2
 theme_override_fonts/normal_font = ExtResource("1_6ca3a")
-text = "UI Element"
+theme_override_font_sizes/normal_font_size = 12
+text = "PLAYER LEFT"
+vertical_alignment = 1
+
+[node name="PlayerCenter" type="RichTextLabel" parent="." unique_id=1072649564]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -42.5
+offset_right = 42.5
+offset_bottom = 17.0
+grow_horizontal = 2
+theme_override_fonts/normal_font = ExtResource("1_6ca3a")
+theme_override_font_sizes/normal_font_size = 12
+text = "PLAYER CENTER"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RichTextLabel2" type="RichTextLabel" parent="." unique_id=363235341]
-offset_top = 320.0
-offset_right = 85.0
-offset_bottom = 360.0
+[node name="PlayerRight" type="RichTextLabel" parent="." unique_id=1559789240]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 229.0
+offset_right = 314.0
+offset_bottom = 17.0
+grow_horizontal = 2
 theme_override_fonts/normal_font = ExtResource("1_6ca3a")
-text = "UI Element"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="RichTextLabel3" type="RichTextLabel" parent="." unique_id=236470520]
-offset_left = 538.0
-offset_top = 328.0
-offset_right = 636.0
-offset_bottom = 368.0
-theme_override_font_sizes/normal_font_size = 4
-text = "uno_rush-alpha_build
-live-demo-0.1"
+theme_override_font_sizes/normal_font_size = 12
+text = "PLAYER RIGHT"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="RichTextLabel4" type="RichTextLabel" parent="." unique_id=546756040]
-offset_left = 555.0
-offset_right = 640.0
-offset_bottom = 40.0
-theme_override_fonts/normal_font = ExtResource("1_6ca3a")
-text = "UI Element"
-horizontal_alignment = 1
+[node name="game_version_info" type="Label" parent="." unique_id=336362483]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -315.0
+offset_top = 324.0
+offset_right = -148.0
+offset_bottom = 373.0
+grow_horizontal = 2
+text = "uno_rush-alpha_build
+live-demo"
+label_settings = SubResource("LabelSettings_6ca3a")
 vertical_alignment = 1
+
+[node name="BottomRight" type="HBoxContainer" parent="." unique_id=208489665]
+offset_left = 546.0
+offset_top = 332.0
+offset_right = 632.0
+offset_bottom = 353.0
+alignment = 1
+
+[node name="Button" type="Button" parent="BottomRight" unique_id=954577562]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_6ca3a")
+text = "Pass Turn"
+
+[node name="ColorRect" type="ColorRect" parent="BottomRight" unique_id=1389096409]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+color = Color(0.06666667, 0.06666667, 0.06666667, 0.49803922)
+
+[node name="BottomCenter" type="HBoxContainer" parent="." unique_id=77351844]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -43.0
+offset_top = 152.0
+offset_right = 43.0
+offset_bottom = 173.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="ArrangeNumber" type="Button" parent="BottomCenter" unique_id=1835788781]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_6ca3a")
+text = "Arrange Number"
+
+[node name="UNO" type="Button" parent="BottomCenter" unique_id=1966454286]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_6ca3a")
+text = "UNO"
+
+[node name="ArrangeColor" type="Button" parent="BottomCenter" unique_id=128005778]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_6ca3a")
+text = "Arrange Color"
