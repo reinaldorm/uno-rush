@@ -1,14 +1,14 @@
 extends Node
 class_name GameLogic
 
-var players = {}
+var players : Dictionary[String, Dictionary] = {}
 
-var turn_order = []
-var current_turn = 0
+var turn_order := []
+var current_turn := 0
 
 var discard_pile : Array[CardData] = []
 var draw_pile : Array[CardData] = []
-var draw_stack = 0
+var draw_stack := 0
 
 # -------------------------
 # Internal
@@ -88,22 +88,39 @@ func _validate_play(cards: Array[CardData]) -> bool:
 # Internal
 # -------------------------
 
-func add_player(id):
-	players[id] = { "hand" = [], "health" = 20 }
+func add_player(id) -> Dictionary:
+	players[id] = { "hand" = [] }
 	turn_order.append(id)
+	return players[id]
 
-func current_player():
+func current_player() -> Dictionary:
 	return turn_order[current_turn]
 
-func next_turn():
+func next_turn() -> void:
 	current_turn = (current_turn + 1) % turn_order.size()
 
-func play_card(player_id, card):
-	if player_id != current_player():
-		return false
+func start() -> void:
+	draw_pile = _create_deck()
+	discard_pile.append(CardData.create_number(CardData.Hue.RED, 0)
+	for player in players.values():
+		var hand := draw_from_pile(7)
 
-	if card not in players[player_id].hand:
-		return false
+func draw_from_pile(amount: int) -> Array[CardData]:
+	var stack : Array[CardData] = []
+
+	for i in range(amount): stack.append(draw_pile.pop_back))
+
+	return stack
+
+func draw_cards(player_id: int) -> void:
+	if player_id != current_player()
+	var player := players[player_id]
+
+	player.hand.append_array(draw_stack)
+
+func play_card(player_id, card):
+	if player_id != current_player(): return false
+	if card not in players[player_id].hand: return false
 
 	players[player_id].hand.erase(card)
 	next_turn()
