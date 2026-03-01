@@ -5,21 +5,27 @@ class_name ServerController
 
 var _game : GameLogic
 
+
+# -------------------------
+# Internal
+# -------------------------
+
+func _ready() -> void:
+    if not multiplayer.is_server: return
+
+    _game = GameLogic.new()
+    _game.start()
+
+    for peer in multiplayer.get_peers():
+        var peer_snapshot := create_player_snapshot(peer)
+
+        client_controller.rpc_id(peer, "_on_game_started", peer_snapshot)
+
 # -------------------------
 # RPC Methods
 # -------------------------
 
-@rpc("any_peer")
-func request_start() -> void:
-    var sender_id := multiplayer.get_remote_sender_id()
-    if sender_id != 1: return
 
-    var ok = _game.start()
-
-    if ok:
-        client_controller._on_game_started.rpc() ## TODO: send back game information
-    else:
-        client_controller._on_start_failed.rpc_id(sender_id)
 
 @rpc("any_peer", "reliable")
 func request_play_cards(cards_serial: Array[Dictionary]) -> void:

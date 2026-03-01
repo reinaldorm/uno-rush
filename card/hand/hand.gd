@@ -12,7 +12,7 @@ var _dragging_card : CardView = null
 # Public API
 # -------------------------
 
-func setup(player_id: int) -> void:
+func setup(player_id: int, first_hand: Array[CardView]) -> void:
 	set_multiplayer_authority(player_id)
 
 func restore_card(card_view: CardView) -> void:

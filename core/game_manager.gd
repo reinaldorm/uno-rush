@@ -3,9 +3,7 @@ class_name GameManager
 
 signal cards_played(card: Array[CardData])
 signal cards_drawn(card: Array[CardData])
-
 signal play_denied(card: Array[CardData])
-signal draw_denied()
 
 @export var client_controller : ClientController
 
@@ -14,41 +12,79 @@ signal draw_denied()
 @export var _discard_pile_node : DiscardPile
 @export var _draw_pile_node : DrawPile
 
-@export var _hand : Array[Hand]
+@export var _hands : Array[Hand]
 @export var _client_hand : Hand
 
-var _discard_pile : Array[CardData] = []
-var _draw_pile : Array[CardData] = []
-var _draw_stack := 0
-
-const INITIAL_HAND_SIZE = 7
-const DRAW_TWO_AMOUNT = 2
-const DRAW_FOUR_AMOUNT = 4
+@export var _card_scene : PackedScene
 
 # -------------------------
 # Public API
 # -------------------------
 
-func start() -> void:
-	print("GameManager: Started")
-	_client_hand._add_cards([CardData.create_numbered(CardData.Hue.RED, 0), CardData.create_numbered(CardData.Hue.RED, 0), CardData.create_numbered(CardData.Hue.RED, 0)])
-	_client_hand._arrange()
-
 # -------------------------
 # Internal
 # -------------------------
+
+func _start(snapshot: Dictionary) -> void:
+	print("GameManager: Game is supposed to be started, beggining of block.")
+	###
+	var top_card := CardData.to_data(snapshot["top_card"])
+	discard_pile_node.setup(top_card)
+	
+	for player in snapshot.players:
+		var id = player["id"]:
+
+		if id == multiplayer.get_unique_id():
+			_create_player_hand(id, player["hand"])
+		else:
+			_create_opponent_hand(id, player["hand_count"])
+	
+	for hand in _hands():
+		await hand.start()
+	
+	await discard_pile_node.start()
+	##
+	print("GameManager: Game is supposed to be started, end of block.")
+
+
+
 
 func _ready() -> void:
 	client_controller.on_cards_played.connect(_on_cards_played)
 	client_controller.on_cards_drawn.connect(_on_cards_drawn)
 	client_controller.on_turn_skipped.connect(_on_turn_skipped)
+	client_controller.on_game_started.connect(_on_game_started)
 
-	start()
+func _create_player_hand(id: int, hand: Array[Dictionary]) -> void:
+	var cards : Array[CardData] = []
+	var views : Array[CardView] = []
+
+	for card_serial in hand: cards.append(CardData.to_data(card_serial))
+	for card in cards:
+		var view : CardView = _view_scene.instantiate()
+		view.setup(card, false)
+		views.append(view)
+
+	_client_hand.setup(id, views)
+
+func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
+	var cards : Array[CardData] = []
+	var views : Array[CardView] = []
+
+	for i in range(hand_count):
+		var card_data = CardData.create_numbered(CardData.Hue.RED, 0)
+		cards.append(card_data)
+	
+	for card in cards:
+		var view : CardView = _view_scene.instantiate()
+		view.setup(card, true)
+		views.append(view)
+
+	_hands[i].setup(id, views)
 
 # -------------------------
 # Handlers
 # -------------------------
-
 
 # Network Handlers
 # Methods for handling network events
@@ -61,6 +97,9 @@ func _on_cards_drawn() -> void:
 
 func _on_turn_skipped() -> void:
 	print("GameManager: Turn skipped from network")
+
+func _on_game_started(snapshot: Dictionary) -> void:
+	_start(snapshot)
 
 # Discard Pile Handlers
 # Methods for handling discard pile signals/requests

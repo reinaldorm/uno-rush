@@ -6,10 +6,9 @@ class_name ClientController
 var client_id : int = 0 : get = _get_client_id
 
 signal on_cards_played()
-
 signal on_cards_drawn()
-
 signal on_turn_skipped()
+signal on_game_started(snapshot: Dictionary)
 
 # -------------------------
 # Public API
@@ -40,9 +39,17 @@ func _on_cards_drawn() -> void:
 func _on_turn_skipped() -> void:
 	emit_signal("on_turn_skipped")
 
+@rpc("authority", "reliable", "call_local")
+func _on_game_started(snapshot: Dictionary):
+	emit_signal("on_game_started", snapshot)
+
 # -------------------------
 # Handlers
 # -------------------------
+
+func _ready() -> void:
+	if client_id == 1:
+		ServerController.initialize.rpc_id(1)
 
 func _get_client_id() -> int:
 	return multiplayer.multiplayer_peer.get_unique_id()

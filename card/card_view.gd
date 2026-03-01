@@ -35,12 +35,11 @@ var _tick := 0.0
 # Public API
 # -------------------------
 
-func setup(card_data: CardData, draggable: bool, flipped:= false) -> void:
+func setup(card_data: CardData, flipped:= false) -> void:
 	data = card_data
 
 	_card_sheet.frame_coords = _get_texture_coord()
 
-	if not draggable: drag_component.queue_free()
 	set_flip(flipped)
 
 ## Animation API

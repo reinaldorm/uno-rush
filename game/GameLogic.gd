@@ -5,6 +5,7 @@ var players : Dictionary[int, Dictionary] = {}
 
 var turn_order := []
 var current_turn := 0
+var direction := 1
 
 var discard_pile : Array[CardData] = []
 var draw_pile : Array[CardData] = []
@@ -24,7 +25,9 @@ func start() -> void:
 		player["hand"].append_array(hand)
 
 	ongoing = true
-	return ongoing
+	var snapshot := _create_snapshot
+
+	return snapshot
 
 func draw_cards(player_id: int) -> void:
 	if player_id != current_player(): return
@@ -42,9 +45,35 @@ func play_card(player_id, card):
 	return true
 
 func add_player(id) -> Dictionary:
-	players[id] = { "hand" = [] }
+	players[id] = { "hand" = [], "id" = id }
 	turn_order.append(id)
 	return players[id]
+
+func create_player_snapshot(player_id: int) -> Dictionary:
+	var players_snapshot :  Array[Dictionary] = []
+	var player_hand_serial : Array[Dictionary] = []
+
+	for card in players[id]["hand"]:
+		player_hand_serial.append(CardData.to_serial(card))
+
+	for id in turn_order: 
+		if id == player_id:
+			players_snapshot.append({
+				"id" = players[id]["id"],
+				"hand" = player_hand_serial
+			})
+		else:
+			players_snapshot.append({
+				"id" = players[id]["id"],
+				"hand_count" = players[id]["hand"].size()
+			})
+
+	return {
+		"players": players_snapshot,
+		"current_player": current_player(),
+		"top_card": CardData.to_serial(discard_pile[0]),
+	}
+
 
 # -------------------------
 # Internal
