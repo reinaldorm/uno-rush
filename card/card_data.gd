@@ -16,11 +16,11 @@ enum Effect {
 	NULL
 }
 
-var hue : Hue
-var number : int
-var effect : Effect
-var effect_parameter : int
-var id: String
+@export var hue : Hue
+@export var number : int
+@export var effect : Effect
+@export var effect_parameter : int
+@export var id: String
 
 static func create_numbered(_hue: Hue, _number: int) -> CardData:
 	if _number < 0 or _number > 9: pass ## Should throw error as no card may have lower than 0 or greater than 9 numbers.

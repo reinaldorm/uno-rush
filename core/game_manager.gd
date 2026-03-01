@@ -13,7 +13,9 @@ signal draw_denied()
 @export var _hue_manager : HueManager
 @export var _discard_pile_node : DiscardPile
 @export var _draw_pile_node : DrawPile
-@export var _hand : Hand
+
+@export var _hand : Array[Hand]
+@export var _client_hand : Hand
 
 var _discard_pile : Array[CardData] = []
 var _draw_pile : Array[CardData] = []
@@ -29,6 +31,8 @@ const DRAW_FOUR_AMOUNT = 4
 
 func start() -> void:
 	print("GameManager: Started")
+	_client_hand._add_cards([CardData.create_numbered(CardData.Hue.RED, 0), CardData.create_numbered(CardData.Hue.RED, 0), CardData.create_numbered(CardData.Hue.RED, 0)])
+	_client_hand._arrange()
 
 # -------------------------
 # Internal
@@ -36,7 +40,10 @@ func start() -> void:
 
 func _ready() -> void:
 	client_controller.on_cards_played.connect(_on_cards_played)
-	pass
+	client_controller.on_cards_drawn.connect(_on_cards_drawn)
+	client_controller.on_turn_skipped.connect(_on_turn_skipped)
+
+	start()
 
 # -------------------------
 # Handlers
@@ -46,29 +53,29 @@ func _ready() -> void:
 # Network Handlers
 # Methods for handling network events
 
-func _on_cards_played() -> void:
-	pass
+func _on_cards_played(_card_data: Array[CardData]) -> void:
+	print("GameManager: Cards played from network")
+
+func _on_cards_drawn() -> void:
+	print("GameManager: Cards drawn from network")
+
+func _on_turn_skipped() -> void:
+	print("GameManager: Turn skipped from network")
 
 # Discard Pile Handlers
 # Methods for handling discard pile signals/requests
 
 # Function triggered by in-game event, acknolodge by GameManager
 # and sent for Server validation
-#
+
 func _on_play_requested() -> void:
-	var cards : Array[CardData] = []
-
-	for view in _hand.selected_cards: cards.append(view.data)
-
-	if not cards.size(): _discard_pile_node.deny_play()
-
-	client_controller.request_play_cards(cards)
+	print("GameManager: Client requested play")
 
 # Draw Pile Handlers
 # Methods for handling draw pile signals/requests
 
 func _on_draw_requested() -> void:
-	client_controller.request_draw_cards()
+	print("GameManager: Client requested draw")
 
 # Hand Handlers
 # Methods for handling hand signals/requests

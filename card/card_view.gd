@@ -2,7 +2,7 @@ class_name CardView
 extends Node2D
 
 signal mouse_left_down(card_view: CardView)
-signal mouse_left_up(card_view: CardView)
+signal mouse_right_down(card_view: CardView)
 
 @export var drag_component : DragComponent
 
@@ -18,7 +18,8 @@ signal mouse_left_up(card_view: CardView)
 
 @export var size : Vector2
 
-var data : CardData
+@export var data : CardData
+
 var is_selected := false
 
 var _tween_channels : Dictionary[String, Tween] = {
@@ -189,3 +190,6 @@ func _on_drag_started(_owner: Node2D) -> void:
 
 func _on_input_component_mouse_left_down() -> void:
 	emit_signal("mouse_left_down", self)
+
+func _on_input_component_mouse_right_down() -> void:
+	emit_signal("mouse_right_down", self)

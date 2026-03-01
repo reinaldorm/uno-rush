@@ -6,8 +6,10 @@ class_name ClientController
 var client_id : int = 0 : get = _get_client_id
 
 signal on_cards_played()
+
 signal on_cards_drawn()
-signal on_cards_skip()
+
+signal on_turn_skipped()
 
 # -------------------------
 # Public API
@@ -28,15 +30,15 @@ func request_turn_skip() -> void:
 
 @rpc("authority", "reliable", "call_local")
 func _on_cards_played() -> void:
-	emit_signal("_on_cards_played()")
+	emit_signal("on_cards_played")
 
 @rpc("authority", "reliable", "call_local")
-func _on_play_failed() -> void:
-	emit_signal("_on_cards_played()")
+func _on_cards_drawn() -> void:
+	emit_signal("on_cards_drawn")
 
 @rpc("authority", "reliable", "call_local")
-func _on_turn_skip() -> void:
-	emit_signal("_on_cards_played()")
+func _on_turn_skipped() -> void:
+	emit_signal("on_turn_skipped")
 
 # -------------------------
 # Handlers

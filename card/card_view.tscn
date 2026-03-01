@@ -272,6 +272,7 @@ theme_override_styles/pressed = SubResource("StyleBoxEmpty_ui2he")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_bssyu")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_r8rk4")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_lh0ho")
+disabled = true
 script = ExtResource("8_qvwpc")
 metadata/_custom_type_script = "uid://bgadywqyw6ite"
 
@@ -287,5 +288,5 @@ speed_scale = 10.0
 [connection signal="mouse_entered" from="InputComponent" to="." method="_on_card_entered"]
 [connection signal="mouse_exited" from="InputComponent" to="." method="_on_card_exited"]
 [connection signal="mouse_left_down" from="InputComponent" to="." method="_on_input_component_mouse_left_down"]
-[connection signal="mouse_right_down" from="InputComponent" to="DragComponent" method="begin_drag"]
+[connection signal="mouse_right_down" from="InputComponent" to="." method="_on_input_component_mouse_right_down"]
 [connection signal="mouse_right_up" from="InputComponent" to="DragComponent" method="end_drag"]

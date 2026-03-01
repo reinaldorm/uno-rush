@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://dx5kml527dyff" path="res://card/hand/hand.tscn" id="2_k2fmo"]
 [ext_resource type="PackedScene" uid="uid://clbegaov7rk68" path="res://piles/draw_pile/draw_pile.tscn" id="3_k2fmo"]
 [ext_resource type="PackedScene" uid="uid://do5kc56ios2tk" path="res://piles/discard_pile/discard_pile.tscn" id="4_l3cfh"]
-[ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="5_raeie"]
 [ext_resource type="Shader" uid="uid://dp3lgf7lykufk" path="res://shaders/vcr.gdshader" id="6_ow5a4"]
 [ext_resource type="PackedScene" uid="uid://bge1wr6a45a8d" path="res://interactions/drag/drag_layer.tscn" id="6_th5th"]
 [ext_resource type="Script" uid="uid://bxvsjmh1bsh2g" path="res://fx/fx_manager.gd" id="7_7smn1"]
@@ -117,90 +116,21 @@ fx_manager = NodePath("../FXManager")
 [node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
 position = Vector2(197, 161)
 
-[node name="Hand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
+[node name="RightHand" parent="." unique_id=342436484 instance=ExtResource("2_k2fmo")]
+position = Vector2(640, 180)
+rotation = 4.712389
+
+[node name="CenterHand" parent="." unique_id=1405062105 instance=ExtResource("2_k2fmo")]
+position = Vector2(319, 0)
+rotation = 3.1415927
+
+[node name="LeftHand" parent="." unique_id=43389945 instance=ExtResource("2_k2fmo")]
+position = Vector2(0, 180)
+rotation = 1.5707964
+
+[node name="PlayerHand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
 position = Vector2(320, 300)
 DEV_layout_max_width_overwrite = 500.0
-
-[node name="DEBUGLeftHand" parent="." unique_id=342436484 instance=ExtResource("2_k2fmo")]
-position = Vector2(-20, 180)
-rotation = 1.5707964
-DEV_layout_max_width_overwrite = 200.0
-
-[node name="HandLayoutComponent" parent="DEBUGLeftHand" index="0" unique_id=936228926]
-mult_y = 30.0
-mult_rot = 0.5
-
-[node name="CardView" parent="DEBUGLeftHand" unique_id=1218889746 instance=ExtResource("5_raeie")]
-
-[node name="CardView2" parent="DEBUGLeftHand" unique_id=325201198 instance=ExtResource("5_raeie")]
-
-[node name="CardView3" parent="DEBUGLeftHand" unique_id=1698583727 instance=ExtResource("5_raeie")]
-
-[node name="CardView4" parent="DEBUGLeftHand" unique_id=743305752 instance=ExtResource("5_raeie")]
-
-[node name="CardView5" parent="DEBUGLeftHand" unique_id=560311316 instance=ExtResource("5_raeie")]
-
-[node name="DEBUGRightHand" parent="." unique_id=1124005256 instance=ExtResource("2_k2fmo")]
-position = Vector2(660, 180)
-rotation = -1.5707964
-DEV_layout_max_width_overwrite = 200.0
-
-[node name="HandLayoutComponent" parent="DEBUGRightHand" index="0" unique_id=936228926]
-mult_y = 30.0
-mult_rot = 0.5
-
-[node name="CardView" parent="DEBUGRightHand" unique_id=440375695 instance=ExtResource("5_raeie")]
-
-[node name="CardView2" parent="DEBUGRightHand" unique_id=2049702730 instance=ExtResource("5_raeie")]
-
-[node name="CardView3" parent="DEBUGRightHand" unique_id=595977078 instance=ExtResource("5_raeie")]
-
-[node name="CardView4" parent="DEBUGRightHand" unique_id=2094515451 instance=ExtResource("5_raeie")]
-
-[node name="CardView5" parent="DEBUGRightHand" unique_id=782870009 instance=ExtResource("5_raeie")]
-
-[node name="CardView6" parent="DEBUGRightHand" unique_id=1520819448 instance=ExtResource("5_raeie")]
-
-[node name="CardView7" parent="DEBUGRightHand" unique_id=1240824269 instance=ExtResource("5_raeie")]
-
-[node name="CardView8" parent="DEBUGRightHand" unique_id=1060928664 instance=ExtResource("5_raeie")]
-
-[node name="DEBUGCenterHand" parent="." unique_id=724256946 instance=ExtResource("2_k2fmo")]
-position = Vector2(320, -20)
-rotation = 3.1415927
-DEV_layout_max_width_overwrite = 200.0
-
-[node name="HandLayoutComponent" parent="DEBUGCenterHand" index="0" unique_id=936228926]
-mult_y = 30.0
-mult_rot = 0.5
-
-[node name="CardView" parent="DEBUGCenterHand" unique_id=1888614100 instance=ExtResource("5_raeie")]
-
-[node name="CardView2" parent="DEBUGCenterHand" unique_id=1918664199 instance=ExtResource("5_raeie")]
-
-[node name="CardView3" parent="DEBUGCenterHand" unique_id=2106887477 instance=ExtResource("5_raeie")]
-
-[node name="CardView4" parent="DEBUGCenterHand" unique_id=1839278792 instance=ExtResource("5_raeie")]
-
-[node name="CardView5" parent="DEBUGCenterHand" unique_id=1884190679 instance=ExtResource("5_raeie")]
-
-[node name="CardView6" parent="DEBUGCenterHand" unique_id=841788704 instance=ExtResource("5_raeie")]
-
-[node name="CardView7" parent="DEBUGCenterHand" unique_id=1940992679 instance=ExtResource("5_raeie")]
-
-[node name="CardView8" parent="DEBUGCenterHand" unique_id=1319203332 instance=ExtResource("5_raeie")]
-
-[node name="CardView9" parent="DEBUGCenterHand" unique_id=829181961 instance=ExtResource("5_raeie")]
-
-[node name="CardView10" parent="DEBUGCenterHand" unique_id=539007087 instance=ExtResource("5_raeie")]
-
-[node name="CardView11" parent="DEBUGCenterHand" unique_id=1080111834 instance=ExtResource("5_raeie")]
-
-[node name="CardView12" parent="DEBUGCenterHand" unique_id=1117204674 instance=ExtResource("5_raeie")]
-
-[node name="CardView13" parent="DEBUGCenterHand" unique_id=1862520796 instance=ExtResource("5_raeie")]
-
-[node name="CardView14" parent="DEBUGCenterHand" unique_id=1748705187 instance=ExtResource("5_raeie")]
 
 [node name="Visuals" type="Node2D" parent="." unique_id=395039280]
 position = Vector2(1, 0)
@@ -222,14 +152,15 @@ metadata/_custom_type_script = "uid://bxvsjmh1bsh2g"
 
 [node name="FXLayer" type="Node2D" parent="FXManager" unique_id=2096540511]
 
-[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("client_controller", "_turn_manager", "_hue_manager", "_discard_pile_node", "_draw_pile_node", "_hand")]
+[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("client_controller", "_turn_manager", "_hue_manager", "_discard_pile_node", "_draw_pile_node", "_hand", "_client_hand")]
 script = ExtResource("7_hujxm")
 client_controller = NodePath("../ClientController")
 _turn_manager = NodePath("../TurnManager")
 _hue_manager = NodePath("../HueManager")
 _discard_pile_node = NodePath("../DiscardPile")
 _draw_pile_node = NodePath("../DrawPile")
-_hand = NodePath("../Hand")
+_hand = [NodePath("../PlayerHand"), NodePath("../LeftHand"), NodePath("../CenterHand"), NodePath("../RightHand")]
+_client_hand = NodePath("../PlayerHand")
 metadata/_custom_type_script = "uid://cl5yn6116qkw2"
 
 [node name="TurnManager" type="Node" parent="." unique_id=521513583]
@@ -310,17 +241,9 @@ metadata/_custom_type_script = "uid://db72o0ul18xad"
 
 [connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_play_requested"]
 [connection signal="draw_requested" from="DrawPile" to="GameManager" method="_on_draw_requested"]
-[connection signal="selection_changed" from="Hand" to="GameManager" method="_on_selection_changed"]
-[connection signal="selection_changed" from="DEBUGLeftHand" to="GameManager" method="_on_selection_changed"]
-[connection signal="selection_changed" from="DEBUGRightHand" to="GameManager" method="_on_selection_changed"]
-[connection signal="selection_changed" from="DEBUGCenterHand" to="GameManager" method="_on_selection_changed"]
 [connection signal="camera_shook" from="FXManager" to="DrawPile" method="_on_camera_shake"]
-[connection signal="cards_drawn" from="GameManager" to="Hand" method="_on_game_manager_cards_drawn"]
-[connection signal="cards_played" from="GameManager" to="Hand" method="_on_game_manager_cards_played"]
-[connection signal="play_denied" from="GameManager" to="Hand" method="_on_game_manager_play_denied"]
+[connection signal="cards_drawn" from="GameManager" to="PlayerHand" method="_on_game_manager_cards_drawn"]
+[connection signal="cards_played" from="GameManager" to="PlayerHand" method="_on_game_manager_cards_played"]
+[connection signal="play_denied" from="GameManager" to="PlayerHand" method="_on_game_manager_play_denied"]
 [connection signal="turn_advanced" from="TurnManager" to="." method="_on_turn_manager_turn_advanced"]
 [connection signal="hue_selected" from="HueManager/ColorSelection" to="HueManager" method="_on_hue_selected"]
-
-[editable path="DEBUGLeftHand"]
-[editable path="DEBUGRightHand"]
-[editable path="DEBUGCenterHand"]

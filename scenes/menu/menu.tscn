@@ -5,6 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://duhia0n1f648k" path="res://assets/background/tile_black.png" id="2_mcvr8"]
 [ext_resource type="FontFile" uid="uid://bwlxp6kod573k" path="res://assets/fonts/monogram.ttf" id="3_e0arn"]
 [ext_resource type="Texture2D" uid="uid://bdlstv3xjk405" path="res://assets/logo.png" id="4_037ec"]
+[ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="6_r8yej"]
+[ext_resource type="Script" uid="uid://bbsfbu574fjgt" path="res://card/card_data.gd" id="7_3y2rt"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_037ec"]
 noise_type = 4
@@ -49,6 +51,13 @@ adjustment_saturation = 1.1
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r8yej"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3y2rt"]
+
+[sub_resource type="Resource" id="Resource_t0a87"]
+script = ExtResource("7_3y2rt")
+hue = 4
+number = -1
+effect_parameter = 4
+metadata/_custom_type_script = "uid://bbsfbu574fjgt"
 
 [node name="Menu" type="Control" unique_id=1469747293]
 layout_mode = 3
@@ -231,6 +240,19 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_y1o0p")
 theme_override_styles/read_only = SubResource("StyleBoxEmpty_r8yej")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_3y2rt")
 alignment = 1
+
+[node name="Visuals" type="Node" parent="." unique_id=1767279787]
+
+[node name="CardView" parent="Visuals" unique_id=1218889746 instance=ExtResource("6_r8yej")]
+position = Vector2(237.99998, 147)
+rotation = -0.2617994
+scale = Vector2(0.99999994, 0.99999994)
+
+[node name="CardView2" parent="Visuals" unique_id=1493207629 instance=ExtResource("6_r8yej")]
+position = Vector2(415.99997, 259)
+rotation = 0.2617994
+scale = Vector2(0.99999994, 0.99999994)
+data = SubResource("Resource_t0a87")
 
 [connection signal="pressed" from="HostGame" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="JoinGame" to="." method="_on_join_pressed"]
