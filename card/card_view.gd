@@ -38,8 +38,6 @@ var _tick := 0.0
 func setup(card_data: CardData, flipped:= false) -> void:
 	data = card_data
 
-	_card_sheet.frame_coords = _get_texture_coord()
-
 	set_flip(flipped)
 
 ## Animation API
