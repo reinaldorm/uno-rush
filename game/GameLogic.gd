@@ -6,6 +6,8 @@ var players : Dictionary[int, Dictionary] = {}
 var turn_order := []
 var current_turn := 0
 var direction := 1
+var reverses := 0
+var skips := 0
 
 var discard_pile : Array[CardData] = []
 var draw_pile : Array[CardData] = []
@@ -35,17 +37,21 @@ func draw_cards(player_id: int) -> void:
 
 	player.hand.append_array(draw_stack)
 
-func play_cards(player_id, cards):
-	# TODO: Implement play_cards
-	return false
+func play_cards(player_id: int, cards_serial: Array[Dictionary]):
+	if player_id != current_player(): return false
 
-	if player_id != current_player():
-		print("NOT PLAYER TURN")
-		return false
+	var player = players[player_id]
+	var cards : CardData.array_to_data(cards_serial)
+	var ok = _validate_play(cards)
 
-	next_turn()
+	if ok:
+		add_to_pile(cards)
+		apply_effects(cards)
+		remove_from_hand(player, cards)
 
-	return true
+		return { "success" = true, "player" = player_id, "cards" = cards_serial }
+	else:
+		return { success: false }
 
 func add_player(id) -> Dictionary:
 	print("GameLogic: Tried to add player with ID: ", id)
@@ -55,10 +61,7 @@ func add_player(id) -> Dictionary:
 
 func create_player_snapshot(player_id: int) -> Dictionary:
 	var players_snapshot :  Array[Dictionary] = []
-	var player_hand_serial : Array[Dictionary] = []
-
-	for card in players[player_id]["hand"]:
-		player_hand_serial.append(CardData.to_serial(card))
+	var player_hand_serial : Array[Dictionary] = CardData.array_to_serial(players[player_id].hand)
 
 	for id in turn_order:
 		if id != player_id:
@@ -104,6 +107,16 @@ func _validate_play(cards: Array[CardData]) -> bool:
 	else:
 		if _can_play(cards[0]): return true
 		else: return false
+
+func _apply_effects(cards: Array[CardData]) -> void:
+	if cards[0].effect == CardData.Effect.DRAW:
+		draw_stack += cards.size() * cards[0].effect_parameter
+
+	if cards[0].effect == CardData.Effect.REVERSE:
+		reverses += cards.size()
+
+	if cards[0].effect == CardData.Effect.SKIP:
+		skips += cards.size()
 
 func _can_play(card: CardData) -> bool:
 	var last_card := discard_pile[discard_pile.size() - 1]
@@ -190,11 +203,17 @@ func _create_deck() -> Array[CardData]:
 # Internal
 # -------------------------
 
+func remove_from_hand(player, cards)
+	player.hand = player.hand.filter(func(card): return cards.all(func(to_remove): return card.id != to_remove.id))
+
 func current_player() -> int:
 	return turn_order[current_turn]
 
 func next_turn() -> void:
 	current_turn = (current_turn + 1) % turn_order.size()
+
+func add_to_pile(cards: Array[CardData]) -> void:
+	discard_pile.append(cards)
 
 func draw_from_pile(amount: int) -> Array[CardData]:
 	var stack : Array[CardData] = []
