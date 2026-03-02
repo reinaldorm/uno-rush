@@ -31,7 +31,8 @@ func _start(snapshot: Dictionary) -> void:
 	var top_card := CardData.to_data(snapshot["top_card"])
 	discard_pile_node.setup(top_card)
 	
-	for player in snapshot.players:
+	for i in range(snapshot.players.size():
+		var player : Dictionary = snapshot.players[i]
 		var id = player["id"]:
 
 		if id == multiplayer.get_unique_id():
