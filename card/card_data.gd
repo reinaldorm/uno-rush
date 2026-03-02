@@ -63,6 +63,13 @@ static func to_serial(card: CardData) -> Dictionary:
 		"id": card.id
 	}
 
+static func array_to_serial(cards: Array[CardData]) -> Array[Dictionary]:
+	var arr : Array[Dictionary] = []
+
+	for card in cards: arr.append(CardData.to_serial(card))
+
+	return arr
+
 static func to_data(serial: Dictionary) -> CardData:
 	var data := CardData.new()
 
@@ -73,3 +80,10 @@ static func to_data(serial: Dictionary) -> CardData:
 	data.id = serial["id"]
 
 	return data
+
+static func array_to_data(cards: Array[Dictionary]) -> Array[CardData]:
+	var arr : Array[CardData] = []
+
+	for card in cards: arr.append(CardData.to_data(card))
+
+	return arr
