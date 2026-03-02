@@ -38,13 +38,11 @@ func request_play_cards(cards_serial: Array[Dictionary]) -> void:
 
 	print("ServerController: Acknowledged play request: ", sender_id, cards_serial)
 
-	var cards : Array[CardData] = []
-	for serial in cards_serial: cards.append(CardData.to_data(serial))
+	var cards : Array[CardData] = CardData.array_to_data(cards_serial)
+	var result = _game.play_cards(sender_id, cards)
 
-	var ok = _game.play_cards(sender_id, cards)
-
-	if ok:
-		client_controller._on_cards_played.rpc(sender_id, cards_serial)
+	if result:
+		client_controller._on_cards_played.rpc(sender_id, result)
 	else:
 		client_controller._on_play_failed.rpc_id(sender_id)
 
