@@ -20,7 +20,6 @@ func host_game(port := DEFAULT_PORT, max_players := 4):
     multiplayer.multiplayer_peer = peer
     is_host = true
 
-    print("Success")
     multiplayer.peer_connected.connect(_on_peer_connected)
     multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
@@ -37,7 +36,6 @@ func join_game(address: String, port := DEFAULT_PORT):
     multiplayer.multiplayer_peer = peer
     is_host = false
 
-    print("Success")
     multiplayer.connected_to_server.connect(_on_connected)
     multiplayer.connection_failed.connect(_on_connection_failed)
     multiplayer.server_disconnected.connect(_on_server_disconnected)

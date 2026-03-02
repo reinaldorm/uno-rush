@@ -6,21 +6,30 @@ class_name ClientController
 var client_id : int = 0 : get = _get_client_id
 
 signal on_cards_played()
+signal on_play_failed()
+
 signal on_cards_drawn()
+
 signal on_turn_skipped()
+
 signal on_game_started(snapshot: Dictionary)
 
 # -------------------------
 # Public API
 # -------------------------
 
-func request_play_cards(cards: Array[CardData]) -> void:
-	server_controller.request_play_cards.rpc_id(1, cards)
+func request_play(cards: Array[CardData]) -> void:
+	var cards_serial : Array[Dictionary] = []
 
-func request_draw_cards() -> void:
+	for card in cards:
+		cards_serial.append(CardData.to_serial(card))
+
+	server_controller.request_play_cards.rpc_id(1, cards_serial)
+
+func request_draw() -> void:
 	server_controller.request_draw_cards.rpc_id(1)
 
-func request_turn_skip() -> void:
+func request_skip() -> void:
 	server_controller.request_turn_skip.rpc_id(1)
 
 # -------------------------
@@ -30,6 +39,11 @@ func request_turn_skip() -> void:
 @rpc("authority", "reliable", "call_local")
 func _on_cards_played() -> void:
 	emit_signal("on_cards_played")
+
+@rpc("authority", "reliable", "call_local")
+func _on_play_failed() -> void:
+	print("Play failed")
+	emit_signal("on_play_failed")
 
 @rpc("authority", "reliable", "call_local")
 func _on_cards_drawn() -> void:

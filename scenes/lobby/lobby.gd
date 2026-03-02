@@ -33,7 +33,6 @@ func _update_players():
 		var player_label : RichTextLabel = player_panel.get_node("PlayerName")
 		player_label.text = _partial_players[idx]["name"]
 
-	print("Lobby: Updated players.")
 
 # -------------------------
 # Handlers

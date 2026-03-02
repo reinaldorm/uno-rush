@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://dx5kml527dyff" path="res://card/hand/hand.tscn" id="2_k2fmo"]
 [ext_resource type="PackedScene" uid="uid://clbegaov7rk68" path="res://piles/draw_pile/draw_pile.tscn" id="3_k2fmo"]
 [ext_resource type="PackedScene" uid="uid://do5kc56ios2tk" path="res://piles/discard_pile/discard_pile.tscn" id="4_l3cfh"]
+[ext_resource type="Script" uid="uid://cv7cqa7ltc674" path="res://card/hand/components/layout_component.gd" id="5_ou6is"]
+[ext_resource type="Script" uid="uid://bems185od7vid" path="res://card/hand/components/selection_component.gd" id="6_necax"]
 [ext_resource type="Shader" uid="uid://dp3lgf7lykufk" path="res://shaders/vcr.gdshader" id="6_ow5a4"]
 [ext_resource type="PackedScene" uid="uid://bge1wr6a45a8d" path="res://interactions/drag/drag_layer.tscn" id="6_th5th"]
 [ext_resource type="Script" uid="uid://bxvsjmh1bsh2g" path="res://fx/fx_manager.gd" id="7_7smn1"]
@@ -17,6 +19,20 @@
 [ext_resource type="PackedScene" uid="uid://dmedcufah270y" path="res://scenes/color_selection/color_selection.tscn" id="12_blune"]
 [ext_resource type="Script" uid="uid://1aqiwmbck15p" path="res://network/ClientController.gd" id="16_hxu8e"]
 [ext_resource type="Script" uid="uid://db72o0ul18xad" path="res://network/ServerController.gd" id="17_nvumn"]
+
+[sub_resource type="Curve" id="Curve_necax"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -1), 0.0, 2.0, 0, 1, Vector2(1, 1), 2.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_r4lks"]
+_data = [Vector2(0, 0.25), 0.0, 4.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.25), -4.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_pg34l"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, -1), 0.0, 2.0, 0, 1, Vector2(1, 1), 2.0, 0.0, 1, 0]
+point_count = 2
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_ow5a4"]
 noise_type = 4
@@ -117,21 +133,69 @@ fx_manager = NodePath("../FXManager")
 [node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
 position = Vector2(197, 161)
 
-[node name="RightHand" parent="." unique_id=342436484 instance=ExtResource("2_k2fmo")]
-position = Vector2(640, 180)
+[node name="RightHand" parent="." unique_id=342436484 node_paths=PackedStringArray("layout_component") instance=ExtResource("2_k2fmo")]
+position = Vector2(660, 180)
 rotation = 4.712389
+layout_component = NodePath("LayoutComponent")
 
-[node name="CenterHand" parent="." unique_id=1405062105 instance=ExtResource("2_k2fmo")]
-position = Vector2(319, 0)
+[node name="LayoutComponent" type="Node" parent="RightHand" unique_id=1942677813]
+script = ExtResource("5_ou6is")
+curve_x = SubResource("Curve_necax")
+curve_y = SubResource("Curve_r4lks")
+curve_rot = SubResource("Curve_pg34l")
+mult_y = 15.0
+mult_rot = 0.3
+max_arrange_width = 150.0
+metadata/_custom_type_script = "uid://cv7cqa7ltc674"
+
+[node name="CenterHand" parent="." unique_id=1405062105 node_paths=PackedStringArray("layout_component") instance=ExtResource("2_k2fmo")]
+position = Vector2(320, -20)
 rotation = 3.1415927
+layout_component = NodePath("LayoutComponent")
 
-[node name="LeftHand" parent="." unique_id=43389945 instance=ExtResource("2_k2fmo")]
-position = Vector2(0, 180)
+[node name="LayoutComponent" type="Node" parent="CenterHand" unique_id=1228830756]
+script = ExtResource("5_ou6is")
+curve_x = SubResource("Curve_necax")
+curve_y = SubResource("Curve_r4lks")
+curve_rot = SubResource("Curve_pg34l")
+mult_y = 15.0
+mult_rot = 0.3
+max_arrange_width = 150.0
+metadata/_custom_type_script = "uid://cv7cqa7ltc674"
+
+[node name="LeftHand" parent="." unique_id=43389945 node_paths=PackedStringArray("layout_component") instance=ExtResource("2_k2fmo")]
+position = Vector2(-10, 180)
 rotation = 1.5707964
+layout_component = NodePath("LayoutComponent")
 
-[node name="PlayerHand" parent="." unique_id=1315296912 instance=ExtResource("2_k2fmo")]
+[node name="LayoutComponent" type="Node" parent="LeftHand" unique_id=699594186]
+script = ExtResource("5_ou6is")
+curve_x = SubResource("Curve_necax")
+curve_y = SubResource("Curve_r4lks")
+curve_rot = SubResource("Curve_pg34l")
+mult_y = 15.0
+mult_rot = 0.3
+max_arrange_width = 150.0
+metadata/_custom_type_script = "uid://cv7cqa7ltc674"
+
+[node name="PlayerHand" parent="." unique_id=1315296912 node_paths=PackedStringArray("layout_component", "selection_component") instance=ExtResource("2_k2fmo")]
 position = Vector2(320, 300)
+layout_component = NodePath("LayoutComponent")
+selection_component = NodePath("SelectionComponent")
 DEV_layout_max_width_overwrite = 500.0
+
+[node name="LayoutComponent" type="Node" parent="PlayerHand" unique_id=1381399874]
+script = ExtResource("5_ou6is")
+curve_x = SubResource("Curve_necax")
+curve_y = SubResource("Curve_r4lks")
+curve_rot = SubResource("Curve_pg34l")
+mult_y = 5.0
+max_arrange_width = 300.0
+metadata/_custom_type_script = "uid://cv7cqa7ltc674"
+
+[node name="SelectionComponent" type="Node" parent="PlayerHand" unique_id=1794874331]
+script = ExtResource("6_necax")
+metadata/_custom_type_script = "uid://bems185od7vid"
 
 [node name="Visuals" type="Node2D" parent="." unique_id=395039280]
 position = Vector2(1, 0)

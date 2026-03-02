@@ -3,6 +3,7 @@ class_name Hand
 
 @export var card_scene : PackedScene
 @export var layout_component : LayoutComponent
+@export var selection_component : SelectionComponent
 
 var _card_data : Array[CardData] = []
 var _card_views : Array[CardView] = []
@@ -17,7 +18,7 @@ func start() -> void:
 
 func setup(player_id: int, first_hand: Array[CardView]) -> void:
 	set_multiplayer_authority(player_id)
-	print(first_hand)
+	_add_card_views(first_hand)
 
 func restore_card(card_view: CardView) -> void:
 
@@ -43,7 +44,6 @@ func restore_card(card_view: CardView) -> void:
 
 func _ready() -> void:
 	_arrange()
-	print(multiplayer.multiplayer_peer)
 
 func _arrange() -> void:
 	layout_component.request_arrange(_card_views)
@@ -52,24 +52,23 @@ func _arrange_new(cards: Array[CardView]) -> void:
 	await layout_component.request_arrange_new(_card_views, cards)
 	_arrange()
 
-func _add_cards(cards: Array[CardData]) -> Array[CardView]:
+func _add_card_views(card_views: Array[CardView]) -> Array[CardView]:
 	var new_cards : Array[CardView] = []
 
-	for data in cards:
-		var card_view : CardView = card_scene.instantiate()
+	for view in card_views:
+		var data := view.data
 
-		new_cards.append(card_view)
+		new_cards.append(view)
 		_card_data.append(data)
-		card_view.setup(data, true)
 
-		add_child(card_view)
-		_card_views.append(card_view)
+		add_child(view)
+		_card_views.append(view)
 
-		card_view.drag_component.drag_started.connect(_on_card_drag_started)
-		card_view.mouse_left_down.connect(_on_card_mouse_left_down)
-		card_view.mouse_right_down.connect(_on_card_mouse_right_down)
+		view.drag_component.drag_started.connect(_on_card_drag_started)
+		view.mouse_left_down.connect(_on_card_mouse_left_down)
+		view.mouse_right_down.connect(_on_card_mouse_right_down)
 
-		card_view.scale = Vector2.ZERO
+		view.scale = Vector2.ZERO
 
 	return new_cards
 
@@ -82,20 +81,13 @@ func _add_cards(cards: Array[CardData]) -> Array[CardView]:
 # -------------
 
 func _on_game_manager_cards_played(card_data: Array[CardData]) -> void:
-	for data in card_data:
-		if _card_data.has(data):
-			var view := _get_view_by_data(data)
-			_card_data.erase(data)
-			if _card_views.has(view): _card_views.erase(view)
-	_dragging_card = null
-	_arrange()
+	print("Hand: Cards Played")
 
 func _on_game_manager_cards_drawn(card_data: Array[CardData]) -> void:
-	var new_cards = _add_cards(card_data)
-	await _arrange_new(new_cards)
+	print("Hand: Cards Drawn")
 
 func _on_game_manager_play_denied(card_data: Array[CardData]) -> void:
-	_arrange()
+	print("Hand: Play Denied")
 
 # -------------
 # Card Handlers
@@ -113,11 +105,13 @@ func _on_card_drag_ended(_draggable: Node2D) -> void:
 
 func _on_card_mouse_right_down(card_view: CardView) -> void:
 	if is_multiplayer_authority():
-		print("Hand: Tried to drag and was the authority: ", card_view.data.id)
 		card_view.drag_component.begin_drag()
 
 func _on_card_mouse_left_down(card_view: CardView) -> void:
-	print("Hand: Tried to select card: ", card_view.data.id)
+	if is_multiplayer_authority():
+		if selection_component:
+			selection_component.select(card_view)
+	_arrange()
 
 # -------------
 # Utilities

@@ -18,6 +18,9 @@ var ongoing = false
 
 func start() -> void:
 	draw_pile = _create_deck()
+
+	draw_pile.shuffle()
+
 	discard_pile.append(CardData.create_numbered(CardData.Hue.RED, 0))
 
 	for player in players.values():
@@ -32,16 +35,20 @@ func draw_cards(player_id: int) -> void:
 
 	player.hand.append_array(draw_stack)
 
-func play_card(player_id, card):
-	if player_id != current_player(): return false
-	if card not in players[player_id].hand: return false
+func play_cards(player_id, cards):
+	# TODO: Implement play_cards
+	return false
 
-	players[player_id].hand.erase(card)
+	if player_id != current_player():
+		print("NOT PLAYER TURN")
+		return false
+
 	next_turn()
 
 	return true
 
 func add_player(id) -> Dictionary:
+	print("GameLogic: Tried to add player with ID: ", id)
 	players[id] = { "hand" = [], "id" = id }
 	turn_order.append(id)
 	return players[id]
@@ -54,23 +61,20 @@ func create_player_snapshot(player_id: int) -> Dictionary:
 		player_hand_serial.append(CardData.to_serial(card))
 
 	for id in turn_order:
-		if id == player_id:
-			players_snapshot.append({
-				"id" = players[id]["id"],
-				"hand" = player_hand_serial
-			})
-		else:
+		if id != player_id:
 			players_snapshot.append({
 				"id" = players[id]["id"],
 				"hand_count" = players[id]["hand"].size()
 			})
 
+	var player_snapshot : Dictionary = { "id" = players[player_id]["id"], "hand" = player_hand_serial }
+
 	return {
+		"player": player_snapshot,
 		"players": players_snapshot,
 		"current_player": current_player(),
 		"top_card": CardData.to_serial(discard_pile[0]),
 	}
-
 
 # -------------------------
 # Internal

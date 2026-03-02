@@ -1,18 +1,21 @@
-extends Node2D
+extends Node
 class_name SelectionComponent
 
-# func _select_card(card_view: CardView) -> void:
-# 	if selected_cards.has(card_view):
-# 		selected_cards.erase(card_view)
-# 		card_view.set_selected(false)
+signal card_selected(card_view: CardView)
 
-# 		for i in range(selected_cards.size()):
-# 			var card := selected_cards[i]
-# 			card.set_selected(true, i + 1)
+var selected_cards : Array[CardView] = []
 
-# 	else:
-# 		selected_cards.append(card_view)
-# 		card_view.set_selected(true, selected_cards.size())
+func select(card_view: CardView) -> void:
+	if selected_cards.has(card_view):
+		selected_cards.erase(card_view)
+		card_view.is_selected = false
 
-# 	_request_available_cards()
-# 	_arrange()
+		for i in range(selected_cards.size()):
+			var card := selected_cards[i]
+			card.is_selected = true
+
+	else:
+		selected_cards.append(card_view)
+		card_view.is_selected = true
+
+	emit_signal("card_selected", card_view)

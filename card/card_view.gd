@@ -20,7 +20,8 @@ signal mouse_right_down(card_view: CardView)
 
 @export var data : CardData
 
-var is_selected := false
+var is_selected := false : set = _set_selected
+var is_playable := false : set = _set_playable
 
 var _tween_channels : Dictionary[String, Tween] = {
 	"fx": null,
@@ -63,22 +64,12 @@ func set_flip(backwards := false) -> void:
 	else:
 		_card_sheet.frame_coords = _get_texture_coord()
 
-func set_draggable() -> void:
-	pass;
-
-func set_selected(state: bool, _order := -1) -> void:
-	is_selected = state
-	_toggle_select(state)
-
-func set_playable(state: bool) -> void:
-	_toggle_playable(state)
-
 func reset() -> void:
 	for tween in _tween_channels.values():
 		if tween: tween.kill()
 
-	_toggle_playable(false)
-	_toggle_select(false)
+	is_selected = false
+	is_playable = false
 
 	_selection_transform.scale = Vector2(1.0, 1.0)
 	_selection_transform.rotation = 0.0
@@ -182,11 +173,25 @@ func _on_card_exited() -> void:
 
 func _on_drag_started(_owner: Node2D) -> void:
 	if _tween_channels["layout"]: _tween_channels["layout"].kill()
-	set_selected(false)
-	set_playable(false)
+	is_selected = false
+	is_playable = false
 
 func _on_input_component_mouse_left_down() -> void:
 	emit_signal("mouse_left_down", self)
 
 func _on_input_component_mouse_right_down() -> void:
 	emit_signal("mouse_right_down", self)
+
+# -------------------------
+# Setters
+# -------------------------
+
+func _set_selected(value: bool) -> void:
+	if is_selected == value: return
+	is_selected = value
+	_toggle_select(value)
+
+func _set_playable(value: bool) -> void:
+	if is_playable == value: return
+	is_playable = value
+	_toggle_playable(value)

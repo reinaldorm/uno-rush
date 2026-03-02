@@ -29,9 +29,7 @@ func _on_options_pressed() -> void:
 	print("Menu: Options not implemented yet!")
 
 func _on_server_started() -> void:
-	print("Menu: Server started.")
 	get_tree().change_scene_to_packed(lobby_scene)
 
 func _on_server_connected() -> void:
-	print("Menu: Server connected.")
 	get_tree().change_scene_to_packed(lobby_scene)

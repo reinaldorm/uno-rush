@@ -5,46 +5,54 @@ class_name ServerController
 
 var _game : GameLogic
 
-
 # -------------------------
 # Internal
 # -------------------------
 
 func _ready() -> void:
-	if not multiplayer.is_server: return
+	if not multiplayer.is_server(): return
+	print("Multiplayer peers: ", multiplayer.get_peers())
 
 	_game = GameLogic.new()
+	# Add the server player
+	_game.add_player(multiplayer.multiplayer_peer.get_unique_id())
+
+	for peer_id in multiplayer.get_peers():
+		_game.add_player(peer_id)
+
 	_game.start()
 
-	for peer in multiplayer.get_peers():
-		_game.add_player(peer)
-		var peer_snapshot := _game.create_player_snapshot(peer)
+	for player_id in _game.players.keys():
+		var peer_snapshot := _game.create_player_snapshot(player_id)
 
-		client_controller.rpc_id(peer, "_on_game_started", peer_snapshot)
+		client_controller.rpc_id(player_id, "_on_game_started", peer_snapshot)
 
 # -------------------------
 # RPC Methods
 # -------------------------
 
-@rpc("any_peer", "reliable")
+@rpc("any_peer", "call_local" ,"reliable")
 func request_play_cards(cards_serial: Array[Dictionary]) -> void:
+	if not multiplayer.is_server(): return
 	var sender_id := multiplayer.get_remote_sender_id()
+
+	print("ServerController: Acknowledged play request: ", sender_id, cards_serial)
 
 	var cards : Array[CardData] = []
 	for serial in cards_serial: cards.append(CardData.to_data(serial))
 
-	var ok = _game.play_cards(cards)
+	var ok = _game.play_cards(sender_id, cards)
 
 	if ok:
-		client_controller._on_cards_played.rpc() ## TODO: send back game information
+		client_controller._on_cards_played.rpc(sender_id, cards_serial)
 	else:
 		client_controller._on_play_failed.rpc_id(sender_id)
 
-@rpc("any_peer", "reliable")
+@rpc("any_peer", "call_local")
 func request_draw_cards() -> void:
 	pass
 
-@rpc("any_peer", "reliable")
+@rpc("any_peer", "call_local")
 func request_turn_skip() -> void:
 	pass
 

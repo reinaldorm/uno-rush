@@ -30,7 +30,7 @@ static func create_numbered(_hue: Hue, _number: int) -> CardData:
 	new_data.number = _number
 	new_data.effect = Effect.NULL
 	new_data.effect_parameter = 0
-	new_data.id = new_data.resource_scene_unique_id
+	new_data.id = str(randi_range(0, 1000000))
 
 	return new_data
 
@@ -40,7 +40,7 @@ static func create_special(_hue: Hue, _effect: Effect, draw_amount:= 0) -> CardD
 	new_data.number = -1
 	new_data.effect = _effect
 	new_data.effect_parameter = draw_amount
-	new_data.id = new_data.resource_scene_unique_id
+	new_data.id = str(randi_range(0, 1000000))
 
 	return new_data
 
@@ -50,7 +50,7 @@ static func create_wild(_effect: Effect, draw_amount:= 0) -> CardData:
 	new_data.number = -1
 	new_data.effect = _effect
 	new_data.effect_parameter = draw_amount
-	new_data.id = new_data.resource_scene_unique_id
+	new_data.id = str(randi_range(0, 1000000))
 
 	return new_data
 

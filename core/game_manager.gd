@@ -29,20 +29,18 @@ func _start(snapshot: Dictionary) -> void:
 	print("GameManager: Game is supposed to be started, beggining of block.")
 
 	var top_card := CardData.to_data(snapshot["top_card"])
-	var client = snapshot.players.filter(func(player): return player["id"] == multiplayer.get_unique_id())
-	var idx = snapshot.players.find(client)
+
+	_create_player_hand(multiplayer.multiplayer_peer.get_unique_id(), snapshot.player.hand)
 
 	for i in range(snapshot.players.size()):
 		var player : Dictionary = snapshot.players[i]
-		var id = player["id"]
 
-		if id == multiplayer.get_unique_id():
-			_create_player_hand(id, player["hand"])
+		if player.id == multiplayer.get_unique_id():
+			_create_player_hand(player.id, player.hand)
 		else:
-			_create_opponent_hand(i - idx, id, player["hand_count"])
+			_create_opponent_hand(player.id, player.hand_count, i)
 
-	for hand in _hands:
-		await hand.start()
+	for hand in _hands: await hand.start()
 
 	_discard_pile.start(top_card)
 
@@ -55,6 +53,7 @@ func _ready() -> void:
 	client_controller.on_game_started.connect(_on_game_started)
 
 func _create_player_hand(id: int, hand: Array[Dictionary]) -> void:
+	print("Create Player Hand")
 	var cards : Array[CardData] = []
 	var views : Array[CardView] = []
 
@@ -66,7 +65,8 @@ func _create_player_hand(id: int, hand: Array[Dictionary]) -> void:
 
 	_client_hand.setup(id, views)
 
-func _create_opponent_hand(id: int, hand_count: int, offset: int) -> void:
+func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
+	print("Create Opponent Hand")
 	var cards : Array[CardData] = []
 	var views : Array[CardView] = []
 
@@ -83,7 +83,7 @@ func _create_opponent_hand(id: int, hand_count: int, offset: int) -> void:
 
 	for hand in _hands: if hand.name != "PlayerHand": hands_but_client.append(hand)
 
-	hands_but_client[wrap(offset, 0, 4)].setup(id, views)
+	hands_but_client[idx].setup(id, views)
 
 # -------------------------
 # Handlers
@@ -106,12 +106,19 @@ func _on_game_started(snapshot: Dictionary) -> void:
 
 # Discard Pile Handlers
 # Methods for handling discard pile signals/requests
-
-# Function triggered by in-game event, acknolodge by GameManager
-# and sent for Server validation
-
 func _on_play_requested() -> void:
-	print("GameManager: Client requested play")
+	var views = _client_hand.selection_component.selected_cards
+
+	if views.is_empty():
+		print("GameManager: No cards selected.")
+		return
+
+	var cards : Array[CardData] = []
+
+	for view in views:
+		cards.append(view.data)
+
+	client_controller.request_play(cards)
 
 # Draw Pile Handlers
 # Methods for handling draw pile signals/requests
