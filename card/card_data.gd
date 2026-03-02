@@ -57,18 +57,18 @@ static func create_wild(_effect: Effect, draw_amount:= 0) -> CardData:
 static func to_serial(card: CardData) -> Dictionary:
 	return {
 		"hue": card.hue,
-		"number": null,
-		"effect": null,
-		"effect_parameter": null,
-		"id": null
+		"number": card.number,
+		"effect": card.effect,
+		"effect_parameter": card.effect_parameter,
+		"id": card.id
 	}
 
 static func to_data(serial: Dictionary) -> CardData:
 	var data := CardData.new()
 
-	data.hue ## Todo
+	data.hue = serial["hue"]
 	data.number = serial["number"]
-	data.effect ## Todo
+	data.effect = serial["effect"]
 	data.effect_parameter = serial["effect_parameter"]
 	data.id = serial["id"]
 

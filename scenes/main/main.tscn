@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://bxvsjmh1bsh2g" path="res://fx/fx_manager.gd" id="7_7smn1"]
 [ext_resource type="Script" uid="uid://cl5yn6116qkw2" path="res://core/game_manager.gd" id="7_hujxm"]
 [ext_resource type="Script" uid="uid://bjhn4w8s1fm5h" path="res://core/turn_manager.gd" id="9_blune"]
+[ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="9_nvumn"]
 [ext_resource type="Texture2D" uid="uid://olud8dpxye4j" path="res://assets/ui/arrow.png" id="10_a8run"]
 [ext_resource type="Script" uid="uid://d0nv5vi28moja" path="res://core/hue_manager.gd" id="10_th5th"]
 [ext_resource type="PackedScene" uid="uid://5l4hlbf13et7" path="res://hud/hud.tscn" id="11_ouso4"]
@@ -152,15 +153,16 @@ metadata/_custom_type_script = "uid://bxvsjmh1bsh2g"
 
 [node name="FXLayer" type="Node2D" parent="FXManager" unique_id=2096540511]
 
-[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("client_controller", "_turn_manager", "_hue_manager", "_discard_pile_node", "_draw_pile_node", "_hand", "_client_hand")]
+[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("client_controller", "_turn_manager", "_hue_manager", "_discard_pile", "_draw_pile", "_hands", "_client_hand")]
 script = ExtResource("7_hujxm")
 client_controller = NodePath("../ClientController")
 _turn_manager = NodePath("../TurnManager")
 _hue_manager = NodePath("../HueManager")
-_discard_pile_node = NodePath("../DiscardPile")
-_draw_pile_node = NodePath("../DrawPile")
-_hand = [NodePath("../PlayerHand"), NodePath("../LeftHand"), NodePath("../CenterHand"), NodePath("../RightHand")]
+_discard_pile = NodePath("../DiscardPile")
+_draw_pile = NodePath("../DrawPile")
+_hands = [NodePath("../PlayerHand"), NodePath("../LeftHand"), NodePath("../CenterHand"), NodePath("../RightHand")]
 _client_hand = NodePath("../PlayerHand")
+_view_scene = ExtResource("9_nvumn")
 metadata/_custom_type_script = "uid://cl5yn6116qkw2"
 
 [node name="TurnManager" type="Node" parent="." unique_id=521513583]
@@ -235,8 +237,9 @@ script = ExtResource("16_hxu8e")
 server_controller = NodePath("../ServerController")
 metadata/_custom_type_script = "uid://1aqiwmbck15p"
 
-[node name="ServerController" type="Node" parent="." unique_id=2016043461]
+[node name="ServerController" type="Node" parent="." unique_id=2016043461 node_paths=PackedStringArray("client_controller")]
 script = ExtResource("17_nvumn")
+client_controller = NodePath("../ClientController")
 metadata/_custom_type_script = "uid://db72o0ul18xad"
 
 [connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_play_requested"]

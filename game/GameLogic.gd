@@ -25,9 +25,6 @@ func start() -> void:
 		player["hand"].append_array(hand)
 
 	ongoing = true
-	var snapshot := _create_snapshot
-
-	return snapshot
 
 func draw_cards(player_id: int) -> void:
 	if player_id != current_player(): return
@@ -53,10 +50,10 @@ func create_player_snapshot(player_id: int) -> Dictionary:
 	var players_snapshot :  Array[Dictionary] = []
 	var player_hand_serial : Array[Dictionary] = []
 
-	for card in players[id]["hand"]:
+	for card in players[player_id]["hand"]:
 		player_hand_serial.append(CardData.to_serial(card))
 
-	for id in turn_order: 
+	for id in turn_order:
 		if id == player_id:
 			players_snapshot.append({
 				"id" = players[id]["id"],

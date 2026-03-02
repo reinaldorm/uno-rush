@@ -47,9 +47,5 @@ func _on_game_started(snapshot: Dictionary):
 # Handlers
 # -------------------------
 
-func _ready() -> void:
-	if client_id == 1:
-		ServerController.initialize.rpc_id(1)
-
 func _get_client_id() -> int:
 	return multiplayer.multiplayer_peer.get_unique_id()

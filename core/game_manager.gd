@@ -9,13 +9,13 @@ signal play_denied(card: Array[CardData])
 
 @export var _turn_manager : TurnManager
 @export var _hue_manager : HueManager
-@export var _discard_pile_node : DiscardPile
-@export var _draw_pile_node : DrawPile
+@export var _discard_pile : DiscardPile
+@export var _draw_pile : DrawPile
 
 @export var _hands : Array[Hand]
 @export var _client_hand : Hand
 
-@export var _card_scene : PackedScene
+@export var _view_scene : PackedScene
 
 # -------------------------
 # Public API
@@ -27,28 +27,26 @@ signal play_denied(card: Array[CardData])
 
 func _start(snapshot: Dictionary) -> void:
 	print("GameManager: Game is supposed to be started, beggining of block.")
-	###
+
 	var top_card := CardData.to_data(snapshot["top_card"])
-	discard_pile_node.setup(top_card)
-	
-	for i in range(snapshot.players.size():
+	var client = snapshot.players.filter(func(player): return player["id"] == multiplayer.get_unique_id())
+	var idx = snapshot.players.find(client)
+
+	for i in range(snapshot.players.size()):
 		var player : Dictionary = snapshot.players[i]
-		var id = player["id"]:
+		var id = player["id"]
 
 		if id == multiplayer.get_unique_id():
 			_create_player_hand(id, player["hand"])
 		else:
-			_create_opponent_hand(id, player["hand_count"])
-	
-	for hand in _hands():
+			_create_opponent_hand(i - idx, id, player["hand_count"])
+
+	for hand in _hands:
 		await hand.start()
-	
-	await discard_pile_node.start()
-	##
+
+	_discard_pile.start(top_card)
+
 	print("GameManager: Game is supposed to be started, end of block.")
-
-
-
 
 func _ready() -> void:
 	client_controller.on_cards_played.connect(_on_cards_played)
@@ -68,20 +66,24 @@ func _create_player_hand(id: int, hand: Array[Dictionary]) -> void:
 
 	_client_hand.setup(id, views)
 
-func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
+func _create_opponent_hand(id: int, hand_count: int, offset: int) -> void:
 	var cards : Array[CardData] = []
 	var views : Array[CardView] = []
 
 	for i in range(hand_count):
 		var card_data = CardData.create_numbered(CardData.Hue.RED, 0)
 		cards.append(card_data)
-	
+
 	for card in cards:
 		var view : CardView = _view_scene.instantiate()
 		view.setup(card, true)
 		views.append(view)
 
-	_hands[i].setup(id, views)
+	var hands_but_client : Array[Hand] = []
+
+	for hand in _hands: if hand.name != "PlayerHand": hands_but_client.append(hand)
+
+	hands_but_client[wrap(offset, 0, 4)].setup(id, views)
 
 # -------------------------
 # Handlers
