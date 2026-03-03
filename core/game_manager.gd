@@ -85,6 +85,26 @@ func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
 
 	hands_but_client[idx].setup(id, views)
 
+func _play_from_client(cards: Array[CardData]) -> void:
+	pass
+	# _discard_pile.confirm_play()
+
+func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
+	var card_views : Array[CardView] = []
+	var opponent_hand : Hand
+
+	for hand in _hands:
+		if hand._player_id == opponent_id:
+			opponent_hand = hand
+			break
+
+	for card in cards:
+		var view : CardView = opponent_hand.withdraw_card()
+		view.setup(card, true)
+		card_views.append(view)
+
+	_discard_pile.play_from_opponent(card_views)
+
 # -------------------------
 # Handlers
 # -------------------------
@@ -92,8 +112,15 @@ func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
 # Network Handlers
 # Methods for handling network events
 
-func _on_cards_played(_card_data: Array[CardData]) -> void:
+func _on_cards_played(result: Dictionary) -> void:
 	print("GameManager: Cards played from network")
+
+	var cards = CardData.array_to_data(result.cards)
+
+	if result.player == multiplayer.get_unique_id():
+		_play_from_client(cards)
+	else:
+		_play_from_opponent(result.player, cards)
 
 func _on_cards_drawn() -> void:
 	print("GameManager: Cards drawn from network")

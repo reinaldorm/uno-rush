@@ -41,6 +41,12 @@ func confirm_play(played_cards: Array[CardView]) -> void:
 func reject_play() -> void:
 	_drop_zone.resolve_drop(false)
 
+func play_from_opponent(played_cards: Array[CardView]) -> void:
+	for card in played_cards:
+		_add_card_to_pile(card)
+
+	await _animate_play_sequence(played_cards)
+
 # -------------------------
 # Internal
 # -------------------------

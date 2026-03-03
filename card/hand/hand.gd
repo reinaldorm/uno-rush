@@ -9,6 +9,8 @@ var _card_data : Array[CardData] = []
 var _card_views : Array[CardView] = []
 var _dragging_card : CardView = null
 
+var player_id : int = -1
+
 # -------------------------
 # Public API
 # -------------------------
@@ -16,9 +18,10 @@ var _dragging_card : CardView = null
 func start() -> void:
 	_arrange()
 
-func setup(player_id: int, first_hand: Array[CardView]) -> void:
-	set_multiplayer_authority(player_id)
+func setup(id: int, first_hand: Array[CardView]) -> void:
+	set_multiplayer_authority(id)
 	_add_card_views(first_hand)
+	player_id = id
 
 func restore_card(card_view: CardView) -> void:
 
@@ -37,6 +40,12 @@ func restore_card(card_view: CardView) -> void:
 		_dragging_card = null
 
 	_arrange()
+
+func withdraw_card() -> CardView:
+	var card_view = _card_views.pop_back()
+	_card_views.append(card_view)
+	_arrange()
+	return card_view
 
 # -------------------------
 # Internal

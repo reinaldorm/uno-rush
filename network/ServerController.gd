@@ -42,7 +42,7 @@ func request_play_cards(cards_serial: Array[Dictionary]) -> void:
 	var result = _game.play_cards(sender_id, cards)
 
 	if result:
-		client_controller._on_cards_played.rpc(sender_id, result)
+		client_controller._on_cards_played.rpc(result)
 	else:
 		client_controller._on_play_failed.rpc_id(sender_id)
 

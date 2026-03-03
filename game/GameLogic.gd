@@ -37,21 +37,20 @@ func draw_cards(player_id: int) -> void:
 
 	player.hand.append_array(draw_stack)
 
-func play_cards(player_id: int, cards_serial: Array[Dictionary]):
+func play_cards(player_id: int, cards: Array[CardData]):
 	if player_id != current_player(): return false
 
 	var player = players[player_id]
-	var cards : CardData.array_to_data(cards_serial)
 	var ok = _validate_play(cards)
 
 	if ok:
-		add_to_pile(cards)
-		apply_effects(cards)
-		remove_from_hand(player, cards)
+		_add_to_pile(cards)
+		_apply_effects(cards)
+		_remove_from_hand(player, cards)
 
-		return { "success" = true, "player" = player_id, "cards" = cards_serial }
+		return { "success" = true, "player" = player_id, "cards" = CardData.array_to_serial(cards) }
 	else:
-		return { success: false }
+		return { "success": false }
 
 func add_player(id) -> Dictionary:
 	print("GameLogic: Tried to add player with ID: ", id)
@@ -80,7 +79,7 @@ func create_player_snapshot(player_id: int) -> Dictionary:
 	}
 
 # -------------------------
-# Internal
+# Internal Game Logic
 # -------------------------
 
 # Code will run on server but may be run on client for
@@ -200,10 +199,10 @@ func _create_deck() -> Array[CardData]:
 	return new_deck
 
 # -------------------------
-# Internal
+# Internal Helpers
 # -------------------------
 
-func remove_from_hand(player, cards)
+func _remove_from_hand(player: Dictionary, cards: Array[CardData]) -> void:
 	player.hand = player.hand.filter(func(card): return cards.all(func(to_remove): return card.id != to_remove.id))
 
 func current_player() -> int:
@@ -212,8 +211,8 @@ func current_player() -> int:
 func next_turn() -> void:
 	current_turn = (current_turn + 1) % turn_order.size()
 
-func add_to_pile(cards: Array[CardData]) -> void:
-	discard_pile.append(cards)
+func _add_to_pile(cards: Array[CardData]) -> void:
+	discard_pile.append_array(cards)
 
 func draw_from_pile(amount: int) -> Array[CardData]:
 	var stack : Array[CardData] = []
