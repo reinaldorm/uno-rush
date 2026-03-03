@@ -86,15 +86,14 @@ func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
 	hands_but_client[idx].setup(id, views)
 
 func _play_from_client(cards: Array[CardData]) -> void:
-	pass
-	# _discard_pile.confirm_play()
+	_discard_pile.confirm_play()
 
 func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 	var card_views : Array[CardView] = []
 	var opponent_hand : Hand
 
 	for hand in _hands:
-		if hand._player_id == opponent_id:
+		if hand.player_id == opponent_id:
 			opponent_hand = hand
 			break
 
