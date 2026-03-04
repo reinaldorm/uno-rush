@@ -14,6 +14,11 @@ var draw_pile : Array[CardData] = []
 var draw_stack := 0
 var ongoing = false
 
+enum FailReason {
+	INVALID_PLAY,
+	INVALID_TURN
+}
+
 # -------------------------
 # Public API
 # -------------------------
@@ -51,6 +56,17 @@ func play_cards(player_id: int, cards: Array[CardData]):
 		return { "success" = true, "player" = player_id, "cards" = CardData.array_to_serial(cards) }
 	else:
 		return { "success" = false, "reason" = "Invalid play" }
+
+func skip_turn(player_id: int) -> Dictionary:
+	if player_id != current_player(): return { "success" = false, "reason": "Not player's turn." }
+	
+	var skip_count := skips
+	var reverse_count := reverses
+	var previous := players[player_id]
+
+	_next_turn()
+
+	return { "success" = true, "previous" = previous, "current" = current_player(), "skips" = skip_count, "reverses" = reverse_count }
 
 func add_player(id) -> Dictionary:
 	print("GameLogic: Tried to add player with ID: ", id)
@@ -208,8 +224,15 @@ func _remove_from_hand(player: Dictionary, cards: Array[CardData]) -> void:
 func current_player() -> int:
 	return turn_order[current_turn]
 
-func next_turn() -> void:
-	current_turn = (current_turn + 1) % turn_order.size()
+func _next_turn() -> void:
+	var next := current_turn
+
+	if reverses and reverses % 2 != 0: direction == -direction
+	for i in range(skips + 1): 
+		next += direction % players.size()
+		if next < 0: next += players.size()
+
+	current_turn = next
 
 func _add_to_pile(cards: Array[CardData]) -> void:
 	discard_pile.append_array(cards)
