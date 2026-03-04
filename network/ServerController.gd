@@ -5,6 +5,13 @@ class_name ServerController
 
 var _game : GameLogic
 
+enum ActionType {
+	PLAY,
+	DRAW,
+	SKIP,
+	UNO
+}
+
 # -------------------------
 # Internal
 # -------------------------
@@ -32,6 +39,26 @@ func _ready() -> void:
 # -------------------------
 
 @rpc("any_peer", "call_local" ,"reliable")
+func request_action(action: ActionType, payload: Dictionary = null) -> void:
+	if not multiplayer.is_server(): return
+	var sender_id := multiplayer.get_remote_sender_id()
+	var result : Dictionary
+
+	match action:
+		ActionType.PLAY:
+			result = _game.play(sender_id, payload.cards)
+		ActionType.DRAW:
+			result = _game.draw(sender_id)
+		ActionType.SKIP:
+			result = _game.skip(sender_id)
+#       Waiting Implementation 
+#		ActionType.UNO: 
+#			result = _game.uno(sender_id, payload.cards)
+
+	print("ServerController: Result: ", result)
+	client_controller._on_reponse.rpc(result)
+
+@rpc("any_peer", "call_local" ,"reliable")
 func request_play_cards(cards_serial: Array[Dictionary]) -> void:
 	if not multiplayer.is_server(): return
 	var sender_id := multiplayer.get_remote_sender_id()
@@ -44,11 +71,21 @@ func request_play_cards(cards_serial: Array[Dictionary]) -> void:
 
 @rpc("any_peer", "call_local")
 func request_draw_cards() -> void:
-	pass
+	if not multiplayer.is_server(): return
+	var sender_id := multiplayer.get_remote_sender_id()
+
+	var result := _game.draw_cards(sender_id)
+
+	client_controller._on_turn_skipped.rpc(result)
 
 @rpc("any_peer", "call_local")
-func request_turn_skip() -> void:
-	pass
+func request_skip_turn() -> void:
+	if not multiplayer.is_server(): return
+	var sender_id := multiplayer.get_remote_sender_id()
+
+	var result := _game.skip_turn(sender_id)
+
+	client_controller._on_turn_skipped.rpc(result)
 
 # -------------------------
 # Handlers
