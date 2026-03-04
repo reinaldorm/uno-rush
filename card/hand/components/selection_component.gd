@@ -5,14 +5,20 @@ signal card_selected(card_view: CardView)
 
 var selected_cards : Array[CardView] = []
 
-func select(card_view: CardView) -> void:
+func deselect(card_view: CardView) -> void:
 	if selected_cards.has(card_view):
 		selected_cards.erase(card_view)
-		card_view.is_selected = false
+	card_view.is_selected = false
 
-		for i in range(selected_cards.size()):
-			var card := selected_cards[i]
-			card.is_selected = true
+func deselect_all() -> void:
+	for card_view in selected_cards:
+		if is_instance_valid(card_view):
+			card_view.is_selected = false
+	selected_cards.clear()
+
+func select(card_view: CardView) -> void:
+	if selected_cards.has(card_view):
+		deselect(card_view)
 
 	else:
 		selected_cards.append(card_view)

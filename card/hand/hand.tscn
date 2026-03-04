@@ -3,7 +3,9 @@
 [ext_resource type="Script" uid="uid://4jmmbq33ah3v" path="res://card/hand/hand.gd" id="1_eyfoh"]
 [ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="2_cmdsa"]
 
-[node name="Hand" type="Node2D" unique_id=342436484 node_paths=PackedStringArray("layout_component")]
+[node name="Hand" type="Node2D" unique_id=342436484 node_paths=PackedStringArray("cards_node")]
 script = ExtResource("1_eyfoh")
 card_scene = ExtResource("2_cmdsa")
-layout_component = NodePath("")
+cards_node = NodePath("Cards")
+
+[node name="Cards" type="Node2D" parent="." unique_id=311414036]

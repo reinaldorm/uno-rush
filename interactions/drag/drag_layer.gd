@@ -15,7 +15,10 @@ func begin_drag(draggable: Node2D) -> void:
 	if _active_drags.has(draggable): return
 	_active_drags.append(draggable)
 
-	draggable.set_meta("drag_original_parent", draggable.get_parent())
+	var parent = draggable.get_meta("drag_original_parent", null)
+
+	if not parent: draggable.set_meta("drag_original_parent", draggable.get_parent())
+
 	draggable.set_meta("drag_original_index", draggable.get_index())
 
 	draggable.drag_component.connect("drag_ended", end_drag)

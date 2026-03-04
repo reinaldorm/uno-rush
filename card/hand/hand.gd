@@ -4,8 +4,8 @@ class_name Hand
 @export var card_scene : PackedScene
 @export var layout_component : LayoutComponent
 @export var selection_component : SelectionComponent
+@export var cards_node : Node2D
 
-var _card_data : Array[CardData] = []
 var _card_views : Array[CardView] = []
 var _dragging_card : CardView = null
 
@@ -23,29 +23,40 @@ func setup(id: int, first_hand: Array[CardView]) -> void:
 	_add_card_views(first_hand)
 	player_id = id
 
+func deselect_all_cards() -> void:
+	if not selection_component:
+		return
+	selection_component.deselect_all()
+	_arrange()
+
 func restore_card(card_view: CardView) -> void:
 
-	if _card_data.has(card_view.data):
-		card_view.reparent(self)
+	card_view.reparent(cards_node)
 
-		var _index = card_view.get_meta("drag_original_index")
-		_card_views.insert(_index - 1, card_view)
-		move_child(card_view, _index)
+	var _index = card_view.get_meta("drag_original_index")
+	_card_views.insert(_index, card_view)
+	cards_node.move_child(card_view, _index)
 
-		card_view.drag_component.drag_started.connect(_on_card_drag_started)
-		card_view.mouse_left_down.connect(_on_card_mouse_left_down)
-
-	if card_view == _dragging_card:
-		_dragging_card.set_selected(false)
-		_dragging_card = null
+	card_view.drag_component.drag_started.connect(_on_card_drag_started)
+	card_view.mouse_left_down.connect(_on_card_mouse_left_down)
 
 	_arrange()
 
-func withdraw_card() -> CardView:
-	var card_view = _card_views.pop_back()
-	_card_views.append(card_view)
+func withdraw_card(card_data: CardData = null) -> CardView:
+	var view : CardView = null
+
+	if card_data:
+		view = _get_view_by_data(card_data)
+		_card_views.erase(view)
+	else:
+		view = _card_views.pop_back()
+
+	if selection_component and view:
+		selection_component.deselect(view)
+
 	_arrange()
-	return card_view
+
+	return view
 
 # -------------------------
 # Internal
@@ -65,13 +76,12 @@ func _add_card_views(card_views: Array[CardView]) -> Array[CardView]:
 	var new_cards : Array[CardView] = []
 
 	for view in card_views:
-		var data := view.data
-
 		new_cards.append(view)
-		_card_data.append(data)
 
-		add_child(view)
+		cards_node.add_child(view)
 		_card_views.append(view)
+
+		view.set_meta("drag_original_parent", self)
 
 		view.drag_component.drag_started.connect(_on_card_drag_started)
 		view.mouse_left_down.connect(_on_card_mouse_left_down)
@@ -82,29 +92,22 @@ func _add_card_views(card_views: Array[CardView]) -> Array[CardView]:
 	return new_cards
 
 # -------------------------
-# Handlers
+# Game Handlers
 # -------------------------
 
-# -------------
-# Game Handlers
-# -------------
+func _on_cards_played(_player_id: int) -> void:
+	selection_component.deselect_all()
 
-func _on_game_manager_cards_played(card_data: Array[CardData]) -> void:
-	print("Hand: Cards Played")
-
-func _on_game_manager_cards_drawn(card_data: Array[CardData]) -> void:
-	print("Hand: Cards Drawn")
-
-func _on_game_manager_play_denied(card_data: Array[CardData]) -> void:
-	print("Hand: Play Denied")
-
-# -------------
+# -------------------------
 # Card Handlers
-# -------------
+# -------------------------
 
 func _on_card_drag_started(draggable: Node2D) -> void:
 	draggable.drag_component.drag_started.disconnect(_on_card_drag_started)
 	draggable.mouse_left_down.disconnect(_on_card_mouse_left_down)
+
+	if selection_component and draggable is CardView:
+		selection_component.deselect(draggable as CardView)
 
 	_card_views.erase(draggable)
 	_arrange()
@@ -127,7 +130,8 @@ func _on_card_mouse_left_down(card_view: CardView) -> void:
 # -------------
 
 func _get_view_by_data(data: CardData) -> CardView:
-	for view in _card_views: if view.data == data: return view
+	for view in _card_views:
+		if view.data.id == data.id: return view
 	return null
 
 # -------------

@@ -12,8 +12,9 @@ signal play_denied(card: Array[CardData])
 @export var _discard_pile : DiscardPile
 @export var _draw_pile : DrawPile
 
-@export var _hands : Array[Hand]
 @export var _client_hand : Hand
+@export var _hands : Array[Hand]
+var _hands_mapped : Dictionary[int, Hand] = {}
 
 @export var _view_scene : PackedScene
 
@@ -26,7 +27,6 @@ signal play_denied(card: Array[CardData])
 # -------------------------
 
 func _start(snapshot: Dictionary) -> void:
-	print("GameManager: Game is supposed to be started, beggining of block.")
 
 	var top_card := CardData.to_data(snapshot["top_card"])
 
@@ -35,16 +35,11 @@ func _start(snapshot: Dictionary) -> void:
 	for i in range(snapshot.players.size()):
 		var player : Dictionary = snapshot.players[i]
 
-		if player.id == multiplayer.get_unique_id():
-			_create_player_hand(player.id, player.hand)
-		else:
-			_create_opponent_hand(player.id, player.hand_count, i)
+		_create_opponent_hand(player.id, player.hand_count, i)
 
-	for hand in _hands: await hand.start()
+	for hand in [_client_hand] + _hands: await hand.start()
 
 	_discard_pile.start(top_card)
-
-	print("GameManager: Game is supposed to be started, end of block.")
 
 func _ready() -> void:
 	client_controller.on_cards_played.connect(_on_cards_played)
@@ -53,11 +48,9 @@ func _ready() -> void:
 	client_controller.on_game_started.connect(_on_game_started)
 
 func _create_player_hand(id: int, hand: Array[Dictionary]) -> void:
-	print("Create Player Hand")
-	var cards : Array[CardData] = []
+	var cards : Array[CardData] = CardData.array_to_data(hand)
 	var views : Array[CardView] = []
 
-	for card_serial in hand: cards.append(CardData.to_data(card_serial))
 	for card in cards:
 		var view : CardView = _view_scene.instantiate()
 		view.setup(card, false)
@@ -66,7 +59,6 @@ func _create_player_hand(id: int, hand: Array[Dictionary]) -> void:
 	_client_hand.setup(id, views)
 
 func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
-	print("Create Opponent Hand")
 	var cards : Array[CardData] = []
 	var views : Array[CardView] = []
 
@@ -79,14 +71,17 @@ func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
 		view.setup(card, true)
 		views.append(view)
 
-	var hands_but_client : Array[Hand] = []
-
-	for hand in _hands: if hand.name != "PlayerHand": hands_but_client.append(hand)
-
-	hands_but_client[idx].setup(id, views)
+	_hands[idx].setup(id, views)
+	_hands_mapped[id] = _hands[idx]
 
 func _play_from_client(cards: Array[CardData]) -> void:
-	_discard_pile.confirm_play()
+	var played_cards : Array[CardView] = []
+
+	for card in cards:
+		var view : CardView = _client_hand.withdraw_card(card)
+		played_cards.append(view)
+
+	_discard_pile.play(played_cards)
 
 func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 	var card_views : Array[CardView] = []
@@ -99,10 +94,10 @@ func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 
 	for card in cards:
 		var view : CardView = opponent_hand.withdraw_card()
-		view.setup(card, true)
+		view.setup(card, false)
 		card_views.append(view)
 
-	_discard_pile.play_from_opponent(card_views)
+	_discard_pile.play(card_views)
 
 # -------------------------
 # Handlers
@@ -111,15 +106,13 @@ func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 # Network Handlers
 # Methods for handling network events
 
-func _on_cards_played(result: Dictionary) -> void:
+func _on_cards_played(player_id: int, cards: Array[CardData]) -> void:
 	print("GameManager: Cards played from network")
 
-	var cards = CardData.array_to_data(result.cards)
-
-	if result.player == multiplayer.get_unique_id():
+	if player_id == multiplayer.get_unique_id():
 		_play_from_client(cards)
 	else:
-		_play_from_opponent(result.player, cards)
+		_play_from_opponent(player_id, cards)
 
 func _on_cards_drawn() -> void:
 	print("GameManager: Cards drawn from network")
@@ -135,8 +128,9 @@ func _on_game_started(snapshot: Dictionary) -> void:
 func _on_play_requested() -> void:
 	var views = _client_hand.selection_component.selected_cards
 
+	## Game Manager handles trivial logic validation so server doesn't need to.
 	if views.is_empty():
-		print("GameManager: No cards selected.")
+		print("GameMassager: No cards selected.")
 		return
 
 	var cards : Array[CardData] = []

@@ -71,6 +71,9 @@ func reset() -> void:
 	is_selected = false
 	is_playable = false
 
+	scale = Vector2.ONE
+	rotation = 0.0
+
 	_selection_transform.scale = Vector2(1.0, 1.0)
 	_selection_transform.rotation = 0.0
 
@@ -99,9 +102,9 @@ func _toggle_select(state: bool) -> void:
 	tween.set_parallel()
 
 	if state:
-		tween.tween_property(_selection_transform, "scale", Vector2(1.1, 1.1), 1.0)
+		tween.tween_property(_selection_transform, "scale", Vector2(1.1, 1.1), 0.7)
 	else:
-		tween.tween_property(_selection_transform, "scale", Vector2(1.0, 1.0), 1.0)
+		tween.tween_property(_selection_transform, "scale", Vector2(1.0, 1.0), 0.7)
 
 func _toggle_playable(state: bool) -> void:
 	if state:
@@ -113,9 +116,9 @@ func _toggle_playable(state: bool) -> void:
 		# _fx_transform.scale = Vector2(1.1, 1.1)
 
 		tween.set_loops()
-		tween.tween_property(_fx_transform, "scale", Vector2(1.1, 1.1), 0.01)
-		tween.tween_property(_fx_transform, "scale", Vector2.ONE, 0.75)
-		tween.tween_interval(.2)
+		tween.tween_property(_fx_transform, "scale", Vector2(1.1, 1.1), 0.7)
+		tween.tween_property(_fx_transform, "scale", Vector2.ONE, 0.7)
+		tween.tween_interval(0.7)
 	else:
 		if _tween_channels["fx"]: _tween_channels["fx"].kill()
 
@@ -157,8 +160,8 @@ func _on_card_entered() -> void:
 	_hover_transform.rotation = 0.25
 
 	tween.set_parallel()
-	tween.tween_property(_hover_transform, "scale", Vector2(1.1, 1.1), 1.0)
-	tween.tween_property(_hover_transform, "rotation", 0.0, 1.0)
+	tween.tween_property(_hover_transform, "scale", Vector2(1.1, 1.1), 0.7)
+	tween.tween_property(_hover_transform, "rotation", 0.0, 0.7)
 
 func _on_card_exited() -> void:
 	if drag_component and drag_component.dragging: return
@@ -168,8 +171,8 @@ func _on_card_exited() -> void:
 	var tween = animate("hover")
 
 	tween.set_parallel()
-	tween.tween_property(_hover_transform, "scale", Vector2(1.0, 1.0), 1.0)
-	tween.tween_property(_hover_transform, "rotation", 0.0, 1.0)
+	tween.tween_property(_hover_transform, "scale", Vector2(1.0, 1.0), 0.7)
+	tween.tween_property(_hover_transform, "rotation", 0.0, 0.7)
 
 func _on_drag_started(_owner: Node2D) -> void:
 	if _tween_channels["layout"]: _tween_channels["layout"].kill()

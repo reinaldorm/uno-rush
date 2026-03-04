@@ -5,7 +5,7 @@ class_name ClientController
 
 var client_id : int = 0 : get = _get_client_id
 
-signal on_cards_played(result: Dictionary)
+signal on_cards_played(player_id: int, cards: Array[CardData])
 signal on_play_failed()
 
 signal on_cards_drawn()
@@ -38,12 +38,14 @@ func request_skip() -> void:
 
 @rpc("authority", "reliable", "call_local")
 func _on_cards_played(result: Dictionary) -> void:
-	emit_signal("on_cards_played", result)
+	print("ClientController: _on_cards_played", result)
+	if result.success:
+		var player_id = result.player
+		var cards = CardData.array_to_data(result.cards)
 
-@rpc("authority", "reliable", "call_local")
-func _on_play_failed() -> void:
-	print("Play failed, player: ", multiplayer.get_unique_id())
-	emit_signal("on_play_failed")
+		emit_signal("on_cards_played", player_id, cards)
+	else:
+		emit_signal("on_play_failed")
 
 @rpc("authority", "reliable", "call_local")
 func _on_cards_drawn() -> void:

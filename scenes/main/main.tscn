@@ -217,15 +217,15 @@ metadata/_custom_type_script = "uid://bxvsjmh1bsh2g"
 
 [node name="FXLayer" type="Node2D" parent="FXManager" unique_id=2096540511]
 
-[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("client_controller", "_turn_manager", "_hue_manager", "_discard_pile", "_draw_pile", "_hands", "_client_hand")]
+[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("client_controller", "_turn_manager", "_hue_manager", "_discard_pile", "_draw_pile", "_client_hand", "_hands")]
 script = ExtResource("7_hujxm")
 client_controller = NodePath("../ClientController")
 _turn_manager = NodePath("../TurnManager")
 _hue_manager = NodePath("../HueManager")
 _discard_pile = NodePath("../DiscardPile")
 _draw_pile = NodePath("../DrawPile")
-_hands = [NodePath("../PlayerHand"), NodePath("../LeftHand"), NodePath("../CenterHand"), NodePath("../RightHand")]
 _client_hand = NodePath("../PlayerHand")
+_hands = [NodePath("../LeftHand"), NodePath("../CenterHand"), NodePath("../RightHand")]
 _view_scene = ExtResource("9_nvumn")
 metadata/_custom_type_script = "uid://cl5yn6116qkw2"
 

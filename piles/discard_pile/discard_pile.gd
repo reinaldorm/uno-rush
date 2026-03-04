@@ -30,8 +30,8 @@ func start(first_card: CardData) -> void:
 	c.drag_component.queue_free()
 	_cards_node.add_child(c)
 
-func confirm_play(played_cards: Array[CardView]) -> void:
-	_drop_zone.resolve_drop(true)
+func play(played_cards: Array[CardView]) -> void:
+	if _drop_zone: _drop_zone.resolve_drop(true)
 
 	for card in played_cards:
 		_add_card_to_pile(card)
@@ -40,12 +40,6 @@ func confirm_play(played_cards: Array[CardView]) -> void:
 
 func reject_play() -> void:
 	_drop_zone.resolve_drop(false)
-
-func play_from_opponent(played_cards: Array[CardView]) -> void:
-	for card in played_cards:
-		_add_card_to_pile(card)
-
-	await _animate_play_sequence(played_cards)
 
 # -------------------------
 # Internal
@@ -57,8 +51,6 @@ func _add_card_to_pile(card_view: CardView):
 	card_view.reset()
 
 func _animate_play_sequence(played_cards: Array[CardView]) -> void:
-	print("DiscardPile: Play sequence initiated", played_cards)
-
 	var tween := _animate("play", Tween.EASE_OUT, Tween.TRANS_EXPO).set_parallel()
 
 	for idx in range(played_cards.size()):
@@ -113,8 +105,6 @@ func _play_card_animation(card_view: CardView) -> void:
 
 	tween.tween_property(card_view, "position", Vector2.ZERO, 0.35).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
 	tween.tween_property(card_view, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
-
-	tween.set_parallel(false)
 
 	await tween.finished
 

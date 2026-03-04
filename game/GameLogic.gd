@@ -38,7 +38,7 @@ func draw_cards(player_id: int) -> void:
 	player.hand.append_array(draw_stack)
 
 func play_cards(player_id: int, cards: Array[CardData]):
-	if player_id != current_player(): return false
+	if player_id != current_player(): return { "success" = false, "reason" = "Not your turn" }
 
 	var player = players[player_id]
 	var ok = _validate_play(cards)
@@ -50,7 +50,7 @@ func play_cards(player_id: int, cards: Array[CardData]):
 
 		return { "success" = true, "player" = player_id, "cards" = CardData.array_to_serial(cards) }
 	else:
-		return { "success": false }
+		return { "success" = false, "reason" = "Invalid play" }
 
 func add_player(id) -> Dictionary:
 	print("GameLogic: Tried to add player with ID: ", id)

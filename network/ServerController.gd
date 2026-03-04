@@ -36,15 +36,11 @@ func request_play_cards(cards_serial: Array[Dictionary]) -> void:
 	if not multiplayer.is_server(): return
 	var sender_id := multiplayer.get_remote_sender_id()
 
-	print("ServerController: Acknowledged play request: ", sender_id, cards_serial)
-
 	var cards : Array[CardData] = CardData.array_to_data(cards_serial)
 	var result = _game.play_cards(sender_id, cards)
 
-	if result:
-		client_controller._on_cards_played.rpc(result)
-	else:
-		client_controller._on_play_failed.rpc_id(sender_id)
+	print("ServerController: Result: ", result)
+	client_controller._on_cards_played.rpc(result)
 
 @rpc("any_peer", "call_local")
 func request_draw_cards() -> void:
