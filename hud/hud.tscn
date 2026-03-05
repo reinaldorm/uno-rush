@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://5l4hlbf13et7"]
 
+[ext_resource type="Script" uid="uid://bma8tvprew3kp" path="res://hud/hud.gd" id="1_2gk58"]
 [ext_resource type="FontFile" uid="uid://bwlxp6kod573k" path="res://assets/fonts/monogram.ttf" id="1_6ca3a"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6ca3a"]
@@ -8,6 +9,7 @@ font = ExtResource("1_6ca3a")
 font_size = 8
 
 [node name="Hud" type="CanvasLayer" unique_id=827020285]
+script = ExtResource("1_2gk58")
 
 [node name="PlayerLeft" type="RichTextLabel" parent="." unique_id=1985710432]
 anchors_preset = 5
@@ -71,13 +73,13 @@ offset_right = 632.0
 offset_bottom = 353.0
 alignment = 1
 
-[node name="Button" type="Button" parent="BottomRight" unique_id=954577562]
+[node name="SkipTurn" type="Button" parent="BottomRight" unique_id=954577562]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("1_6ca3a")
-text = "Pass Turn"
+text = "Skip Turn"
 
-[node name="ColorRect" type="ColorRect" parent="BottomRight" unique_id=1389096409]
+[node name="TurnTimer" type="ColorRect" parent="BottomRight" unique_id=1389096409]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 color = Color(0.06666667, 0.06666667, 0.06666667, 0.49803922)
@@ -113,3 +115,5 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("1_6ca3a")
 text = "Arrange Color"
+
+[connection signal="pressed" from="BottomRight/SkipTurn" to="." method="_on_skip_turn_pressed"]

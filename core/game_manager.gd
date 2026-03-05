@@ -107,7 +107,7 @@ func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 # Methods for handling network events
 
 func _on_cards_played(player_id: int, cards: Array[CardData]) -> void:
-	print("GameManager: Cards played from network")
+	print("GameManager: _on_cards_played: ", player_id)
 
 	if player_id == multiplayer.get_unique_id():
 		_play_from_client(cards)
@@ -129,9 +129,7 @@ func _on_play_requested() -> void:
 	var views = _client_hand.selection_component.selected_cards
 
 	## Game Manager handles trivial logic validation so server doesn't need to.
-	if views.is_empty():
-		print("GameMassager: No cards selected.")
-		return
+	if views.is_empty(): return
 
 	var cards : Array[CardData] = []
 
@@ -151,3 +149,9 @@ func _on_draw_requested() -> void:
 
 func _on_selection_changed() -> void:
 	print("GameManager: Selection changed")
+
+# Skip Turn Handlers
+# Methods for handling skip turn signals/requests
+
+func _on_skip_requested() -> void:
+	client_controller.request_skip()

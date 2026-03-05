@@ -19,18 +19,16 @@ signal on_game_started(snapshot: Dictionary)
 # -------------------------
 
 func request_play(cards: Array[CardData]) -> void:
-	var cards_serial : Array[Dictionary] = []
+	var cards_serial : Array[Dictionary] = CardData.array_to_serial(cards)
 
-	for card in cards:
-		cards_serial.append(CardData.to_serial(card))
-
-	server_controller.request_play_cards.rpc_id(1, cards_serial)
+	server_controller.request_action.rpc_id(1, ServerController.ActionType.PLAY, { "cards" = cards_serial })
 
 func request_draw() -> void:
-	server_controller.request_draw_cards.rpc_id(1)
+	server_controller.request_action.rpc_id(1, ServerController.ActionType.DRAW)
 
 func request_skip() -> void:
-	server_controller.request_turn_skip.rpc_id(1)
+	print("Hi!")
+	server_controller.request_action.rpc_id(1, ServerController.ActionType.SKIP)
 
 # -------------------------
 # RPC Handlers
@@ -38,7 +36,8 @@ func request_skip() -> void:
 
 @rpc("authority", "reliable", "call_local")
 func _on_cards_played(result: Dictionary) -> void:
-	print("ClientController: _on_cards_played", result)
+	print("ClientController: _on_cards_played: ", result.success)
+
 	if result.success:
 		var player_id = result.player
 		var cards = CardData.array_to_data(result.cards)
@@ -48,11 +47,11 @@ func _on_cards_played(result: Dictionary) -> void:
 		emit_signal("on_play_failed")
 
 @rpc("authority", "reliable", "call_local")
-func _on_cards_drawn() -> void:
+func _on_cards_drawn(result: Dictionary) -> void:
 	emit_signal("on_cards_drawn")
 
 @rpc("authority", "reliable", "call_local")
-func _on_turn_skipped() -> void:
+func _on_turn_skipped(result: Dictionary) -> void:
 	emit_signal("on_turn_skipped")
 
 @rpc("authority", "reliable", "call_local")

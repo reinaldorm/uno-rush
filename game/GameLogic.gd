@@ -36,14 +36,19 @@ func start() -> void:
 
 	ongoing = true
 
-func draw_cards(player_id: int) -> void:
-	if player_id != current_player(): return
+func draw(player_id: int) -> Dictionary:
+	if player_id != current_player(): return { "success" = false, "reason" = "Not your turn" }
 	var player := players[player_id]
 
-	player.hand.append_array(draw_stack)
+	var cards := draw_from_pile(1)
 
-func play_cards(player_id: int, cards: Array[CardData]):
-	if player_id != current_player(): return { "success" = false, "reason" = "Not your turn" }
+	player.hand.append_array(cards)
+
+	return { "success" = true, "player" = player_id, "cards" = CardData.array_to_serial(cards) }
+
+func play(player_id: int, cards_serial: Array[Dictionary]):
+	if player_id != current_player(): return { "success" = false, "reason" = "Not your turn", "current" = current_player(), "sender" = player_id }
+	var cards := CardData.array_to_data(cards_serial)
 
 	var player = players[player_id]
 	var ok = _validate_play(cards)
@@ -53,13 +58,13 @@ func play_cards(player_id: int, cards: Array[CardData]):
 		_apply_effects(cards)
 		_remove_from_hand(player, cards)
 
-		return { "success" = true, "player" = player_id, "cards" = CardData.array_to_serial(cards) }
+		return { "success" = true, "player" = player_id, "cards" = cards_serial }
 	else:
 		return { "success" = false, "reason" = "Invalid play" }
 
-func skip_turn(player_id: int) -> Dictionary:
-	if player_id != current_player(): return { "success" = false, "reason": "Not player's turn." }
-	
+func skip(player_id: int) -> Dictionary:
+	if player_id != current_player(): return { "success" = false, "reason" = "Not player's turn." }
+
 	var skip_count := skips
 	var reverse_count := reverses
 	var previous := players[player_id]
@@ -227,11 +232,13 @@ func current_player() -> int:
 func _next_turn() -> void:
 	var next := current_turn
 
-	if reverses and reverses % 2 != 0: direction == -direction
-	for i in range(skips + 1): 
-		next += direction % players.size()
+	if reverses and reverses % 2 != 0: direction = -direction
+	for i in range(skips + 1):
+		next = (next + direction) % players.size()
 		if next < 0: next += players.size()
 
+	skips = 0
+	reverses = 0
 	current_turn = next
 
 func _add_to_pile(cards: Array[CardData]) -> void:

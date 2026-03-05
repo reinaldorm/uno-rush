@@ -39,7 +39,7 @@ func _ready() -> void:
 # -------------------------
 
 @rpc("any_peer", "call_local" ,"reliable")
-func request_action(action: ActionType, payload: Dictionary = null) -> void:
+func request_action(action: ActionType, payload: Dictionary = {}) -> void:
 	if not multiplayer.is_server(): return
 	var sender_id := multiplayer.get_remote_sender_id()
 	var result : Dictionary
@@ -47,45 +47,18 @@ func request_action(action: ActionType, payload: Dictionary = null) -> void:
 	match action:
 		ActionType.PLAY:
 			result = _game.play(sender_id, payload.cards)
+			client_controller._on_cards_played.rpc(result)
 		ActionType.DRAW:
 			result = _game.draw(sender_id)
+			client_controller._on_cards_drawn.rpc(result)
 		ActionType.SKIP:
 			result = _game.skip(sender_id)
-#       Waiting Implementation 
-#		ActionType.UNO: 
+			client_controller._on_turn_skipped.rpc(result)
+#		ActionType.UNO:
 #			result = _game.uno(sender_id, payload.cards)
+	print("ServerController: _on_cards_played: ", result.success)
 
-	print("ServerController: Result: ", result)
-	client_controller._on_reponse.rpc(result)
 
-@rpc("any_peer", "call_local" ,"reliable")
-func request_play_cards(cards_serial: Array[Dictionary]) -> void:
-	if not multiplayer.is_server(): return
-	var sender_id := multiplayer.get_remote_sender_id()
-
-	var cards : Array[CardData] = CardData.array_to_data(cards_serial)
-	var result = _game.play_cards(sender_id, cards)
-
-	print("ServerController: Result: ", result)
-	client_controller._on_cards_played.rpc(result)
-
-@rpc("any_peer", "call_local")
-func request_draw_cards() -> void:
-	if not multiplayer.is_server(): return
-	var sender_id := multiplayer.get_remote_sender_id()
-
-	var result := _game.draw_cards(sender_id)
-
-	client_controller._on_turn_skipped.rpc(result)
-
-@rpc("any_peer", "call_local")
-func request_skip_turn() -> void:
-	if not multiplayer.is_server(): return
-	var sender_id := multiplayer.get_remote_sender_id()
-
-	var result := _game.skip_turn(sender_id)
-
-	client_controller._on_turn_skipped.rpc(result)
 
 # -------------------------
 # Handlers
