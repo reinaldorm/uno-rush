@@ -5,12 +5,12 @@ class_name ClientController
 
 var client_id : int = 0 : get = _get_client_id
 
-signal on_cards_played(player_id: int, cards: Array[CardData])
+signal on_cards_played(player_id: int, cards: Array[CardData], game_snapshot: Dictionary)
 signal on_play_failed()
 
-signal on_cards_drawn()
+signal on_cards_drawn(result: Dictionary)
 
-signal on_turn_skipped()
+signal on_turn_skipped(result: Dictionary)
 
 signal on_game_started(snapshot: Dictionary)
 
@@ -27,7 +27,6 @@ func request_draw() -> void:
 	server_controller.request_action.rpc_id(1, ServerController.ActionType.DRAW)
 
 func request_skip() -> void:
-	print("Hi!")
 	server_controller.request_action.rpc_id(1, ServerController.ActionType.SKIP)
 
 # -------------------------
@@ -41,18 +40,19 @@ func _on_cards_played(result: Dictionary) -> void:
 	if result.success:
 		var player_id = result.player
 		var cards = CardData.array_to_data(result.cards)
+		var game_snapshot : Dictionary = result.get("game", {})
 
-		emit_signal("on_cards_played", player_id, cards)
+		emit_signal("on_cards_played", player_id, cards, game_snapshot)
 	else:
 		emit_signal("on_play_failed")
 
 @rpc("authority", "reliable", "call_local")
 func _on_cards_drawn(result: Dictionary) -> void:
-	emit_signal("on_cards_drawn")
+	emit_signal("on_cards_drawn", result)
 
 @rpc("authority", "reliable", "call_local")
 func _on_turn_skipped(result: Dictionary) -> void:
-	emit_signal("on_turn_skipped")
+	emit_signal("on_turn_skipped", result)
 
 @rpc("authority", "reliable", "call_local")
 func _on_game_started(snapshot: Dictionary):

@@ -31,7 +31,7 @@ func start() -> void:
 	discard_pile.append(CardData.create_numbered(CardData.Hue.RED, 0))
 
 	for player in players.values():
-		var hand := draw_from_pile(7)
+		var hand := _draw_from_pile(7)
 		player["hand"].append_array(hand)
 
 	ongoing = true
@@ -40,11 +40,16 @@ func draw(player_id: int) -> Dictionary:
 	if player_id != current_player(): return { "success" = false, "reason" = "Not your turn" }
 	var player := players[player_id]
 
-	var cards := draw_from_pile(1)
+	var cards := _draw_from_pile(1)
 
 	player.hand.append_array(cards)
 
-	return { "success" = true, "player" = player_id, "cards" = CardData.array_to_serial(cards) }
+	return {
+		"success" = true,
+		"player" = player_id,
+		"cards" = CardData.array_to_serial(cards),
+		"draw_count" = cards.size()
+	}
 
 func play(player_id: int, cards_serial: Array[Dictionary]):
 	if player_id != current_player(): return { "success" = false, "reason" = "Not your turn", "current" = current_player(), "sender" = player_id }
@@ -80,23 +85,25 @@ func add_player(id) -> Dictionary:
 	return players[id]
 
 func create_player_snapshot(player_id: int) -> Dictionary:
-	var players_snapshot :  Array[Dictionary] = []
 	var player_hand_serial : Array[Dictionary] = CardData.array_to_serial(players[player_id].hand)
-
-	for id in turn_order:
-		if id != player_id:
-			players_snapshot.append({
-				"id" = players[id]["id"],
-				"hand_count" = players[id]["hand"].size()
-			})
-
 	var player_snapshot : Dictionary = { "id" = players[player_id]["id"], "hand" = player_hand_serial }
+	var snapshot := create_game_snapshot(player_id)
+	snapshot["player"] = player_snapshot
+	return snapshot
+
+func create_game_snapshot(exclude_player_id: int = -1) -> Dictionary:
+	var top_card_serial : Dictionary = {}
+
+	if not discard_pile.is_empty():
+		top_card_serial = CardData.to_serial(discard_pile[discard_pile.size() - 1])
 
 	return {
-		"player": player_snapshot,
-		"players": players_snapshot,
-		"current_player": current_player(),
-		"top_card": CardData.to_serial(discard_pile[0]),
+		"ongoing" = ongoing,
+		"current_player" = current_player(),
+		"direction" = direction,
+		"draw_stack" = draw_stack,
+		"top_card" = top_card_serial,
+		"players" = _create_players_snapshot(exclude_player_id)
 	}
 
 # -------------------------
@@ -244,7 +251,20 @@ func _next_turn() -> void:
 func _add_to_pile(cards: Array[CardData]) -> void:
 	discard_pile.append_array(cards)
 
-func draw_from_pile(amount: int) -> Array[CardData]:
+func _create_players_snapshot(exclude_player_id: int = -1) -> Array[Dictionary]:
+	var players_snapshot : Array[Dictionary] = []
+
+	for id in turn_order:
+		if id == exclude_player_id: continue
+
+		players_snapshot.append({
+			"id" = players[id]["id"],
+			"hand_count" = players[id]["hand"].size()
+		})
+
+	return players_snapshot
+
+func _draw_from_pile(amount: int) -> Array[CardData]:
 	var stack : Array[CardData] = []
 
 	for i in range(amount): stack.append(draw_pile.pop_back())

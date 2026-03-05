@@ -7,39 +7,40 @@ signal play_denied(card: Array[CardData])
 
 @export var client_controller : ClientController
 
+@export var _view_scene : PackedScene
 @export var _turn_manager : TurnManager
 @export var _hue_manager : HueManager
 @export var _discard_pile : DiscardPile
 @export var _draw_pile : DrawPile
+@export var _hud : HUD
 
 @export var _client_hand : Hand
 @export var _hands : Array[Hand]
 var _hands_mapped : Dictionary[int, Hand] = {}
 
-@export var _view_scene : PackedScene
-
-# -------------------------
-# Public API
-# -------------------------
+var _last_snapshot : Dictionary = {}
 
 # -------------------------
 # Internal
 # -------------------------
 
 func _start(snapshot: Dictionary) -> void:
-
 	var top_card := CardData.to_data(snapshot["top_card"])
+	var client_id := multiplayer.multiplayer_peer.get_unique_id()
 
-	_create_player_hand(multiplayer.multiplayer_peer.get_unique_id(), snapshot.player.hand)
+	_create_player_hand(client_id, snapshot.player.hand)
+	_hud.update_player_hand(client_id == snapshot.current_player)
 
 	for i in range(snapshot.players.size()):
-		var player : Dictionary = snapshot.players[i]
+		var opponent : Dictionary = snapshot.players[i]
 
-		_create_opponent_hand(player.id, player.hand_count, i)
+		_create_opponent_hand(opponent.id, opponent.hand_count, i)
+		_hud.set_opponent_box(opponent.id, i, opponent.hand_count, snapshot.current_player == opponent.id)
 
 	for hand in [_client_hand] + _hands: await hand.start()
 
-	_discard_pile.start(top_card)
+	await _discard_pile.start(top_card)
+	# await _turn_manager.start(snapshot.current_player)
 
 func _ready() -> void:
 	client_controller.on_cards_played.connect(_on_cards_played)
@@ -59,12 +60,8 @@ func _create_player_hand(id: int, hand: Array[Dictionary]) -> void:
 	_client_hand.setup(id, views)
 
 func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
-	var cards : Array[CardData] = []
+	var cards := _create_placeholder_cards(hand_count)
 	var views : Array[CardView] = []
-
-	for i in range(hand_count):
-		var card_data = CardData.create_numbered(CardData.Hue.RED, 0)
-		cards.append(card_data)
 
 	for card in cards:
 		var view : CardView = _view_scene.instantiate()
@@ -73,6 +70,14 @@ func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
 
 	_hands[idx].setup(id, views)
 	_hands_mapped[id] = _hands[idx]
+
+func _create_placeholder_cards(amount: int) -> Array[CardData]:
+	var cards : Array[CardData] = []
+
+	for i in range(amount):
+		cards.append(CardData.create_numbered(CardData.Hue.RED, 0))
+
+	return cards
 
 func _play_from_client(cards: Array[CardData]) -> void:
 	var played_cards : Array[CardView] = []
@@ -99,6 +104,50 @@ func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 
 	_discard_pile.play(card_views)
 
+func _add_cards_to_client_hand(cards: Array[CardData]) -> void:
+	var views : Array[CardView] = []
+
+	for card in cards:
+		var view : CardView = _view_scene.instantiate()
+		view.setup(card, false)
+		views.append(view)
+
+	_client_hand.add_cards(views)
+
+func _add_cards_to_opponent_hand(opponent_id: int, draw_count: int) -> void:
+	var opponent_hand : Hand
+	var cards : Array[CardData] = _create_placeholder_cards(draw_count)
+	var cards_to_draw : Array[CardView] = []
+
+	for hand in _hands:
+		if hand.player_id == opponent_id:
+			opponent_hand = hand
+			break
+
+	for card in cards:
+		var view : CardView = _view_scene.instantiate()
+		view.setup(card, true)
+		cards_to_draw.append(view)
+
+	opponent_hand.add_cards(cards_to_draw)
+
+func _sync_game_snapshot(snapshot: Dictionary) -> void:
+	if snapshot.is_empty(): return
+
+	_last_snapshot = snapshot
+
+	var current_player_id : int = snapshot.get("current_player", -1)
+	_hud.update_player_hand(multiplayer.get_unique_id() == current_player_id)
+
+	if not snapshot.has("players"):
+		return
+
+	for player in snapshot.players:
+		if player.id == multiplayer.get_unique_id():
+			continue
+		if _hands_mapped.has(player.id):
+			_hud.update_opponent(player.id, player.hand_count, player.id == current_player_id)
+
 # -------------------------
 # Handlers
 # -------------------------
@@ -106,7 +155,7 @@ func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 # Network Handlers
 # Methods for handling network events
 
-func _on_cards_played(player_id: int, cards: Array[CardData]) -> void:
+func _on_cards_played(player_id: int, cards: Array[CardData], snapshot: Dictionary) -> void:
 	print("GameManager: _on_cards_played: ", player_id)
 
 	if player_id == multiplayer.get_unique_id():
@@ -114,17 +163,27 @@ func _on_cards_played(player_id: int, cards: Array[CardData]) -> void:
 	else:
 		_play_from_opponent(player_id, cards)
 
-func _on_cards_drawn() -> void:
-	print("GameManager: Cards drawn from network")
+	_sync_game_snapshot(snapshot)
 
-func _on_turn_skipped() -> void:
-	print("GameManager: Turn skipped from network")
+func _on_cards_drawn(result: Dictionary) -> void:
+	print("GameManager: Cards drawn from network")
+	if result.success and result.player == multiplayer.get_unique_id() and result.has("cards"):
+		_add_cards_to_client_hand(CardData.array_to_data(result.cards))
+	elif result.success and result.player != multiplayer.get_unique_id() and result.has("draw_count"):
+		_add_cards_to_opponent_hand(result.player, result.get("draw_count", 0))
+		print("Enemy drew cards")
+
+	_sync_game_snapshot(result.get("game", {}))
+
+func _on_turn_skipped(result: Dictionary) -> void:
+	_sync_game_snapshot(result.get("game", {}))
 
 func _on_game_started(snapshot: Dictionary) -> void:
 	_start(snapshot)
 
 # Discard Pile Handlers
 # Methods for handling discard pile signals/requests
+
 func _on_play_requested() -> void:
 	var views = _client_hand.selection_component.selected_cards
 
@@ -143,6 +202,7 @@ func _on_play_requested() -> void:
 
 func _on_draw_requested() -> void:
 	print("GameManager: Client requested draw")
+	client_controller.request_draw()
 
 # Hand Handlers
 # Methods for handling hand signals/requests

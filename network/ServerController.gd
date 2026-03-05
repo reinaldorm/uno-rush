@@ -47,12 +47,28 @@ func request_action(action: ActionType, payload: Dictionary = {}) -> void:
 	match action:
 		ActionType.PLAY:
 			result = _game.play(sender_id, payload.cards)
+			result["game"] = _game.create_game_snapshot()
 			client_controller._on_cards_played.rpc(result)
 		ActionType.DRAW:
 			result = _game.draw(sender_id)
-			client_controller._on_cards_drawn.rpc(result)
+			result["game"] = _game.create_game_snapshot()
+
+			if result.success:
+				for player_id in _game.players.keys():
+					if player_id == sender_id:
+						client_controller.rpc_id(player_id, "_on_cards_drawn", result)
+					else:
+						client_controller.rpc_id(player_id, "_on_cards_drawn", {
+							"success" = true,
+							"player" = sender_id,
+							"draw_count" = result.get("draw_count", 0),
+							"game" = result["game"]
+						})
+			else:
+				client_controller.rpc_id(sender_id, "_on_cards_drawn", result)
 		ActionType.SKIP:
 			result = _game.skip(sender_id)
+			result["game"] = _game.create_game_snapshot()
 			client_controller._on_turn_skipped.rpc(result)
 #		ActionType.UNO:
 #			result = _game.uno(sender_id, payload.cards)

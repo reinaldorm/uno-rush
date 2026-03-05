@@ -23,6 +23,10 @@ func setup(id: int, first_hand: Array[CardView]) -> void:
 	_add_card_views(first_hand)
 	player_id = id
 
+func add_cards(card_views: Array[CardView]) -> void:
+	_add_card_views(card_views)
+	_arrange()
+
 func deselect_all_cards() -> void:
 	if not selection_component:
 		return
