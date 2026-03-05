@@ -217,16 +217,17 @@ metadata/_custom_type_script = "uid://bxvsjmh1bsh2g"
 
 [node name="FXLayer" type="Node2D" parent="FXManager" unique_id=2096540511]
 
-[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("client_controller", "_turn_manager", "_hue_manager", "_discard_pile", "_draw_pile", "_client_hand", "_hands")]
+[node name="GameManager" type="Node" parent="." unique_id=1267347403 node_paths=PackedStringArray("client_controller", "_turn_manager", "_hue_manager", "_discard_pile", "_draw_pile", "_hud", "_client_hand", "_hands")]
 script = ExtResource("7_hujxm")
 client_controller = NodePath("../ClientController")
+_view_scene = ExtResource("9_nvumn")
 _turn_manager = NodePath("../TurnManager")
 _hue_manager = NodePath("../HueManager")
 _discard_pile = NodePath("../DiscardPile")
 _draw_pile = NodePath("../DrawPile")
+_hud = NodePath("../Hud")
 _client_hand = NodePath("../PlayerHand")
 _hands = [NodePath("../LeftHand"), NodePath("../CenterHand"), NodePath("../RightHand")]
-_view_scene = ExtResource("9_nvumn")
 metadata/_custom_type_script = "uid://cl5yn6116qkw2"
 
 [node name="TurnManager" type="Node" parent="." unique_id=521513583]
@@ -291,7 +292,7 @@ visibility_rect = Rect2(0, 0, 640, 360)
 process_material = SubResource("ParticleProcessMaterial_l3cfh")
 metadata/_edit_lock_ = true
 
-[node name="Hud" parent="." unique_id=1792151263 instance=ExtResource("11_ouso4")]
+[node name="Hud" parent="." unique_id=827020285 instance=ExtResource("11_ouso4")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1605705152]
 environment = SubResource("Environment_ow5a4")

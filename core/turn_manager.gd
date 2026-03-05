@@ -8,7 +8,7 @@ var _skips_left := 0
 
 signal turn_advanced(direction: int)
 
-func initialize(_turn: int) -> void:
+func start(_turn: int) -> void:
 	turn = _turn
 
 func advance_turn() -> Signal:

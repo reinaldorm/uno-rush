@@ -27,7 +27,8 @@ var _tween_channels : Dictionary[String, Tween] = {
 	"fx": null,
 	"layout": null,
 	"hover": null ,
-	"selection": null
+	"selection": null,
+	"idle": null
 }
 
 var _tick := 0.0
@@ -89,13 +90,29 @@ func reset() -> void:
 # Internal
 # -------------------------
 
-func _idle() -> void:
+func _ready() -> void:
+	# _idle()
 	pass
+
+func _idle() -> void:
+	var _tween := animate("idle", Tween.EASE_OUT, Tween.TRANS_LINEAR)
+
+	_tween.tween_method(func(value: float):
+		_card_sprite.material.set_shader_parameter("x_rot", value)
+		_card_sprite.material.set_shader_parameter("y_rot", -value), 0.0, 15.0, 1)
+
+	_tween.tween_method(func(value: float):
+		_card_sprite.material.set_shader_parameter("x_rot", value)
+		_card_sprite.material.set_shader_parameter("y_rot", -value), 15.0, -15.0, 1.0)
+
+	_tween.tween_method(func(value: float):
+		_card_sprite.material.set_shader_parameter("x_rot", value)
+		_card_sprite.material.set_shader_parameter("y_rot", -value), -15.0, 0.0, 1)
+
+	_tween.set_loops(-1)
 
 func _process(delta: float) -> void:
 	_tick += delta
-
-	_idle()
 
 func _toggle_select(state: bool) -> void:
 	var tween = animate("selection")
