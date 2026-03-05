@@ -21,8 +21,10 @@ var _hands_mapped : Dictionary[int, Hand] = {}
 var _last_snapshot : Dictionary = {}
 
 # -------------------------
-# Internal
+# Internal ################
 # -------------------------
+
+# Game Starters -----------------------------------------------------------
 
 func _start(snapshot: Dictionary) -> void:
 	var top_card := CardData.to_data(snapshot["top_card"])
@@ -71,6 +73,8 @@ func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
 	_hands[idx].setup(id, views)
 	_hands_mapped[id] = _hands[idx]
 
+# Helpers -----------------------------------------------------------------
+
 func _create_placeholder_cards(amount: int) -> Array[CardData]:
 	var cards : Array[CardData] = []
 
@@ -78,6 +82,8 @@ func _create_placeholder_cards(amount: int) -> Array[CardData]:
 		cards.append(CardData.create_numbered(CardData.Hue.RED, 0))
 
 	return cards
+
+# Play Dispatchers --------------------------------------------------------
 
 func _play_from_client(cards: Array[CardData]) -> void:
 	var played_cards : Array[CardView] = []
@@ -103,6 +109,8 @@ func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 		card_views.append(view)
 
 	_discard_pile.play(card_views)
+
+# Draw Dispatchers --------------------------------------------------------
 
 func _add_cards_to_client_hand(cards: Array[CardData]) -> void:
 	var views : Array[CardView] = []
@@ -131,11 +139,13 @@ func _add_cards_to_opponent_hand(opponent_id: int, draw_count: int) -> void:
 
 	opponent_hand.add_cards(cards_to_draw)
 
+# UI Snapshot Sync  -------------------------------------------------------
+
 func _sync_game_snapshot(snapshot: Dictionary) -> void:
 	if snapshot.is_empty(): return
-
 	_last_snapshot = snapshot
 
+	# Update UI (Hand counts, turn labels, etc.)
 	var current_player_id : int = snapshot.get("current_player", -1)
 	_hud.update_player_hand(multiplayer.get_unique_id() == current_player_id)
 
@@ -149,11 +159,10 @@ func _sync_game_snapshot(snapshot: Dictionary) -> void:
 			_hud.update_opponent(player.id, player.hand_count, player.id == current_player_id)
 
 # -------------------------
-# Handlers
+# Handlers ################
 # -------------------------
 
-# Network Handlers
-# Methods for handling network events
+# Network Handlers --------------------------------------------------------
 
 func _on_cards_played(player_id: int, cards: Array[CardData], snapshot: Dictionary) -> void:
 	print("GameManager: _on_cards_played: ", player_id)
@@ -178,11 +187,19 @@ func _on_cards_drawn(result: Dictionary) -> void:
 func _on_turn_skipped(result: Dictionary) -> void:
 	_sync_game_snapshot(result.get("game", {}))
 
+	var current_player_hand : Hand
+
+	if multiplayer_peer.get_unique_id() == result.current: 
+		current_player_hand = _client_hand
+	else:
+		current_player_hand = _hands_mapped[result.current]
+
+	TurnManager.update_turn(current_player_hand, result.skips, result.reverses)
+
 func _on_game_started(snapshot: Dictionary) -> void:
 	_start(snapshot)
 
-# Discard Pile Handlers
-# Methods for handling discard pile signals/requests
+# Discard Pile Handlers ---------------------------------------------------
 
 func _on_play_requested() -> void:
 	var views = _client_hand.selection_component.selected_cards
@@ -197,21 +214,18 @@ func _on_play_requested() -> void:
 
 	client_controller.request_play(cards)
 
-# Draw Pile Handlers
-# Methods for handling draw pile signals/requests
+# Draw Pile Handlers ------------------------------------------------------
 
 func _on_draw_requested() -> void:
 	print("GameManager: Client requested draw")
 	client_controller.request_draw()
 
-# Hand Handlers
-# Methods for handling hand signals/requests
+# Hand Pile Handlers ------------------------------------------------------
 
 func _on_selection_changed() -> void:
 	print("GameManager: Selection changed")
 
-# Skip Turn Handlers
-# Methods for handling skip turn signals/requests
+# HUD Actions Handlers ----------------------------------------------------
 
 func _on_skip_requested() -> void:
 	client_controller.request_skip()

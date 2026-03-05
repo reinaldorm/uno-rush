@@ -12,7 +12,10 @@ var skips := 0
 var discard_pile : Array[CardData] = []
 var draw_pile : Array[CardData] = []
 var draw_stack := 0
+
 var ongoing = false
+var play_lock = false
+var draw_lock = false
 
 enum FailReason {
 	INVALID_PLAY,
@@ -37,8 +40,10 @@ func start() -> void:
 	ongoing = true
 
 func draw(player_id: int) -> Dictionary:
-	if player_id != current_player(): return { "success" = false, "reason" = "Not your turn" }
+	if player_id != _current_player(): return { "success" = false, "reason" = "Not current player." }
+	if draw_lock: return { "success" = false, "reason" = "Draw locked, should skip turn." }
 	var player := players[player_id]
+	draw_lock = true
 
 	var cards := _draw_from_pile(1)
 
@@ -52,7 +57,9 @@ func draw(player_id: int) -> Dictionary:
 	}
 
 func play(player_id: int, cards_serial: Array[Dictionary]):
-	if player_id != current_player(): return { "success" = false, "reason" = "Not your turn", "current" = current_player(), "sender" = player_id }
+	if player_id != _current_player(): return { "success" = false, "reason" = "Not your turn", "current" = _current_player(), "sender" = player_id }
+	if play_lock: return { "success" = false, "reason" = "Play Locked, should skip turn.", "sender" = player_id }
+	
 	var cards := CardData.array_to_data(cards_serial)
 
 	var player = players[player_id]
@@ -62,13 +69,15 @@ func play(player_id: int, cards_serial: Array[Dictionary]):
 		_add_to_pile(cards)
 		_apply_effects(cards)
 		_remove_from_hand(player, cards)
+		play_lock = true
 
 		return { "success" = true, "player" = player_id, "cards" = cards_serial }
 	else:
 		return { "success" = false, "reason" = "Invalid play" }
 
 func skip(player_id: int) -> Dictionary:
-	if player_id != current_player(): return { "success" = false, "reason" = "Not player's turn." }
+	if player_id != _current_player(): return { "success" = false, "reason" = "Not player's turn." }
+	play_lock = false
 
 	var skip_count := skips
 	var reverse_count := reverses
@@ -76,7 +85,7 @@ func skip(player_id: int) -> Dictionary:
 
 	_next_turn()
 
-	return { "success" = true, "previous" = previous, "current" = current_player(), "skips" = skip_count, "reverses" = reverse_count }
+	return { "success" = true, "previous" = previous, "current" = _current_player(), "skips" = skip_count, "reverses" = reverse_count }
 
 func add_player(id) -> Dictionary:
 	print("GameLogic: Tried to add player with ID: ", id)
@@ -99,7 +108,7 @@ func create_game_snapshot(exclude_player_id: int = -1) -> Dictionary:
 
 	return {
 		"ongoing" = ongoing,
-		"current_player" = current_player(),
+		"_current_player" = _current_player(),
 		"direction" = direction,
 		"draw_stack" = draw_stack,
 		"top_card" = top_card_serial,
@@ -233,7 +242,7 @@ func _create_deck() -> Array[CardData]:
 func _remove_from_hand(player: Dictionary, cards: Array[CardData]) -> void:
 	player.hand = player.hand.filter(func(card): return cards.all(func(to_remove): return card.id != to_remove.id))
 
-func current_player() -> int:
+func _current_player() -> int:
 	return turn_order[current_turn]
 
 func _next_turn() -> void:

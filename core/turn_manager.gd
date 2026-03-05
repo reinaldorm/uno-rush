@@ -1,32 +1,25 @@
 extends Node
 class_name TurnManager
 
-var turn := 0
-var direction := 1
-var _reverses_left := 0
-var _skips_left := 0
-
 signal turn_advanced(direction: int)
 
-func start(_turn: int) -> void:
-	turn = _turn
+@export var skip_effect_scene = PackedScene
+@export var reverse_effect_scene = PackedScene
 
-func advance_turn() -> Signal:
-	_update_turn()
-	return turn_advanced
-
-func set_reverses(amount: int) -> void:
-	_reverses_left = amount
-
-func set_skips(amount: int) -> void:
-	_skips_left = amount
+@export var turn_arrow : Node2D
+@export var direction_arrow : Node2D
+@export var effect_history_container : Node2D
 
 # -------------------------
-# Internal
+# Public Api # ------------
 # -------------------------
 
-func _update_turn() -> void:
-	print("TurnManager: Pretending advancing turn...")
-	await get_tree().create_timer(0.25).timeout
+func update_turn(current_hand: Hand, skips: int, reverses: int):
+	pass
 
-	emit_signal("turn_advanced", direction)
+# -------------------------
+# Internal # --------------
+# -------------------------
+
+func _move_turn_arrow() -> void:
+	pass

@@ -49,6 +49,7 @@ func request_action(action: ActionType, payload: Dictionary = {}) -> void:
 			result = _game.play(sender_id, payload.cards)
 			result["game"] = _game.create_game_snapshot()
 			client_controller._on_cards_played.rpc(result)
+			
 		ActionType.DRAW:
 			result = _game.draw(sender_id)
 			result["game"] = _game.create_game_snapshot()
