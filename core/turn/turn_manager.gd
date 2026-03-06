@@ -6,20 +6,21 @@ signal turn_advanced(direction: int)
 @export var skip_effect_scene = PackedScene
 @export var reverse_effect_scene = PackedScene
 
-@export var turn_arrow : Node2D
-@export var direction_arrow : Node2D
+@export var turn_arrow : TurnArrow
+@export var direction_arrow : DirectionArrow
 @export var effect_history_container : Node2D
 
 # -------------------------
 # Public Api # ------------
 # -------------------------
 
-func update_turn(current_hand: Hand, skips: int, reverses: int):
-	pass
+func update_turn(current_hand: Hand, direction: int, skips: int, reverses: int):
+	turn_arrow.turn(current_hand.global_position)
+	direction_arrow.reverse(direction)
 
 # -------------------------
 # Internal # --------------
 # -------------------------
 
-func _move_turn_arrow() -> void:
+func _process(delta: float) -> void:
 	pass

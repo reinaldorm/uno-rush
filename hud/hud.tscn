@@ -3,16 +3,18 @@
 [ext_resource type="Script" uid="uid://bma8tvprew3kp" path="res://hud/hud.gd" id="1_2gk58"]
 [ext_resource type="FontFile" uid="uid://bwlxp6kod573k" path="res://assets/fonts/monogram.ttf" id="1_6ca3a"]
 [ext_resource type="PackedScene" uid="uid://dap61eeu641vg" path="res://hud/opponent_box/opponent_box.tscn" id="2_318vg"]
+[ext_resource type="PackedScene" uid="uid://d32n00ypygf0a" path="res://hud/card_button/card_button.tscn" id="3_w8tcp"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6ca3a"]
 line_spacing = -1.995
 font = ExtResource("1_6ca3a")
 font_size = 8
 
-[node name="Hud" type="CanvasLayer" unique_id=827020285 node_paths=PackedStringArray("player_turn_label", "opponent_boxes")]
+[node name="Hud" type="CanvasLayer" unique_id=827020285 node_paths=PackedStringArray("player_turn_label", "opponent_boxes", "turn_button")]
 script = ExtResource("1_2gk58")
 player_turn_label = NodePath("PlayerTurn")
 opponent_boxes = [NodePath("Opponents/OpponentBox"), NodePath("Opponents/OpponentBox2"), NodePath("Opponents/OpponentBox3")]
+turn_button = NodePath("BottomRight/PassTurn")
 
 [node name="Opponents" type="HBoxContainer" parent="." unique_id=777612490]
 anchors_preset = 10
@@ -31,30 +33,35 @@ layout_mode = 2
 [node name="OpponentBox3" parent="Opponents" unique_id=1730602814 instance=ExtResource("2_318vg")]
 layout_mode = 2
 
-[node name="BottomRight" type="HBoxContainer" parent="." unique_id=208489665]
+[node name="BottomRight" type="Control" parent="." unique_id=1630418202]
+layout_mode = 3
+anchors_preset = 0
 offset_left = 546.0
 offset_top = 332.0
 offset_right = 632.0
-offset_bottom = 353.0
-alignment = 1
-
-[node name="SkipTurn" type="Button" parent="BottomRight" unique_id=954577562]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("1_6ca3a")
-text = "Skip Turn"
+offset_bottom = 397.0
 
 [node name="TurnTimer" type="ColorRect" parent="BottomRight" unique_id=1389096409]
 custom_minimum_size = Vector2(20, 20)
-layout_mode = 2
+layout_mode = 0
+offset_left = 63.0
+offset_right = 83.0
+offset_bottom = 21.0
 color = Color(0.06666667, 0.06666667, 0.06666667, 0.49803922)
+
+[node name="PassTurn" parent="BottomRight" unique_id=2119594245 instance=ExtResource("3_w8tcp")]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 0.0
+offset_right = 57.0
+offset_bottom = 64.0
 
 [node name="PlayerTurn" type="RichTextLabel" parent="." unique_id=1161033615]
 custom_minimum_size = Vector2(0, 15)
-offset_left = 5.0
-offset_top = 335.0
-offset_right = 83.0
-offset_bottom = 350.0
+offset_left = 281.0
+offset_top = 319.0
+offset_right = 359.0
+offset_bottom = 334.0
 theme_override_fonts/normal_font = ExtResource("1_6ca3a")
 bbcode_enabled = true
 text = "[wave ]Your Turn![/wave]"
@@ -62,56 +69,41 @@ fit_content = true
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BottomCenter" type="VBoxContainer" parent="." unique_id=1647205823]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -106.0
-offset_top = -41.0
-offset_right = 106.0
-offset_bottom = 7.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/separation = 94
+[node name="BottomCenter" type="HBoxContainer" parent="." unique_id=77351844]
+offset_left = 214.0
+offset_top = 336.0
+offset_right = 426.0
+offset_bottom = 400.0
 alignment = 1
 
-[node name="BottomCenter" type="HBoxContainer" parent="BottomCenter" unique_id=77351844]
+[node name="ArrangeNumber" parent="BottomCenter" unique_id=576914224 instance=ExtResource("3_w8tcp")]
 layout_mode = 2
-alignment = 1
 
-[node name="ArrangeNumber" type="Button" parent="BottomCenter/BottomCenter" unique_id=1835788781]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("1_6ca3a")
-text = "Arrange Number"
+[node name="Sprite2D" parent="BottomCenter/ArrangeNumber/PressTransform/StateTransform/HoverTransform" parent_id_path=PackedInt32Array(576914224, 149712602) index="0" unique_id=1295252431]
+frame = 3
 
-[node name="UNO" type="Button" parent="BottomCenter/BottomCenter" unique_id=1966454286]
+[node name="ArrangeColor" parent="BottomCenter" unique_id=1271550422 instance=ExtResource("3_w8tcp")]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("1_6ca3a")
-text = "UNO"
 
-[node name="ArrangeColor" type="Button" parent="BottomCenter/BottomCenter" unique_id=128005778]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("1_6ca3a")
-text = "Arrange Color"
+[node name="Sprite2D" parent="BottomCenter/ArrangeColor/PressTransform/StateTransform/HoverTransform" parent_id_path=PackedInt32Array(1271550422, 149712602) index="0" unique_id=1295252431]
+frame = 4
 
 [node name="game_version_info" type="Label" parent="." unique_id=336362483]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = 252.0
-offset_top = 297.0
-offset_right = 312.0
-offset_bottom = 346.0
+offset_left = -312.0
+offset_top = 322.0
+offset_right = -252.0
+offset_bottom = 371.0
 grow_horizontal = 2
 text = "uno_rush-alpha_build
 live-demo"
 label_settings = SubResource("LabelSettings_6ca3a")
-horizontal_alignment = 2
 vertical_alignment = 1
 
-[connection signal="pressed" from="BottomRight/SkipTurn" to="." method="_on_skip_turn_pressed"]
+[connection signal="on_button_pressed" from="BottomRight/PassTurn" to="." method="_on_skip_turn_pressed"]
+
+[editable path="BottomRight/PassTurn"]
+[editable path="BottomCenter/ArrangeNumber"]
+[editable path="BottomCenter/ArrangeColor"]

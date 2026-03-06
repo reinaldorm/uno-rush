@@ -22,7 +22,7 @@ func _ready() -> void:
 
 	_game = GameLogic.new()
 	# Add the server player
-	_game.add_player(multiplayer.multiplayer_peer.get_unique_id())
+	_game.add_player(multiplayer.get_unique_id())
 
 	for peer_id in multiplayer.get_peers():
 		_game.add_player(peer_id)
@@ -49,7 +49,7 @@ func request_action(action: ActionType, payload: Dictionary = {}) -> void:
 			result = _game.play(sender_id, payload.cards)
 			result["game"] = _game.create_game_snapshot()
 			client_controller._on_cards_played.rpc(result)
-			
+
 		ActionType.DRAW:
 			result = _game.draw(sender_id)
 			result["game"] = _game.create_game_snapshot()

@@ -59,7 +59,7 @@ func draw(player_id: int) -> Dictionary:
 func play(player_id: int, cards_serial: Array[Dictionary]):
 	if player_id != _current_player(): return { "success" = false, "reason" = "Not your turn", "current" = _current_player(), "sender" = player_id }
 	if play_lock: return { "success" = false, "reason" = "Play Locked, should skip turn.", "sender" = player_id }
-	
+
 	var cards := CardData.array_to_data(cards_serial)
 
 	var player = players[player_id]
@@ -78,6 +78,7 @@ func play(player_id: int, cards_serial: Array[Dictionary]):
 func skip(player_id: int) -> Dictionary:
 	if player_id != _current_player(): return { "success" = false, "reason" = "Not player's turn." }
 	play_lock = false
+	draw_lock = false
 
 	var skip_count := skips
 	var reverse_count := reverses
@@ -108,7 +109,7 @@ func create_game_snapshot(exclude_player_id: int = -1) -> Dictionary:
 
 	return {
 		"ongoing" = ongoing,
-		"_current_player" = _current_player(),
+		"current_player" = _current_player(),
 		"direction" = direction,
 		"draw_stack" = draw_stack,
 		"top_card" = top_card_serial,

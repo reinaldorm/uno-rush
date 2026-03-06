@@ -5,6 +5,8 @@ signal skip_turn()
 
 @export var player_turn_label : RichTextLabel
 @export var opponent_boxes : Array[OpponentBox]
+@export var turn_button : CardButton
+
 var opponent_boxes_mapped : Dictionary[int, OpponentBox]
 
 # -------------------------
@@ -28,8 +30,10 @@ func update_opponent(opponent_id: int, hand_count: int, is_current: bool) -> voi
 func update_player_hand(is_current: bool) -> void:
 	if is_current:
 		player_turn_label.show()
+		turn_button.enable()
 	else:
 		player_turn_label.hide()
+		turn_button.disable()
 
 # -------------------------
 # Internal

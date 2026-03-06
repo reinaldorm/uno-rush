@@ -1,7 +1,7 @@
 shader_type canvas_item;
 
 uniform float speed = 2.0;
-uniform sampler2D noise_tex;
+  uniform sampler2D noise_tex;
 uniform bool disabled;
 uniform float amount: hint_range(0.0, 1.0, 0.1);
 

@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://3liiamwek2ge"]
+
+[ext_resource type="Script" uid="uid://b18l6f4m8vy2a" path="res://core/turn/turn_arrow/turn_arrow.gd" id="1_ote7t"]
+[ext_resource type="Texture2D" uid="uid://b84jj1cynk0r0" path="res://assets/ui/turn_arrow.png" id="2_fom88"]
+
+[node name="TurnArrow" type="Node2D" unique_id=908456041 node_paths=PackedStringArray("sprite_2d")]
+script = ExtResource("1_ote7t")
+sprite_2d = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1196022016]
+modulate = Color(1, 1, 1, 0.043137256)
+scale = Vector2(2.8, 2.8)
+texture = ExtResource("2_fom88")
+offset = Vector2(3, 0)

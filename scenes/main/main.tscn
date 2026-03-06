@@ -10,13 +10,14 @@
 [ext_resource type="Shader" uid="uid://dp3lgf7lykufk" path="res://shaders/vcr.gdshader" id="6_ow5a4"]
 [ext_resource type="PackedScene" uid="uid://bge1wr6a45a8d" path="res://interactions/drag/drag_layer.tscn" id="6_th5th"]
 [ext_resource type="Script" uid="uid://bxvsjmh1bsh2g" path="res://fx/fx_manager.gd" id="7_7smn1"]
-[ext_resource type="Script" uid="uid://cl5yn6116qkw2" path="res://core/game_manager.gd" id="7_hujxm"]
-[ext_resource type="Script" uid="uid://bjhn4w8s1fm5h" path="res://core/turn_manager.gd" id="9_blune"]
+[ext_resource type="Script" uid="uid://cl5yn6116qkw2" path="res://core/game/game_manager.gd" id="7_hujxm"]
+[ext_resource type="Script" uid="uid://bjhn4w8s1fm5h" path="res://core/turn/turn_manager.gd" id="9_blune"]
 [ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="9_nvumn"]
-[ext_resource type="Texture2D" uid="uid://olud8dpxye4j" path="res://assets/ui/arrow.png" id="10_a8run"]
-[ext_resource type="Script" uid="uid://d0nv5vi28moja" path="res://core/hue_manager.gd" id="10_th5th"]
+[ext_resource type="Script" uid="uid://d0nv5vi28moja" path="res://core/hue/hue_manager.gd" id="10_th5th"]
 [ext_resource type="PackedScene" uid="uid://5l4hlbf13et7" path="res://hud/hud.tscn" id="11_ouso4"]
 [ext_resource type="PackedScene" uid="uid://dmedcufah270y" path="res://scenes/color_selection/color_selection.tscn" id="12_blune"]
+[ext_resource type="PackedScene" uid="uid://3liiamwek2ge" path="res://core/turn/turn_arrow/turn_arrow.tscn" id="12_necax"]
+[ext_resource type="PackedScene" uid="uid://rtey47r1s52j" path="res://core/turn/direction_arrow/direction_arrow.tscn" id="13_r4lks"]
 [ext_resource type="Script" uid="uid://1aqiwmbck15p" path="res://network/ClientController.gd" id="16_hxu8e"]
 [ext_resource type="Script" uid="uid://db72o0ul18xad" path="res://network/ServerController.gd" id="17_nvumn"]
 
@@ -114,12 +115,11 @@ glow_intensity = 0.1
 glow_hdr_threshold = 0.04
 adjustment_enabled = true
 adjustment_contrast = 1.03
-adjustment_saturation = 1.1
+adjustment_saturation = 1.22
 
-[node name="Main" type="Node2D" unique_id=1247881097 node_paths=PackedStringArray("camera", "turn_arrow")]
+[node name="Main" type="Node2D" unique_id=1247881097 node_paths=PackedStringArray("camera")]
 script = ExtResource("1_l3cfh")
 camera = NodePath("Camera2D")
-turn_arrow = NodePath("Visuals/TurnArrow")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1670420092]
 position = Vector2(320, 180)
@@ -131,7 +131,8 @@ position = Vector2(320, 150.6665)
 fx_manager = NodePath("../FXManager")
 
 [node name="DrawPile" parent="." unique_id=1703369888 instance=ExtResource("3_k2fmo")]
-position = Vector2(197, 161)
+position = Vector2(195.99998, 185)
+rotation = -0.08694543
 
 [node name="RightHand" parent="." unique_id=342436484 node_paths=PackedStringArray("layout_component") instance=ExtResource("2_k2fmo")]
 position = Vector2(660, 180)
@@ -189,23 +190,13 @@ script = ExtResource("5_ou6is")
 curve_x = SubResource("Curve_necax")
 curve_y = SubResource("Curve_r4lks")
 curve_rot = SubResource("Curve_pg34l")
-mult_y = 5.0
+mult_y = 15.0
 max_arrange_width = 300.0
 metadata/_custom_type_script = "uid://cv7cqa7ltc674"
 
 [node name="SelectionComponent" type="Node" parent="PlayerHand" unique_id=1794874331]
 script = ExtResource("6_necax")
 metadata/_custom_type_script = "uid://bems185od7vid"
-
-[node name="Visuals" type="Node2D" parent="." unique_id=395039280]
-position = Vector2(1, 0)
-
-[node name="TurnArrow" type="Sprite2D" parent="Visuals" unique_id=1031837384]
-modulate = Color(1, 1, 1, 0.11764706)
-position = Vector2(321, 150.99998)
-rotation = -30.659378
-scale = Vector2(1.8, 1.8)
-texture = ExtResource("10_a8run")
 
 [node name="DragLayer" parent="." unique_id=1888223450 groups=["drag_layer"] instance=ExtResource("6_th5th")]
 
@@ -230,9 +221,21 @@ _client_hand = NodePath("../PlayerHand")
 _hands = [NodePath("../LeftHand"), NodePath("../CenterHand"), NodePath("../RightHand")]
 metadata/_custom_type_script = "uid://cl5yn6116qkw2"
 
-[node name="TurnManager" type="Node" parent="." unique_id=521513583]
+[node name="TurnManager" type="Node" parent="." unique_id=521513583 node_paths=PackedStringArray("turn_arrow", "direction_arrow", "effect_history_container")]
 script = ExtResource("9_blune")
+turn_arrow = NodePath("TurnArrow")
+direction_arrow = NodePath("DirectionArrow")
+effect_history_container = NodePath("EffectsNode")
 metadata/_custom_type_script = "uid://bjhn4w8s1fm5h"
+
+[node name="TurnArrow" parent="TurnManager" unique_id=908456041 instance=ExtResource("12_necax")]
+position = Vector2(320, 151)
+
+[node name="DirectionArrow" parent="TurnManager" unique_id=1053536829 instance=ExtResource("13_r4lks")]
+position = Vector2(320, 151)
+
+[node name="EffectsNode" type="Node2D" parent="TurnManager" unique_id=1024189391]
+position = Vector2(320, 101)
 
 [node name="HueManager" type="Node" parent="." unique_id=2066351292 node_paths=PackedStringArray("hue_selection_node")]
 script = ExtResource("10_th5th")
@@ -264,6 +267,7 @@ offset_right = 639.0
 offset_bottom = 360.0
 texture = ExtResource("2_6q06x")
 stretch_mode = 1
+metadata/_edit_lock_ = true
 
 [node name="Stars" type="GPUParticles2D" parent="Background" unique_id=1323026414]
 modulate = Color(0.08627451, 0.08235294, 0.19215687, 1)

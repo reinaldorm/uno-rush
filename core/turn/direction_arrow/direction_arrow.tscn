@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://rtey47r1s52j"]
+
+[ext_resource type="Script" uid="uid://c2hc1w8dp35xn" path="res://core/turn/direction_arrow/direction_arrow.gd" id="1_2yc6f"]
+[ext_resource type="Texture2D" uid="uid://olud8dpxye4j" path="res://assets/ui/direction_arrow.png" id="2_vjwao"]
+
+[node name="DirectionArrow" type="Node2D" unique_id=1053536829 node_paths=PackedStringArray("_sprite_2d")]
+script = ExtResource("1_2yc6f")
+_sprite_2d = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=3759902]
+modulate = Color(1, 1, 1, 0.18039216)
+scale = Vector2(1.9, 1.9)
+texture = ExtResource("2_vjwao")

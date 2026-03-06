@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://d32n00ypygf0a"]
+
+[ext_resource type="Script" uid="uid://dst0bhvcbgg6s" path="res://hud/card_button/card_button.gd" id="1_012nd"]
+[ext_resource type="Texture2D" uid="uid://c8n88aw1g7oyd" path="res://hud/card_button/assets/button_sheet.png" id="2_dhasi"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a1bc7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a1vvm"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6x765"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dhwgv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1deb0"]
+
+[node name="CardButton" type="Button" unique_id=2119594245 node_paths=PackedStringArray("card_sprite", "state_transform", "hover_transform", "press_transform")]
+custom_minimum_size = Vector2(40, 64)
+offset_left = -20.0
+offset_top = -32.0
+offset_right = 20.0
+offset_bottom = 32.0
+pivot_offset = Vector2(20, 32)
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_a1bc7")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_a1vvm")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_6x765")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_dhwgv")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_1deb0")
+script = ExtResource("1_012nd")
+card_sprite = NodePath("PressTransform/StateTransform/HoverTransform/Sprite2D")
+state_transform = NodePath("PressTransform/StateTransform")
+hover_transform = NodePath("PressTransform/StateTransform/HoverTransform")
+press_transform = NodePath("PressTransform")
+
+[node name="PressTransform" type="Node2D" parent="." unique_id=76845199]
+position = Vector2(20, 32)
+
+[node name="StateTransform" type="Node2D" parent="PressTransform" unique_id=2070679092]
+
+[node name="HoverTransform" type="Node2D" parent="PressTransform/StateTransform" unique_id=149712602]
+
+[node name="Sprite2D" type="Sprite2D" parent="PressTransform/StateTransform/HoverTransform" unique_id=1295252431]
+position = Vector2(0, -1.9073486e-06)
+scale = Vector2(2, 2)
+texture = ExtResource("2_dhasi")
+hframes = 5
+
+[connection signal="mouse_entered" from="." to="." method="_on_button_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_button_exited"]
+[connection signal="pressed" from="." to="." method="_on_button_pressed"]

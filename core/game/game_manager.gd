@@ -185,16 +185,20 @@ func _on_cards_drawn(result: Dictionary) -> void:
 	_sync_game_snapshot(result.get("game", {}))
 
 func _on_turn_skipped(result: Dictionary) -> void:
+	if not result.success:
+		print("GameManager: Turn Skip Failed")
+		return
+
 	_sync_game_snapshot(result.get("game", {}))
 
 	var current_player_hand : Hand
 
-	if multiplayer_peer.get_unique_id() == result.current: 
+	if multiplayer.get_unique_id() == result.current:
 		current_player_hand = _client_hand
 	else:
 		current_player_hand = _hands_mapped[result.current]
 
-	TurnManager.update_turn(current_player_hand, result.skips, result.reverses)
+	_turn_manager.update_turn(current_player_hand, result.game.direction, result.skips, result.reverses)
 
 func _on_game_started(snapshot: Dictionary) -> void:
 	_start(snapshot)

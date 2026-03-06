@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://cjdkmqlkwnn3b"]
 
 [ext_resource type="Script" uid="uid://nmsbi5c21cxq" path="res://card/card_view.gd" id="1_2nlio"]
-[ext_resource type="Texture2D" uid="uid://dehqyg61rlqbt" path="res://card/assets/sheet.png" id="2_4bpaw"]
 [ext_resource type="Shader" uid="uid://b1fgbs4nkik7e" path="res://shaders/shine.gdshader" id="2_ui2he"]
 [ext_resource type="Script" uid="uid://cw12ktjdt7lyy" path="res://interactions/drag/drag_component.gd" id="3_f2o64"]
+[ext_resource type="Texture2D" uid="uid://c7nc4cl4iwht5" path="res://card/assets/old_sheet.png" id="3_qvwpc"]
 [ext_resource type="Shader" uid="uid://c2kfwnkkt8ge8" path="res://shaders/card.gdshader" id="3_rcv2q"]
 [ext_resource type="Texture2D" uid="uid://d2n812qqvhhi7" path="res://card/assets/drag_bubble.png" id="5_m3lw8"]
 [ext_resource type="Texture2D" uid="uid://dypa4dqlg2fh8" path="res://card/assets/select_bubble.png" id="6_rcv2q"]
@@ -211,10 +211,10 @@ size = Vector2i(16, 24)
 [node name="CardSheet" type="Sprite2D" parent="SubViewport" unique_id=1221830928]
 material = SubResource("ShaderMaterial_m3lw8")
 position = Vector2(8, 12)
-texture = ExtResource("2_4bpaw")
+texture = ExtResource("3_qvwpc")
 hframes = 13
 vframes = 5
-frame = 62
+frame = 57
 
 [node name="SelectionTransform" type="Node2D" parent="." unique_id=1445043032]
 
@@ -225,7 +225,7 @@ frame = 62
 [node name="CardShadow" type="Sprite2D" parent="SelectionTransform/HoverTransform/FXTransform" unique_id=2041923596]
 modulate = Color(0.011764706, 0.011764706, 0.011764706, 0.043137256)
 position = Vector2(0, 7.000001)
-scale = Vector2(2.5, 2.5)
+scale = Vector2(2.25, 2.25)
 texture = SubResource("ViewportTexture_m3lw8")
 
 [node name="CardTexture" type="Sprite2D" parent="SelectionTransform/HoverTransform/FXTransform" unique_id=2110238940]
