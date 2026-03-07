@@ -4,17 +4,41 @@
 [ext_resource type="FontFile" uid="uid://bwlxp6kod573k" path="res://assets/fonts/monogram.ttf" id="1_6ca3a"]
 [ext_resource type="PackedScene" uid="uid://dap61eeu641vg" path="res://hud/opponent_box/opponent_box.tscn" id="2_318vg"]
 [ext_resource type="PackedScene" uid="uid://d32n00ypygf0a" path="res://hud/card_button/card_button.tscn" id="3_w8tcp"]
+[ext_resource type="Texture2D" uid="uid://bmoghda6j5u5x" path="res://assets/effects/star_2.png" id="4_svhta"]
+
+[sub_resource type="Curve" id="Curve_fjv1a"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_0ivg5"]
+curve = SubResource("Curve_fjv1a")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_w8tcp"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(44.3, 7.635, 1)
+radial_velocity_min = 79.99998
+radial_velocity_max = 79.99998
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 29.999996
+radial_accel_max = 29.999996
+scale_curve = SubResource("CurveTexture_0ivg5")
+color = Color(0.8901961, 0.80784315, 0.24705882, 1)
+hue_variation_min = -0.12000002
+hue_variation_max = 0.049999975
 
 [sub_resource type="LabelSettings" id="LabelSettings_6ca3a"]
 line_spacing = -1.995
 font = ExtResource("1_6ca3a")
 font_size = 8
 
-[node name="Hud" type="CanvasLayer" unique_id=827020285 node_paths=PackedStringArray("player_turn_label", "opponent_boxes", "turn_button")]
+[node name="Hud" type="CanvasLayer" unique_id=827020285 node_paths=PackedStringArray("opponent_boxes", "turn_button", "turn_label", "turn_particle", "uno_button")]
 script = ExtResource("1_2gk58")
-player_turn_label = NodePath("PlayerTurn")
 opponent_boxes = [NodePath("Opponents/OpponentBox"), NodePath("Opponents/OpponentBox2"), NodePath("Opponents/OpponentBox3")]
 turn_button = NodePath("BottomRight/PassTurn")
+turn_label = NodePath("PlayerTurn")
+turn_particle = NodePath("Particles")
+uno_button = NodePath("BottomCenter/Uno")
 
 [node name="Opponents" type="HBoxContainer" parent="." unique_id=777612490]
 anchors_preset = 10
@@ -56,15 +80,34 @@ offset_top = 0.0
 offset_right = 57.0
 offset_bottom = 64.0
 
+[node name="Particles" type="GPUParticles2D" parent="." unique_id=1755224102]
+position = Vector2(319, 240)
+emitting = false
+amount = 20
+texture = ExtResource("4_svhta")
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_w8tcp")
+
 [node name="PlayerTurn" type="RichTextLabel" parent="." unique_id=1161033615]
 custom_minimum_size = Vector2(0, 15)
-offset_left = 281.0
-offset_top = 319.0
-offset_right = 359.0
-offset_bottom = 334.0
+offset_left = 270.0
+offset_top = 226.0
+offset_right = 370.0
+offset_bottom = 249.0
+pivot_offset = Vector2(50, 11.5)
+theme_override_colors/default_color = Color(0.8945506, 0.78366905, 0, 1)
+theme_override_colors/font_outline_color = Color(0.7065354, 0.48928326, 7.70092e-07, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.36078432)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/outline_size = 1
 theme_override_fonts/normal_font = ExtResource("1_6ca3a")
+theme_override_font_sizes/normal_font_size = 23
 bbcode_enabled = true
-text = "[wave ]Your Turn![/wave]"
+text = "[tornado radius=2]Your Turn![/tornado]"
 fit_content = true
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -81,6 +124,12 @@ layout_mode = 2
 
 [node name="Sprite2D" parent="BottomCenter/ArrangeNumber/PressTransform/StateTransform/HoverTransform" parent_id_path=PackedInt32Array(576914224, 149712602) index="0" unique_id=1295252431]
 frame = 3
+
+[node name="Uno" parent="BottomCenter" unique_id=1473883471 instance=ExtResource("3_w8tcp")]
+layout_mode = 2
+
+[node name="Sprite2D" parent="BottomCenter/Uno/PressTransform/StateTransform/HoverTransform" parent_id_path=PackedInt32Array(1473883471, 149712602) index="0" unique_id=1295252431]
+frame = 2
 
 [node name="ArrangeColor" parent="BottomCenter" unique_id=1271550422 instance=ExtResource("3_w8tcp")]
 layout_mode = 2
@@ -106,4 +155,5 @@ vertical_alignment = 1
 
 [editable path="BottomRight/PassTurn"]
 [editable path="BottomCenter/ArrangeNumber"]
+[editable path="BottomCenter/Uno"]
 [editable path="BottomCenter/ArrangeColor"]

@@ -180,7 +180,7 @@ max_arrange_width = 150.0
 metadata/_custom_type_script = "uid://cv7cqa7ltc674"
 
 [node name="PlayerHand" parent="." unique_id=1315296912 node_paths=PackedStringArray("layout_component", "selection_component") instance=ExtResource("2_k2fmo")]
-position = Vector2(320, 300)
+position = Vector2(320, 308)
 layout_component = NodePath("LayoutComponent")
 selection_component = NodePath("SelectionComponent")
 DEV_layout_max_width_overwrite = 500.0
@@ -190,7 +190,7 @@ script = ExtResource("5_ou6is")
 curve_x = SubResource("Curve_necax")
 curve_y = SubResource("Curve_r4lks")
 curve_rot = SubResource("Curve_pg34l")
-mult_y = 15.0
+mult_y = 5.0
 max_arrange_width = 300.0
 metadata/_custom_type_script = "uid://cv7cqa7ltc674"
 
@@ -255,6 +255,9 @@ offset_right = -320.0
 offset_bottom = -180.0
 _select_max_time = 0.5
 
+[node name="Hud" parent="." unique_id=827020285 instance=ExtResource("11_ouso4")]
+layer = 0
+
 [node name="Background" type="CanvasLayer" parent="." unique_id=1884324124]
 layer = -1
 
@@ -295,8 +298,6 @@ lifetime = 10.0
 visibility_rect = Rect2(0, 0, 640, 360)
 process_material = SubResource("ParticleProcessMaterial_l3cfh")
 metadata/_edit_lock_ = true
-
-[node name="Hud" parent="." unique_id=827020285 instance=ExtResource("11_ouso4")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1605705152]
 environment = SubResource("Environment_ow5a4")

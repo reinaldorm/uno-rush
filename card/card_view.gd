@@ -24,8 +24,8 @@ var is_selected := false : set = _set_selected
 var is_playable := false : set = _set_playable
 
 var _tween_channels : Dictionary[String, Tween] = {
-	"fx": null,
 	"layout": null,
+	"fx": null,
 	"hover": null ,
 	"selection": null,
 	"idle": null
@@ -95,21 +95,9 @@ func _ready() -> void:
 	pass
 
 func _idle() -> void:
-	var _tween := animate("idle", Tween.EASE_OUT, Tween.TRANS_LINEAR)
+	var _tween := animate("idle")
+	_tween.set_trans(Tween.TRANS_SINE)
 
-	_tween.tween_method(func(value: float):
-		_card_sprite.material.set_shader_parameter("x_rot", value)
-		_card_sprite.material.set_shader_parameter("y_rot", -value), 0.0, 15.0, 1)
-
-	_tween.tween_method(func(value: float):
-		_card_sprite.material.set_shader_parameter("x_rot", value)
-		_card_sprite.material.set_shader_parameter("y_rot", -value), 15.0, -15.0, 1.0)
-
-	_tween.tween_method(func(value: float):
-		_card_sprite.material.set_shader_parameter("x_rot", value)
-		_card_sprite.material.set_shader_parameter("y_rot", -value), -15.0, 0.0, 1)
-
-	_tween.set_loops(-1)
 
 func _process(delta: float) -> void:
 	_tick += delta

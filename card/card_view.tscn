@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://cw12ktjdt7lyy" path="res://interactions/drag/drag_component.gd" id="3_f2o64"]
 [ext_resource type="Texture2D" uid="uid://c7nc4cl4iwht5" path="res://card/assets/old_sheet.png" id="3_qvwpc"]
 [ext_resource type="Shader" uid="uid://c2kfwnkkt8ge8" path="res://shaders/card.gdshader" id="3_rcv2q"]
+[ext_resource type="Shader" uid="uid://cdn0sctuicv01" path="res://shaders/outline.gdshader" id="4_ush2r"]
 [ext_resource type="Texture2D" uid="uid://d2n812qqvhhi7" path="res://card/assets/drag_bubble.png" id="5_m3lw8"]
 [ext_resource type="Texture2D" uid="uid://dypa4dqlg2fh8" path="res://card/assets/select_bubble.png" id="6_rcv2q"]
 [ext_resource type="Script" uid="uid://bgadywqyw6ite" path="res://interactions/input/input_component.gd" id="8_qvwpc"]
@@ -31,6 +32,26 @@ shader_parameter/amount = 0.40000000596048
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_m3lw8"]
 viewport_path = NodePath("SubViewport")
+
+[sub_resource type="Gradient" id="Gradient_ush2r"]
+colors = PackedColorArray(7.5516453, 2.9045255, 0, 1, 1, 0.6025, 0.47000003, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ui2he"]
+gradient = SubResource("Gradient_ush2r")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ush2r"]
+shader = ExtResource("4_ush2r")
+shader_parameter/textureScale = Vector2(1, 1)
+shader_parameter/angle = 3.0950001470125
+shader_parameter/textureSpeed = 10.0
+shader_parameter/textureStrength = 0.0
+shader_parameter/maxLineWidth = 0.50000002375
+shader_parameter/minLineWidth = 1.0000000475
+shader_parameter/speed = 10.000000475
+shader_parameter/blockSize = 28.0430013320425
+shader_parameter/color = SubResource("GradientTexture2D_ui2he")
+shader_parameter/gradientResolution = 10
+shader_parameter/tolerance = 0.77200003667
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qvwpc"]
 resource_local_to_scene = true
@@ -161,7 +182,7 @@ length = 0.001
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("SelectionTransform/HoverTransform/FXTransform/CardTexture:material:shader_parameter/y_rot")
+tracks/0/path = NodePath("SelectionTransform/HoverTransform/FXTransform/Outline:material:shader_parameter/y_rot")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -176,11 +197,11 @@ length = 2.0
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("SelectionTransform/HoverTransform/FXTransform/CardTexture:material:shader_parameter/y_rot")
+tracks/0/path = NodePath("SelectionTransform/HoverTransform/FXTransform/Outline:material:shader_parameter/y_rot")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"handle_modes": PackedInt32Array(2, 0, 0),
+"handle_modes": PackedInt32Array(0, 0, 0),
 "points": PackedFloat32Array(-89.99999, -0.25, 0, 0.25, 0, -89.99999, -0.25, 0, 0.25, 0, 8.55e-06, -0.16666667, -15, 0, 0),
 "times": PackedFloat32Array(0, 1, 2)
 }
@@ -195,7 +216,7 @@ _data = {
 script = ExtResource("1_2nlio")
 drag_component = NodePath("DragComponent")
 _card_sheet = NodePath("SubViewport/CardSheet")
-_card_sprite = NodePath("SelectionTransform/HoverTransform/FXTransform/CardTexture")
+_card_sprite = NodePath("SelectionTransform/HoverTransform/FXTransform/Outline")
 _selection_transform = NodePath("SelectionTransform")
 _hover_transform = NodePath("SelectionTransform/HoverTransform")
 _fx_transform = NodePath("SelectionTransform/HoverTransform/FXTransform")
@@ -228,7 +249,13 @@ position = Vector2(0, 7.000001)
 scale = Vector2(2.25, 2.25)
 texture = SubResource("ViewportTexture_m3lw8")
 
-[node name="CardTexture" type="Sprite2D" parent="SelectionTransform/HoverTransform/FXTransform" unique_id=2110238940]
+[node name="Outline" type="Sprite2D" parent="SelectionTransform/HoverTransform/FXTransform" unique_id=2110238940]
+material = SubResource("ShaderMaterial_ush2r")
+position = Vector2(7.6293945e-06, -3.8146973e-06)
+scale = Vector2(2.5, 2.5)
+texture = SubResource("ViewportTexture_m3lw8")
+
+[node name="CardTexture2" type="Sprite2D" parent="SelectionTransform/HoverTransform/FXTransform" unique_id=391141521]
 material = SubResource("ShaderMaterial_qvwpc")
 scale = Vector2(2.5, 2.5)
 texture = SubResource("ViewportTexture_m3lw8")
