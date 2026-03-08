@@ -25,6 +25,7 @@ uniform int gradientResolution: hint_range(1, 30) = 10;
 // Used to compensate for alpha values.
 uniform float tolerance: hint_range(0.0, 0.999) = 0.0;
 
+uniform sampler2D text_noise: hint_normal;
 
 // Compensate UV for outline.
 void vertex() {
