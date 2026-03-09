@@ -18,7 +18,6 @@ enum ActionType {
 
 func _ready() -> void:
 	if not multiplayer.is_server(): return
-	print("Multiplayer peers: ", multiplayer.get_peers())
 
 	_game = GameLogic.new()
 	# Add the server player
@@ -47,35 +46,39 @@ func request_action(action: ActionType, payload: Dictionary = {}) -> void:
 	match action:
 		ActionType.PLAY:
 			result = _game.play(sender_id, payload.cards)
-			result["game"] = _game.create_game_snapshot()
-			client_controller._on_cards_played.rpc(result)
+
+			if result.success:
+				result["snapshot"] = _game.create_game_snapshot()
+				client_controller._on_cards_played.rpc(result)
+				pass
+			else:
+				client_controller._on_cards_played.rpc_id(sender_id, result)
 
 		ActionType.DRAW:
 			result = _game.draw(sender_id)
-			result["game"] = _game.create_game_snapshot()
+			result["snapshot"] = _game.create_game_snapshot()
 
 			if result.success:
 				for player_id in _game.players.keys():
 					if player_id == sender_id:
-						client_controller.rpc_id(player_id, "_on_cards_drawn", result)
+						client_controller.rpc_id(player_id, "_on_cards_drew", result)
+					## REFACTOR, RETURN SHOULD NOT BE EXPLICIT HERE
 					else:
-						client_controller.rpc_id(player_id, "_on_cards_drawn", {
+						client_controller.rpc_id(player_id, "_on_cards_drew", {
 							"success" = true,
-							"player" = sender_id,
-							"draw_count" = result.get("draw_count", 0),
-							"game" = result["game"]
+							"snapshot" = result.snapshot,
+							"payload" = {
+								"player_id" = sender_id,
+								"draw_count" = result.payload.draw_count
+							}
 						})
 			else:
-				client_controller.rpc_id(sender_id, "_on_cards_drawn", result)
+				client_controller.rpc_id(sender_id, "_on_cards_drew", result)
+
 		ActionType.SKIP:
 			result = _game.skip(sender_id)
-			result["game"] = _game.create_game_snapshot()
+			result["snapshot"] = _game.create_game_snapshot()
 			client_controller._on_turn_skipped.rpc(result)
-#		ActionType.UNO:
-#			result = _game.uno(sender_id, payload.cards)
-	print("ServerController: _on_cards_played: ", result.success)
-
-
 
 # -------------------------
 # Handlers

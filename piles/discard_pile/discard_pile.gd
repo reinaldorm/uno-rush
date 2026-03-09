@@ -1,7 +1,8 @@
 extends Node2D
 class_name DiscardPile
 
-signal play_requested(card: CardView)
+signal play_requested()
+signal drag_requested(card: CardView)
 signal play_routine_ended()
 
 @export var fx_manager : FXManager
@@ -31,7 +32,7 @@ func start(first_card: CardData) -> void:
 	_cards_node.add_child(c)
 
 func play(played_cards: Array[CardView]) -> void:
-	if _drop_zone: _drop_zone.resolve_drop(true)
+	_drop_zone.resolve_drop(true)
 
 	for card in played_cards:
 		_add_card_to_pile(card)
@@ -164,8 +165,9 @@ func _on_drag_component_exited(_draggable: Node2D = null) -> void:
 func _on_card_drop_requested(draggable: Node2D) -> void:
 	# user tried to drop a card onto the discard pile; forward the
 	# underlying data to the game manager via the public signal.
+	print("hi")
 
-	if draggable is CardView: emit_signal("play_requested")
+	if draggable is CardView: emit_signal("drag_requested", draggable)
 
 	# TODO
 	# Should no execute this directly, this animation should be turned into a method

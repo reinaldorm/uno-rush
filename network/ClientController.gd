@@ -8,7 +8,8 @@ var client_id : int = 0 : get = _get_client_id
 signal on_cards_played(player_id: int, cards: Array[CardData], game_snapshot: Dictionary)
 signal on_play_failed()
 
-signal on_cards_drawn(result: Dictionary)
+signal on_cards_drew(result: Dictionary)
+signal on_drew_failed()
 
 signal on_turn_skipped(result: Dictionary)
 
@@ -35,20 +36,33 @@ func request_skip() -> void:
 
 @rpc("authority", "reliable", "call_local")
 func _on_cards_played(result: Dictionary) -> void:
-	print("ClientController: _on_cards_played: ", result.success)
+	var player = result.payload.player_id
 
 	if result.success:
-		var player_id = result.player
-		var cards = CardData.array_to_data(result.cards)
-		var game_snapshot : Dictionary = result.get("game", {})
+		result.payload.cards = CardData.array_to_data(result.payload.cards)
 
-		emit_signal("on_cards_played", player_id, cards, game_snapshot)
+		var is_client : bool = result.payload.player_id == multiplayer.get_unique_id()
+		var snapshot : Dictionary = result.snapshot
+		var payload = result.payload
+
+		emit_signal("on_cards_played", is_client, payload, snapshot)
 	else:
 		emit_signal("on_play_failed")
 
 @rpc("authority", "reliable", "call_local")
-func _on_cards_drawn(result: Dictionary) -> void:
-	emit_signal("on_cards_drawn", result)
+func _on_cards_drew(result: Dictionary) -> void:
+	if result.success:
+		var is_client : bool = result.payload.player_id == multiplayer.get_unique_id()
+
+		if is_client: 
+			result.payload.cards = CardData.array_to_data(result.payload.cards)
+
+		var snapshot : Dictionary = result.snapshot
+		var payload = result.payload
+
+		emit_signal("on_cards_drew", is_client, payload, snapshot)
+	else:
+		emit_signal("on_drew_failed")
 
 @rpc("authority", "reliable", "call_local")
 func _on_turn_skipped(result: Dictionary) -> void:
@@ -63,4 +77,4 @@ func _on_game_started(snapshot: Dictionary):
 # -------------------------
 
 func _get_client_id() -> int:
-	return multiplayer.multiplayer_peer.get_unique_id()
+	return multiplayer.get_unique_id()

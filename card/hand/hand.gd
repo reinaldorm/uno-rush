@@ -6,6 +6,8 @@ class_name Hand
 @export var selection_component : SelectionComponent
 @export var cards_node : Node2D
 
+signal selection_changed(views: Array[CardView], selected: Array[CardView])
+
 var _card_views : Array[CardView] = []
 var _dragging_card : CardView = null
 
@@ -17,6 +19,7 @@ var player_id : int = -1
 
 func start() -> void:
 	_arrange()
+	_deselect_all_cards()
 
 func setup(id: int, first_hand: Array[CardView]) -> void:
 	set_multiplayer_authority(id)
@@ -27,18 +30,12 @@ func add_cards(card_views: Array[CardView]) -> void:
 	_add_card_views(card_views)
 	_arrange()
 
-func deselect_all_cards() -> void:
-	if not selection_component:
-		return
-	selection_component.deselect_all()
-	_arrange()
-
 func restore_card(card_view: CardView) -> void:
 
 	card_view.reparent(cards_node)
 
 	var _index = card_view.get_meta("drag_original_index")
-	_card_views.insert(_index, card_view)
+	# _card_views.insert(_index, card_view)
 	cards_node.move_child(card_view, _index)
 
 	card_view.drag_component.drag_started.connect(_on_card_drag_started)
@@ -61,6 +58,13 @@ func withdraw_card(card_data: CardData = null) -> CardView:
 	_arrange()
 
 	return view
+
+func set_available_cards(card_data: Array[CardData]) -> void:
+	for view in _card_views: view.is_playable = false
+
+	for card in card_data:
+		var view := _get_view_by_data(card)
+		if view: view.is_playable = true
 
 # -------------------------
 # Internal
@@ -95,12 +99,28 @@ func _add_card_views(card_views: Array[CardView]) -> Array[CardView]:
 
 	return new_cards
 
+func _select_card(view: CardView) -> void:
+	if not selection_component or not is_multiplayer_authority():
+		return
+	
+	selection_component.select(view)
+	_arrange()
+
+func _deselect_all_cards() -> void:
+	if not selection_component:
+		return
+	selection_component.deselect_all()
+	_arrange()
+
 # -------------------------
 # Game Handlers
 # -------------------------
 
 func _on_cards_played(_player_id: int) -> void:
-	selection_component.deselect_all()
+	_deselect_all_cards()
+
+func _on_selection_changed(selected_views: Array[CardView]) -> void:
+	emit_signal("selection_changed", _card_views, selected_views)
 
 # -------------------------
 # Card Handlers
@@ -113,7 +133,6 @@ func _on_card_drag_started(draggable: Node2D) -> void:
 	if selection_component and draggable is CardView:
 		selection_component.deselect(draggable as CardView)
 
-	_card_views.erase(draggable)
 	_arrange()
 
 func _on_card_drag_ended(_draggable: Node2D) -> void:
@@ -124,10 +143,7 @@ func _on_card_mouse_right_down(card_view: CardView) -> void:
 		card_view.drag_component.begin_drag()
 
 func _on_card_mouse_left_down(card_view: CardView) -> void:
-	if is_multiplayer_authority():
-		if selection_component:
-			selection_component.select(card_view)
-	_arrange()
+	_select_card(card_view)
 
 # -------------
 # Utilities

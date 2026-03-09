@@ -312,12 +312,13 @@ script = ExtResource("17_nvumn")
 client_controller = NodePath("../ClientController")
 metadata/_custom_type_script = "uid://db72o0ul18xad"
 
+[connection signal="drag_requested" from="DiscardPile" to="GameManager" method="_on_drag_requested"]
 [connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_play_requested"]
 [connection signal="draw_requested" from="DrawPile" to="GameManager" method="_on_draw_requested"]
+[connection signal="selection_changed" from="PlayerHand" to="GameManager" method="_on_selection_changed"]
+[connection signal="selection_changed" from="PlayerHand/SelectionComponent" to="PlayerHand" method="_on_selection_changed"]
 [connection signal="camera_shook" from="FXManager" to="DrawPile" method="_on_camera_shake"]
-[connection signal="cards_drawn" from="GameManager" to="PlayerHand" method="_on_game_manager_cards_drawn"]
-[connection signal="cards_played" from="GameManager" to="PlayerHand" method="_on_game_manager_cards_played"]
-[connection signal="play_denied" from="GameManager" to="PlayerHand" method="_on_game_manager_play_denied"]
+[connection signal="cards_played" from="GameManager" to="PlayerHand" method="_on_cards_played"]
 [connection signal="turn_advanced" from="TurnManager" to="." method="_on_turn_manager_turn_advanced"]
 [connection signal="hue_selected" from="HueManager/ColorSelection" to="HueManager" method="_on_hue_selected"]
 [connection signal="skip_turn" from="Hud" to="GameManager" method="_on_skip_requested"]

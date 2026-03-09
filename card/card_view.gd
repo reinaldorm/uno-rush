@@ -99,7 +99,6 @@ func _idle() -> void:
 	var _tween := animate("idle")
 	_tween.set_trans(Tween.TRANS_SINE)
 
-
 func _process(delta: float) -> void:
 	_tick += delta
 
@@ -115,16 +114,18 @@ func _toggle_select(state: bool) -> void:
 func _toggle_playable(state: bool) -> void:
 
 	if state:
-		var tween = animate("fx").set_trans(Tween.TRANS_EXPO)
+		var tween = animate("fx").set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 		
-		_card_outline.modulate.a = 1.0
+		_card_outline.show()
 
-		tween.tween_property(_fx_transform, "scale", Vector2(1.1, 1.1), 0.25)
-		tween.tween_property(_fx_transform, "scale", Vector2.ONE, 0.25)
+		tween.tween_property(_fx_transform, "rotation", -0.025, 0.25)
+		tween.tween_property(_fx_transform, "rotation", 0.025, 0.25)
+
 		tween.set_loops()
 	else:
 		if _tween_channels["fx"]: _tween_channels["fx"].kill()
-		_card_outline.modulate.a = 0.0
+		_fx_transform.rotation = 0.0
+		_card_outline.hide()
 
 	_card_sheet.material.set_shader_parameter("disabled", not state)
 
@@ -202,15 +203,3 @@ func _set_playable(value: bool) -> void:
 	if is_playable == value: return
 	is_playable = value
 	_toggle_playable(value)
-
-# debug
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey:
-		if event.is_action_pressed("ui_up"):
-			var rand := randf_range(-1, 1)
-
-			if rand > 0:
-				_toggle_playable(true)
-			else:
-				_toggle_playable(false)

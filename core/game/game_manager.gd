@@ -2,8 +2,8 @@ extends Node
 class_name GameManager
 
 signal cards_played(card: Array[CardData])
-signal cards_drawn(card: Array[CardData])
-signal play_denied(card: Array[CardData])
+# signal cards_drew(card: Array[CardData])
+# signal play_denied(card: Array[CardData])
 
 @export var client_controller : ClientController
 
@@ -18,17 +18,14 @@ signal play_denied(card: Array[CardData])
 @export var _hands : Array[Hand]
 var _hands_mapped : Dictionary[int, Hand] = {}
 
-var _last_snapshot : Dictionary = {}
-
-# -------------------------
-# Internal ################
-# -------------------------
+var _snapshot : Dictionary = {}
 
 # Game Starters -----------------------------------------------------------
 
 func _start(snapshot: Dictionary) -> void:
+	_snapshot = snapshot
 	var top_card := CardData.to_data(snapshot["top_card"])
-	var client_id := multiplayer.multiplayer_peer.get_unique_id()
+	var client_id := multiplayer.get_unique_id()
 
 	_create_player_hand(client_id, snapshot.player.hand)
 	_hud.update_player_hand(client_id == snapshot.current_player)
@@ -46,8 +43,9 @@ func _start(snapshot: Dictionary) -> void:
 
 func _ready() -> void:
 	client_controller.on_cards_played.connect(_on_cards_played)
-	client_controller.on_cards_drawn.connect(_on_cards_drawn)
-	client_controller.on_turn_skipped.connect(_on_turn_skipped)
+	client_controller.on_play_failed.connect(_on_play_failed)
+	client_controller.on_cards_drew.connect(_on_cards_drew)
+	client_controller.on_turn_skipped.connect(_on_turn_changed)
 	client_controller.on_game_started.connect(_on_game_started)
 
 func _create_player_hand(id: int, hand: Array[Dictionary]) -> void:
@@ -72,16 +70,6 @@ func _create_opponent_hand(id: int, hand_count: int, idx: int) -> void:
 
 	_hands[idx].setup(id, views)
 	_hands_mapped[id] = _hands[idx]
-
-# Helpers -----------------------------------------------------------------
-
-func _create_placeholder_cards(amount: int) -> Array[CardData]:
-	var cards : Array[CardData] = []
-
-	for i in range(amount):
-		cards.append(CardData.create_numbered(CardData.Hue.RED, 0))
-
-	return cards
 
 # Play Dispatchers --------------------------------------------------------
 
@@ -112,7 +100,7 @@ func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 
 # Draw Dispatchers --------------------------------------------------------
 
-func _add_cards_to_client_hand(cards: Array[CardData]) -> void:
+func _add_cards_to_client(cards: Array[CardData]) -> void:
 	var views : Array[CardView] = []
 
 	for card in cards:
@@ -122,7 +110,7 @@ func _add_cards_to_client_hand(cards: Array[CardData]) -> void:
 
 	_client_hand.add_cards(views)
 
-func _add_cards_to_opponent_hand(opponent_id: int, draw_count: int) -> void:
+func _add_cards_to_opponent(opponent_id: int, draw_count: int) -> void:
 	var opponent_hand : Hand
 	var cards : Array[CardData] = _create_placeholder_cards(draw_count)
 	var cards_to_draw : Array[CardView] = []
@@ -143,48 +131,47 @@ func _add_cards_to_opponent_hand(opponent_id: int, draw_count: int) -> void:
 
 func _sync_game_snapshot(snapshot: Dictionary) -> void:
 	if snapshot.is_empty(): return
-	_last_snapshot = snapshot
+	_snapshot = snapshot
 
 	# Update UI (Hand counts, turn labels, etc.)
 	var current_player_id : int = snapshot.get("current_player", -1)
-	_hud.update_player_hand(multiplayer.get_unique_id() == current_player_id)
 
 	if not snapshot.has("players"):
 		return
 
 	for player in snapshot.players:
 		if player.id == multiplayer.get_unique_id():
-			continue
+			_hud.update_player_hand(multiplayer.get_unique_id() == current_player_id)
 		if _hands_mapped.has(player.id):
 			_hud.update_opponent(player.id, player.hand_count, player.id == current_player_id)
 
-# -------------------------
-# Handlers ################
-# -------------------------
-
 # Network Handlers --------------------------------------------------------
 
-func _on_cards_played(player_id: int, cards: Array[CardData], snapshot: Dictionary) -> void:
-	print("GameManager: _on_cards_played: ", player_id)
+func _on_cards_played(is_client: bool, payload: Dictionary, snapshot: Dictionary) -> void:
+	_sync_game_snapshot(snapshot)
+	
+	if is_client: _play_from_client(payload.cards)
+	else: _play_from_opponent(payload.player_id, payload.cards)
 
-	if player_id == multiplayer.get_unique_id():
-		_play_from_client(cards)
-	else:
-		_play_from_opponent(player_id, cards)
+	var current_player_hand : Hand
+
+	if _is_client_turn(): current_player_hand = _client_hand
+	else: current_player_hand = _hands_mapped[_get_current_player()]
+
+	_turn_manager.update_turn(current_player_hand, _snapshot.direction, payload.skips, payload.reverses)
+
+	emit_signal("cards_played", payload.player_id)
+
+func _on_play_failed() -> void:
+	_discard_pile.reject_play()
+
+func _on_cards_drew(is_client: bool, payload: Dictionary, snapshot: Dictionary) -> void:
+	if is_client: _add_cards_to_client(payload.cards)
+	else: _add_cards_to_opponent(payload.player_id, payload.draw_count)
 
 	_sync_game_snapshot(snapshot)
 
-func _on_cards_drawn(result: Dictionary) -> void:
-	print("GameManager: Cards drawn from network")
-	if result.success and result.player == multiplayer.get_unique_id() and result.has("cards"):
-		_add_cards_to_client_hand(CardData.array_to_data(result.cards))
-	elif result.success and result.player != multiplayer.get_unique_id() and result.has("draw_count"):
-		_add_cards_to_opponent_hand(result.player, result.get("draw_count", 0))
-		print("Enemy drew cards")
-
-	_sync_game_snapshot(result.get("game", {}))
-
-func _on_turn_skipped(result: Dictionary) -> void:
+func _on_turn_changed(result: Dictionary) -> void:
 	if not result.success:
 		print("GameManager: Turn Skip Failed")
 		return
@@ -209,7 +196,12 @@ func _on_play_requested() -> void:
 	var views = _client_hand.selection_component.selected_cards
 
 	## Game Manager handles trivial logic validation so server doesn't need to.
-	if views.is_empty(): return
+	if views.is_empty(): 
+		print("GameManager: Cannot play, cards not selected.")
+		return
+	if _snapshot.current_player != multiplayer.get_unique_id(): 
+		print("GameManager: Cannot play, not client's turn.")
+		return
 
 	var cards : Array[CardData] = []
 
@@ -217,6 +209,13 @@ func _on_play_requested() -> void:
 		cards.append(view.data)
 
 	client_controller.request_play(cards)
+
+func _on_drag_requested(view: CardView) -> void:
+	if _snapshot.current_player != multiplayer.get_unique_id(): 
+		print("GameManager: Cannot play, not client's turn.")
+		return
+	
+	client_controller.request_play([view.data])
 
 # Draw Pile Handlers ------------------------------------------------------
 
@@ -226,10 +225,40 @@ func _on_draw_requested() -> void:
 
 # Hand Pile Handlers ------------------------------------------------------
 
-func _on_selection_changed() -> void:
-	print("GameManager: Selection changed")
+func _on_selection_changed(views: Array[CardView], _selected: Array[CardView]) -> void:
+	if not _snapshot.current_player == multiplayer.get_unique_id() or _snapshot.play_lock: 
+		_client_hand.set_available_cards([])
+		return
+
+	var available_cards : Array[CardData] = []
+	var top_card = CardData.to_data(_snapshot.top_card)
+
+	for view in views:
+		var data = view.data
+		if GameLogic.can_play(top_card, data):
+			available_cards.append(data)
+
+	print(available_cards)
+
+	_client_hand.set_available_cards(available_cards)
 
 # HUD Actions Handlers ----------------------------------------------------
 
 func _on_skip_requested() -> void:
 	client_controller.request_skip()
+
+# Helpers -----------------------------------------------------------------
+
+func _create_placeholder_cards(amount: int) -> Array[CardData]:
+	var cards : Array[CardData] = []
+
+	for i in range(amount):
+		cards.append(CardData.create_numbered(CardData.Hue.RED, 0))
+
+	return cards
+
+func _is_client_turn() -> bool:
+	return _snapshot.current_player == client_controller.client_id
+
+func _get_current_player() -> int:
+	return _snapshot.current_player

@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://dt11ovpfk7fn"]
+
+[ext_resource type="Texture2D" uid="uid://c8n88aw1g7oyd" path="res://hud/card_button/assets/button_sheet.png" id="1_3lbo5"]
+[ext_resource type="Script" uid="uid://ctnv4ofgnne58" path="res://hud/turn_wheel/turn_card/turn_card.gd" id="1_86f4q"]
+
+[node name="TurnCard" type="Node2D" unique_id=1539764439]
+script = ExtResource("1_86f4q")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=311672176]
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("1_3lbo5")
+hframes = 5
+frame = 1

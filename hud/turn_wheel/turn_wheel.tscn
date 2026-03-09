@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://db8ll2iyivewv"]
+
+[ext_resource type="PackedScene" uid="uid://dt11ovpfk7fn" path="res://hud/turn_wheel/turn_card/turn_card.tscn" id="1_0jqpx"]
+[ext_resource type="Script" uid="uid://88c368vsm7xw" path="res://hud/turn_wheel/turn_wheel.gd" id="1_8crnc"]
+
+[node name="TurnWheel" type="Control" unique_id=450243315 node_paths=PackedStringArray("_player_card", "_opponent_card")]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_8crnc")
+_player_card = NodePath("PlayerCard")
+_opponent_card = NodePath("OpponentCard")
+
+[node name="PlayerCard" parent="." unique_id=1539764439 instance=ExtResource("1_0jqpx")]
+position = Vector2(0, -40)
+
+[node name="Sprite2D" parent="PlayerCard" index="0" unique_id=311672176]
+position = Vector2(0, 44.000008)
+frame = 0
+
+[node name="OpponentCard" parent="." unique_id=1253391324 instance=ExtResource("1_0jqpx")]
+position = Vector2(0, 21)
+rotation = 3.1415927
+
+[editable path="PlayerCard"]

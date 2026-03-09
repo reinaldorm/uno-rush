@@ -43,6 +43,7 @@ func _arrange(cards: Array[CardView]) -> void:
 	for i in range(total):
 		var card := active_cards[i]
 		if not card: continue
+		if card.drag_component.dragging: continue
 
 		var ratio := 0.5 if total == 1 else _get_ratio(i, total - 1)
 		var final_card_width : float = (min(card.size.x * total, max_arrange_width) - card.size.x) / 2

@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dap61eeu641vg" path="res://hud/opponent_box/opponent_box.tscn" id="2_318vg"]
 [ext_resource type="PackedScene" uid="uid://d32n00ypygf0a" path="res://hud/card_button/card_button.tscn" id="3_w8tcp"]
 [ext_resource type="Texture2D" uid="uid://bmoghda6j5u5x" path="res://assets/effects/star_2.png" id="4_svhta"]
+[ext_resource type="PackedScene" uid="uid://db8ll2iyivewv" path="res://hud/turn_wheel/turn_wheel.tscn" id="6_fjv1a"]
 
 [sub_resource type="Curve" id="Curve_fjv1a"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -32,13 +33,13 @@ line_spacing = -1.995
 font = ExtResource("1_6ca3a")
 font_size = 8
 
-[node name="Hud" type="CanvasLayer" unique_id=827020285 node_paths=PackedStringArray("opponent_boxes", "turn_button", "turn_label", "turn_particle", "uno_button")]
+[node name="Hud" type="CanvasLayer" unique_id=827020285 node_paths=PackedStringArray("_opponent_boxes", "_uno_button", "_turn_wheel", "_turn_label", "_turn_particle")]
 script = ExtResource("1_2gk58")
-opponent_boxes = [NodePath("Opponents/OpponentBox"), NodePath("Opponents/OpponentBox2"), NodePath("Opponents/OpponentBox3")]
-turn_button = NodePath("BottomRight/PassTurn")
-turn_label = NodePath("PlayerTurn")
-turn_particle = NodePath("Particles")
-uno_button = NodePath("BottomCenter/Uno")
+_opponent_boxes = [NodePath("Opponents/OpponentBox"), NodePath("Opponents/OpponentBox2"), NodePath("Opponents/OpponentBox3")]
+_uno_button = NodePath("BottomCenter/Uno")
+_turn_wheel = NodePath("TurnWheel")
+_turn_label = NodePath("PlayerTurn")
+_turn_particle = NodePath("Particles")
 
 [node name="Opponents" type="HBoxContainer" parent="." unique_id=777612490]
 anchors_preset = 10
@@ -72,13 +73,6 @@ offset_left = 63.0
 offset_right = 83.0
 offset_bottom = 21.0
 color = Color(0.06666667, 0.06666667, 0.06666667, 0.49803922)
-
-[node name="PassTurn" parent="BottomRight" unique_id=2119594245 instance=ExtResource("3_w8tcp")]
-layout_mode = 0
-offset_left = 17.0
-offset_top = 0.0
-offset_right = 57.0
-offset_bottom = 64.0
 
 [node name="Particles" type="GPUParticles2D" parent="." unique_id=1755224102]
 position = Vector2(319, 240)
@@ -151,9 +145,12 @@ live-demo"
 label_settings = SubResource("LabelSettings_6ca3a")
 vertical_alignment = 1
 
-[connection signal="on_button_pressed" from="BottomRight/PassTurn" to="." method="_on_skip_turn_pressed"]
+[node name="TurnWheel" parent="." unique_id=450243315 instance=ExtResource("6_fjv1a")]
+offset_left = 579.0
+offset_top = 412.0
+offset_right = 579.0
+offset_bottom = 412.0
 
-[editable path="BottomRight/PassTurn"]
 [editable path="BottomCenter/ArrangeNumber"]
 [editable path="BottomCenter/Uno"]
 [editable path="BottomCenter/ArrangeColor"]

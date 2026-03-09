@@ -24,14 +24,14 @@
 ### Client event payloads
 - Updated `network/ClientController.gd` signals/RPC propagation:
   - `on_cards_played(player_id, cards, game_snapshot)`
-  - `on_cards_drawn(result)`
+  - `on_cards_drew(result)`
   - `on_turn_skipped(result)`
 
 ### GameManager sync flow
 - In `core/game_manager.gd`, implemented snapshot-driven UI synchronization:
   - `_sync_game_snapshot(snapshot)` updates current-turn HUD state and opponent hand counts.
 - Added local draw visualization support:
-  - `_add_cards_to_client_hand(cards)` and wiring in `_on_cards_drawn(result)`.
+  - `_add_cards_to_client_hand(cards)` and wiring in `_on_cards_drew(result)`.
 - Play/skip handlers now consume snapshot payloads to keep HUD state consistent.
 - Fixed draw request flow from UI:
   - `_on_draw_requested()` now calls `client_controller.request_draw()`.
@@ -48,7 +48,7 @@
 
 ### Opponent draw visualization
 - Implement opponent-side placeholder card addition when another player draws.
-- Use `result.draw_count` from `_on_cards_drawn(result)` to append placeholder/back-facing card views to the correct opponent hand.
+- Use `result.draw_count` from `_on_cards_drew(result)` to append placeholder/back-facing card views to the correct opponent hand.
 - Optionally animate draw from draw pile to opponent hand.
 
 ### Snapshot consistency and guards
