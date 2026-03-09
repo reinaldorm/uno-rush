@@ -100,7 +100,7 @@ scale_max = 4.0
 scale_curve = SubResource("CurveTexture_l3cfh")
 color_ramp = SubResource("GradientTexture1D_iuonh")
 
-[sub_resource type="Environment" id="Environment_ow5a4"]
+[sub_resource type="Environment" id="Environment_r4lks"]
 background_mode = 3
 ssao_radius = 8.24
 ssao_intensity = 6.77
@@ -115,7 +115,7 @@ glow_intensity = 0.1
 glow_hdr_threshold = 0.04
 adjustment_enabled = true
 adjustment_contrast = 1.03
-adjustment_saturation = 1.22
+adjustment_saturation = 1.1
 
 [node name="Main" type="Node2D" unique_id=1247881097 node_paths=PackedStringArray("camera")]
 script = ExtResource("1_l3cfh")
@@ -299,9 +299,6 @@ visibility_rect = Rect2(0, 0, 640, 360)
 process_material = SubResource("ParticleProcessMaterial_l3cfh")
 metadata/_edit_lock_ = true
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1605705152]
-environment = SubResource("Environment_ow5a4")
-
 [node name="ClientController" type="Node" parent="." unique_id=909286862 node_paths=PackedStringArray("server_controller")]
 script = ExtResource("16_hxu8e")
 server_controller = NodePath("../ServerController")
@@ -311,6 +308,9 @@ metadata/_custom_type_script = "uid://1aqiwmbck15p"
 script = ExtResource("17_nvumn")
 client_controller = NodePath("../ClientController")
 metadata/_custom_type_script = "uid://db72o0ul18xad"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1936753063]
+environment = SubResource("Environment_r4lks")
 
 [connection signal="drag_requested" from="DiscardPile" to="GameManager" method="_on_drag_requested"]
 [connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_play_requested"]
