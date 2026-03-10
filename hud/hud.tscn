@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://bma8tvprew3kp" path="res://hud/hud.gd" id="1_2gk58"]
 [ext_resource type="FontFile" uid="uid://bwlxp6kod573k" path="res://assets/fonts/monogram.ttf" id="1_6ca3a"]
-[ext_resource type="Texture2D" uid="uid://d0116j03x00gu" path="res://assets/ui/profile_demo.png" id="2_0ivg5"]
 [ext_resource type="PackedScene" uid="uid://dap61eeu641vg" path="res://hud/opponent_box/opponent_box.tscn" id="2_318vg"]
 [ext_resource type="PackedScene" uid="uid://d32n00ypygf0a" path="res://hud/card_button/card_button.tscn" id="3_w8tcp"]
 [ext_resource type="Texture2D" uid="uid://bmoghda6j5u5x" path="res://assets/effects/star_2.png" id="4_svhta"]
@@ -42,52 +41,22 @@ _turn_wheel = NodePath("TurnWheel")
 _turn_label = NodePath("PlayerTurn")
 _turn_particle = NodePath("Particles")
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=1612626409]
-offset_left = 9.0
-offset_top = 7.0
-offset_right = 70.0
-offset_bottom = 26.0
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("2_0ivg5")
-stretch_mode = 2
-
-[node name="TextureRect2" type="TextureRect" parent="." unique_id=463327350]
-offset_left = 564.0
-offset_top = 7.0000005
-offset_right = 609.0
-offset_bottom = 26.0
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("2_0ivg5")
-stretch_mode = 2
-
-[node name="TextureRect3" type="TextureRect" parent="." unique_id=883990154]
-offset_left = 285.0
-offset_top = 7.0
-offset_right = 330.0
-offset_bottom = 26.0
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("2_0ivg5")
-stretch_mode = 2
-
 [node name="Opponents" type="HBoxContainer" parent="." unique_id=777612490]
-visible = false
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 50.0
+offset_top = 11.0
+offset_bottom = 61.0
 grow_horizontal = 2
-theme_override_constants/separation = 200
+theme_override_constants/separation = 270
 alignment = 1
 
 [node name="OpponentBox" parent="Opponents" unique_id=1424250101 instance=ExtResource("2_318vg")]
-visible = false
 layout_mode = 2
 
 [node name="OpponentBox2" parent="Opponents" unique_id=510020750 instance=ExtResource("2_318vg")]
-visible = false
 layout_mode = 2
 
 [node name="OpponentBox3" parent="Opponents" unique_id=1730602814 instance=ExtResource("2_318vg")]
-visible = false
 layout_mode = 2
 
 [node name="BottomRight" type="Control" parent="." unique_id=1630418202]

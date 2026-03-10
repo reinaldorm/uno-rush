@@ -219,9 +219,8 @@ scale = Vector2(2.25, 2.25)
 texture = SubResource("ViewportTexture_m3lw8")
 
 [node name="Outline" type="Sprite2D" parent="SelectionTransform/HoverTransform/FXTransform" unique_id=1804300080]
-visible = false
 material = SubResource("ShaderMaterial_ush2r")
-scale = Vector2(2.802, 2.707)
+scale = Vector2(2.4, 2.314)
 texture = SubResource("ViewportTexture_m3lw8")
 
 [node name="CardTexture" type="Sprite2D" parent="SelectionTransform/HoverTransform/FXTransform" unique_id=391141521]

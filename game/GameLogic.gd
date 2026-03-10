@@ -87,11 +87,11 @@ func skip(player_id: int) -> Dictionary:
 
 	return { "skips" = skip_count, "reverses" = reverse_count }
 
-func add_player(id) -> Dictionary:
-	print("GameLogic: Tried to add player with ID: ", id)
-	players[id] = { "hand" = [], "id" = id }
-	turn_order.append(id)
-	return players[id]
+func add_player(player: Dictionary) -> Dictionary:
+	print("GameLogic: Tried to add player with ID and Name: ", player.id, player.name)
+	players[player.id] = { "hand" = [], "id" = player.id, "name" = player.name }
+	turn_order.append(player.id)
+	return players[player.id]
 
 func create_player_snapshot(player_id: int) -> Dictionary:
 	var player_hand_serial : Array[Dictionary] = CardData.array_to_serial(players[player_id].hand)
@@ -122,7 +122,7 @@ func create_game_snapshot(exclude_player_id: int = -1) -> Dictionary:
 # -------------------------
 
 # Code will run on server but may be run on client for
-# early play validaton for visual feedback since it its lightweigh
+# early play validation for visual feedback since it its lightweigh
 # and deterministic
 
 static func validate_play(top_card: CardData, cards: Array[CardData], stack: int) -> bool:
@@ -257,10 +257,12 @@ func _create_players_snapshot(exclude_player_id: int = -1) -> Array[Dictionary]:
 
 	for id in turn_order:
 		if id == exclude_player_id: continue
+		var player = players[id]
 
 		players_snapshot.append({
-			"id" = players[id]["id"],
-			"hand_count" = players[id]["hand"].size()
+			"id" = player.id,
+			"hand_count" = player.hand.size(),
+			"name" = player.name
 		})
 
 	return players_snapshot

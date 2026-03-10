@@ -1,1 +1,3 @@
-var players : Array[Dictionary]
+extends Node
+
+var players : Array[Dictionary] = []

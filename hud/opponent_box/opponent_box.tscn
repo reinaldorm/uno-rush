@@ -2,47 +2,83 @@
 
 [ext_resource type="Script" uid="uid://bo6o3uu1r8fb" path="res://hud/opponent_box/opponent_box.gd" id="1_0fa0n"]
 [ext_resource type="FontFile" uid="uid://bwlxp6kod573k" path="res://assets/fonts/monogram.ttf" id="1_dnyvt"]
+[ext_resource type="PackedScene" uid="uid://dt11ovpfk7fn" path="res://hud/turn_wheel/turn_card/turn_card.tscn" id="2_36iyv"]
+[ext_resource type="Texture2D" uid="uid://c7dfhi7it1bdg" path="res://hud/opponent_box/assets/label_box.png" id="2_ud88w"]
+[ext_resource type="Texture2D" uid="uid://df6f887jkoxl" path="res://hud/opponent_box/assets/uno_box.png" id="4_36iyv"]
+[ext_resource type="Texture2D" uid="uid://bj0r41jy3a541" path="res://hud/opponent_box/assets/card_box.png" id="5_15dtd"]
 
-[node name="OpponentBox" type="VBoxContainer" unique_id=1424250101 node_paths=PackedStringArray("name_label", "cards_label", "turn_label")]
-alignment = 1
+[node name="OpponentBox" type="Control" unique_id=23777230 node_paths=PackedStringArray("name_label", "cards_label", "turn_sprite")]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_0fa0n")
-name_label = NodePath("HBoxContainer/NameLabel")
-cards_label = NodePath("HBoxContainer/CardLabel")
-turn_label = NodePath("TurnLabel")
+name_label = NodePath("LabelBox/NameLabel")
+cards_label = NodePath("CardBox/CountLabel")
+turn_sprite = NodePath("OpponentCard")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1662710037]
-layout_mode = 2
-alignment = 1
+[node name="OpponentCard" parent="." unique_id=1539764439 instance=ExtResource("2_36iyv")]
+position = Vector2(35, 9)
+rotation = 1.5707964
+scale = Vector2(0.25, 0.25)
 
-[node name="NameLabel" type="RichTextLabel" parent="HBoxContainer" unique_id=1375349042]
-custom_minimum_size = Vector2(50, 15)
-layout_mode = 2
+[node name="Sprite2D" parent="OpponentCard" index="0" unique_id=311672176]
+frame = 0
+
+[node name="LabelBox" type="TextureRect" parent="." unique_id=1781801804]
+layout_mode = 0
+offset_left = -66.0
+offset_right = 66.0
+offset_bottom = 33.0
+pivot_offset = Vector2(66, 9)
+texture = ExtResource("2_ud88w")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="NameLabel" type="RichTextLabel" parent="LabelBox" unique_id=1530451908]
+layout_mode = 0
+offset_left = 28.0
+offset_top = -1.0
+offset_right = 104.0
+offset_bottom = 18.0
 theme_override_fonts/normal_font = ExtResource("1_dnyvt")
 theme_override_font_sizes/normal_font_size = 12
 bbcode_enabled = true
-text = "[wave]Player[/wave]"
-fit_content = true
+text = "[wave amp=5]Bug Name[/wave]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CardLabel" type="RichTextLabel" parent="HBoxContainer" unique_id=1512290159]
-custom_minimum_size = Vector2(10, 15)
-layout_mode = 2
+[node name="UnoBox" type="TextureRect" parent="." unique_id=1535004852]
+layout_mode = 0
+offset_left = -34.444443
+offset_top = 18.0
+offset_right = 2.2222214
+offset_bottom = 33.0
+pivot_offset = Vector2(11, 4.5)
+texture = ExtResource("4_36iyv")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="CardBox" type="TextureRect" parent="." unique_id=110030682]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 18.0
+offset_right = 34.333317
+offset_bottom = 33.0
+pivot_offset = Vector2(8, 4.5)
+texture = ExtResource("5_15dtd")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="CountLabel" type="RichTextLabel" parent="CardBox" unique_id=1423555011]
+layout_mode = 0
+offset_left = 8.0
+offset_right = 30.105263
+offset_bottom = 12.63158
+scale = Vector2(0.95, 0.95)
 theme_override_fonts/normal_font = ExtResource("1_dnyvt")
-theme_override_font_sizes/normal_font_size = 12
-bbcode_enabled = true
-text = "[wave]5[/wave]"
-fit_content = true
+theme_override_font_sizes/normal_font_size = 14
+text = "0"
+scroll_active = false
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TurnLabel" type="RichTextLabel" parent="." unique_id=1111504099]
-custom_minimum_size = Vector2(80, 15)
-layout_mode = 2
-theme_override_fonts/normal_font = ExtResource("1_dnyvt")
-theme_override_font_sizes/normal_font_size = 12
-bbcode_enabled = true
-text = "[wave]Has Turn![/wave]"
-fit_content = true
-horizontal_alignment = 1
-vertical_alignment = 1
+[editable path="OpponentCard"]

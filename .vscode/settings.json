@@ -8,6 +8,6 @@
     "**/**.tscn": true,
     "**/**.uid": true
   },
-  "cSpell.words": ["mult", "reparent"],
+  "cSpell.words": ["lightweigh", "mult", "reparent"],
   "files.autoSave": "onWindowChange"
 }

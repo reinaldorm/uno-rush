@@ -20,13 +20,13 @@ var _tween : Tween
 # Public API
 # -------------------------
 
-func set_opponent_box(opponent_id: int, order: int, hand_count: int, is_current: bool) -> void:
+func set_opponent_box(opponent_id: int, opponent_name: String, order: int, hand_count: int, is_current: bool) -> void:
 	var box := _opponent_boxes[order]
 	box.show()
 
-	box.set_name(str(opponent_id))
 	_opponent_mapped[opponent_id] = box
 
+	box.update_name(opponent_name)
 	update_opponent(opponent_id, hand_count, is_current)
 
 func update_opponent(opponent_id: int, hand_count: int, is_current: bool) -> void:

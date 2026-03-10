@@ -27,6 +27,7 @@ var is_playable := false : set = _set_playable
 var _tween_channels : Dictionary[String, Tween] = {
 	"layout": null,
 	"fx": null,
+	"outline": null,
 	"hover": null ,
 	"selection": null,
 	"idle": null
@@ -113,19 +114,25 @@ func _toggle_select(state: bool) -> void:
 
 func _toggle_playable(state: bool) -> void:
 
+	var tween_fx = animate("fx")
+	var tween_outline = animate("outline")
+	
 	if state:
-		var tween = animate("fx").set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
-		
-		_card_outline.show()
+		tween_fx.set_trans(Tween.TRANS_EXPO)
+		tween_outline.set_trans(Tween.TRANS_EXPO)
 
-		tween.tween_property(_fx_transform, "rotation", -0.025, 0.25)
-		tween.tween_property(_fx_transform, "rotation", 0.025, 0.25)
+		tween_fx.tween_property(_fx_transform, "rotation", -0.025, 0.25)
+		tween_fx.tween_property(_fx_transform, "rotation", 0.025, 0.25)
 
-		tween.set_loops()
+		tween_outline.tween_property(_card_outline, "scale", Vector2(2.8, 2.7), 0.5)
+		tween_outline.tween_property(_card_outline, "scale", Vector2(2.7, 2.6), 0.5)
+
+		tween_fx.set_loops()
+		tween_outline.set_loops()
 	else:
-		if _tween_channels["fx"]: _tween_channels["fx"].kill()
-		_fx_transform.rotation = 0.0
-		_card_outline.hide()
+
+		tween_fx.tween_property(_fx_transform, "rotation", 0.0, 1.0)
+		tween_outline.tween_property(_card_outline, "scale", Vector2(2.4, 2.3), 1.0)
 
 	_card_sheet.material.set_shader_parameter("disabled", not state)
 

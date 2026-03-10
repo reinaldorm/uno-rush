@@ -4,7 +4,7 @@ extends Control
 @onready var _main_scene = preload("res://scenes/main/main.tscn")
 
 
-var _random_usernames = ["assortedcow", "abandonediguana", "overratedpanda", "makeshiftboars", "derangedflamingo", "enchantingvulture", "timidelephant", "advancedpigeon", "futuristicmonkey", "smartmouse"]
+var _random_usernames = ["assortedcow", "blindiguana", "dietpanda", "slimboar", "blueflamingo", "flossvulture", "timidelephant", "sandalpigeon", "flyingmonkey", "smartmouse"]
 var _partial_players : Array[Dictionary] = []
 
 # -------------------------
@@ -33,15 +33,15 @@ func _update_players():
 		var player_label : RichTextLabel = player_panel.get_node("PlayerName")
 		player_label.text = _partial_players[idx]["name"]
 
-
 # -------------------------
 # Handlers
 # -------------------------
 
 func _on_start_pressed():
-	if multiplayer.multiplayer_peer.get_unique_id() != 1: return
+	if multiplayer.get_unique_id() != 1: return
 	if _partial_players.size() < 2: return
 
+	SessionManager.players = _partial_players
 	rpc("_on_game_started")
 
 func _on_player_connected(peer_id: int):

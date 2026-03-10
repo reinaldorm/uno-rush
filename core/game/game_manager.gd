@@ -34,7 +34,7 @@ func _start(snapshot: Dictionary) -> void:
 		var opponent : Dictionary = snapshot.players[i]
 
 		_create_opponent_hand(opponent.id, opponent.hand_count, i)
-		_hud.set_opponent_box(opponent.id, i, opponent.hand_count, snapshot.current_player == opponent.id)
+		_hud.set_opponent_box(opponent.id, opponent.name, i, opponent.hand_count, snapshot.current_player == opponent.id)
 
 	for hand in [_client_hand] + _hands: await hand.start()
 
@@ -233,12 +233,26 @@ func _on_selection_changed(views: Array[CardView], _selected: Array[CardView]) -
 	var available_cards : Array[CardData] = []
 	var top_card = CardData.to_data(_snapshot.top_card)
 
-	for view in views:
-		var data = view.data
-		if GameLogic.can_play(top_card, data):
-			available_cards.append(data)
-
-	print(available_cards)
+	if _selected.size():
+		print(_selected)
+		var first := _selected[0]
+		if _snapshot.draw_stack:
+			if GameLogic.can_stack(top_card, first.data):
+				for view in views:
+					if GameLogic.can_play_with_next(first.data, view.data):
+						available_cards.append(view.data)
+		else: 
+			if GameLogic.can_play(top_card, first.data):
+				for view in views:
+					if GameLogic.can_play_with_next(first.data, view.data):
+						available_cards.append(view.data)
+	else:
+		for view in views:
+			if _snapshot.draw_stack:
+				if GameLogic.can_stack(top_card, view.data):
+					available_cards.append(view.data)	
+			elif GameLogic.can_play(top_card, view.data):
+				available_cards.append(view.data)
 
 	_client_hand.set_available_cards(available_cards)
 
