@@ -8,7 +8,7 @@ class_name Hand
 
 signal selection_changed(views: Array[CardView], selected: Array[CardView])
 
-var _card_views : Array[CardView] = []
+var card_views : Array[CardView] = []
 var _dragging_card : CardView = null
 
 var player_id : int = -1
@@ -19,15 +19,15 @@ var player_id : int = -1
 
 func start() -> void:
 	_arrange()
-	_deselect_all_cards()
+	deselect_all_cards()
 
 func setup(id: int, first_hand: Array[CardView]) -> void:
 	set_multiplayer_authority(id)
 	_add_card_views(first_hand)
 	player_id = id
 
-func add_cards(card_views: Array[CardView]) -> void:
-	_add_card_views(card_views)
+func add_cards(views: Array[CardView]) -> void:
+	_add_card_views(views)
 	_arrange()
 
 func restore_card(card_view: CardView) -> void:
@@ -35,7 +35,7 @@ func restore_card(card_view: CardView) -> void:
 	card_view.reparent(cards_node)
 
 	var _index = card_view.get_meta("drag_original_index")
-	# _card_views.insert(_index, card_view)
+	# card_views.insert(_index, card_view)
 	cards_node.move_child(card_view, _index)
 
 	card_view.drag_component.drag_started.connect(_on_card_drag_started)
@@ -48,9 +48,9 @@ func withdraw_card(card_data: CardData = null) -> CardView:
 
 	if card_data:
 		view = _get_view_by_data(card_data)
-		_card_views.erase(view)
+		card_views.erase(view)
 	else:
-		view = _card_views.pop_back()
+		view = card_views.pop_back()
 
 	if selection_component and view:
 		selection_component.deselect(view)
@@ -60,11 +60,17 @@ func withdraw_card(card_data: CardData = null) -> CardView:
 	return view
 
 func set_available_cards(card_data: Array[CardData]) -> void:
-	for view in _card_views: view.is_playable = false
+	for view in card_views: view.is_playable = false
 
 	for card in card_data:
 		var view := _get_view_by_data(card)
 		if view: view.is_playable = true
+
+func deselect_all_cards() -> void:
+	if not selection_component:
+		return
+	selection_component.deselect_all()
+	_arrange()
 
 # -------------------------
 # Internal
@@ -74,20 +80,20 @@ func _ready() -> void:
 	_arrange()
 
 func _arrange() -> void:
-	layout_component.request_arrange(_card_views)
+	layout_component.request_arrange(card_views)
 
 func _arrange_new(cards: Array[CardView]) -> void:
-	await layout_component.request_arrange_new(_card_views, cards)
+	await layout_component.request_arrange_new(card_views, cards)
 	_arrange()
 
-func _add_card_views(card_views: Array[CardView]) -> Array[CardView]:
+func _add_card_views(views: Array[CardView]) -> Array[CardView]:
 	var new_cards : Array[CardView] = []
 
-	for view in card_views:
+	for view in views:
 		new_cards.append(view)
 
 		cards_node.add_child(view)
-		_card_views.append(view)
+		card_views.append(view)
 
 		view.set_meta("drag_original_parent", self)
 
@@ -106,21 +112,12 @@ func _select_card(view: CardView) -> void:
 	selection_component.select(view)
 	_arrange()
 
-func _deselect_all_cards() -> void:
-	if not selection_component:
-		return
-	selection_component.deselect_all()
-	_arrange()
-
 # -------------------------
 # Game Handlers
 # -------------------------
 
-func _on_cards_played(_player_id: int) -> void:
-	_deselect_all_cards()
-
 func _on_selection_changed(selected_views: Array[CardView]) -> void:
-	emit_signal("selection_changed", _card_views, selected_views)
+	emit_signal("selection_changed", card_views, selected_views)
 
 # -------------------------
 # Card Handlers
@@ -150,9 +147,25 @@ func _on_card_mouse_left_down(card_view: CardView) -> void:
 # -------------
 
 func _get_view_by_data(data: CardData) -> CardView:
-	for view in _card_views:
+	for view in card_views:
 		if view.data.id == data.id: return view
 	return null
+
+func _arrange_by_number() -> void:
+	card_views.sort_custom(func(a: CardView, b: CardView):
+		return a.data.number < b.data.number)
+
+	print("Hi from number!")
+
+	_arrange()
+
+func _arrange_by_color() -> void:
+	card_views.sort_custom(func(a: CardView, b: CardView):
+		return a.data.hue > b.data.hue)
+
+	print("Hi from color!")
+
+	_arrange()
 
 # -------------
 # Debug

@@ -5,13 +5,16 @@ class_name ClientController
 
 var client_id : int = 0 : get = _get_client_id
 
-signal on_cards_played(player_id: int, cards: Array[CardData], game_snapshot: Dictionary)
+signal on_cards_played(is_client: bool, payload: Dictionary, snapshot: Dictionary)
 signal on_play_failed()
 
-signal on_cards_drew(result: Dictionary)
+signal on_cards_drew(is_client: bool, payload: Dictionary, snapshot: Dictionary)
 signal on_drew_failed()
 
-signal on_turn_skipped(result: Dictionary)
+signal on_turn_changed(payload: Dictionary, snapshot: Dictionary)
+
+signal on_hue_selection_request()
+signal on_hue_selected(result: Dictionary)
 
 signal on_game_started(snapshot: Dictionary)
 
@@ -29,6 +32,11 @@ func request_draw() -> void:
 
 func request_skip() -> void:
 	server_controller.request_action.rpc_id(1, ServerController.ActionType.SKIP)
+
+func select_hue(hue: CardData.Hue) -> void:
+	var payload = { "hue" = hue }
+
+	server_controller.request_action.rpc_id(1, ServerController.ActionType.SELECT_HUE, payload)
 
 # -------------------------
 # RPC Handlers
@@ -63,8 +71,34 @@ func _on_cards_drew(result: Dictionary) -> void:
 		emit_signal("on_drew_failed")
 
 @rpc("authority", "reliable", "call_local")
-func _on_turn_skipped(result: Dictionary) -> void:
-	emit_signal("on_turn_skipped", result)
+func _on_turn_changed(result: Dictionary) -> void:
+	if result.success:
+		var snapshot : Dictionary = result.snapshot
+		var payload = result.payload
+
+		emit_signal("on_turn_changed", payload, snapshot)
+	else:
+		emit_signal("on_skip_failed")
+
+@rpc("authority", "reliable", "call_local")
+func _on_hue_selection_request(result: Dictionary) -> void:
+	if result.success:
+		var snapshot : Dictionary = result.snapshot
+		var payload = result.payload
+
+		emit_signal("on_turn_changed", payload, snapshot)
+	else:
+		emit_signal("on_skip_failed")
+
+@rpc("authority", "reliable", "call_local")
+func _on_hue_selected(result: Dictionary) -> void:
+	if result.success:
+		var snapshot : Dictionary = result.snapshot
+		var payload = result.payload
+
+		emit_signal("on_turn_changed", payload, snapshot)
+	else:
+		emit_signal("on_skip_failed")
 
 @rpc("authority", "reliable", "call_local")
 func _on_game_started(snapshot: Dictionary):

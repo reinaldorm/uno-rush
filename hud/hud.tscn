@@ -152,6 +152,9 @@ offset_top = 412.0
 offset_right = 579.0
 offset_bottom = 412.0
 
+[connection signal="on_button_pressed" from="BottomCenter/ArrangeNumber" to="." method="_on_arrange_number_pressed"]
+[connection signal="on_button_pressed" from="BottomCenter/ArrangeColor" to="." method="_on_arrange_color_pressed"]
+
 [editable path="BottomCenter/ArrangeNumber"]
 [editable path="BottomCenter/Uno"]
 [editable path="BottomCenter/ArrangeColor"]

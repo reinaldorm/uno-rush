@@ -2,8 +2,8 @@ extends Node
 class_name GameManager
 
 signal cards_played(card: Array[CardData])
-# signal cards_drew(card: Array[CardData])
-# signal play_denied(card: Array[CardData])
+signal cards_drew(card: Array[CardData])
+signal turn_skipped(card: Array[CardData])
 
 @export var client_controller : ClientController
 
@@ -45,7 +45,7 @@ func _ready() -> void:
 	client_controller.on_cards_played.connect(_on_cards_played)
 	client_controller.on_play_failed.connect(_on_play_failed)
 	client_controller.on_cards_drew.connect(_on_cards_drew)
-	client_controller.on_turn_skipped.connect(_on_turn_changed)
+	client_controller.on_turn_changed.connect(_on_turn_changed)
 	client_controller.on_game_started.connect(_on_game_started)
 
 func _create_player_hand(id: int, hand: Array[Dictionary]) -> void:
@@ -98,6 +98,24 @@ func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 
 	_discard_pile.play(card_views)
 
+func _cycle_hand_available() -> void:
+	_client_hand.deselect_all_cards()
+
+func _check_available_cards() -> void:
+	var client_cards = _client_hand.card_views
+	var top_card = CardData.to_data(_snapshot.top_card)
+
+	var available_cards : Array[CardData] = []
+
+	for view in client_cards:
+		if _snapshot.draw_stack:
+			if GameLogic.can_stack(top_card, view.data):
+				available_cards.append(view.data)	
+		elif GameLogic.can_play(top_card, view.data):
+			available_cards.append(view.data)
+	
+	if available_cards.size() == 0: client_controller.request_skip()
+
 # Draw Dispatchers --------------------------------------------------------
 
 func _add_cards_to_client(cards: Array[CardData]) -> void:
@@ -135,15 +153,17 @@ func _sync_game_snapshot(snapshot: Dictionary) -> void:
 
 	var current_player_id : int = snapshot.get("current_player", -1)
 
-
-
 	for player in snapshot.players:
 		if player.id == multiplayer.get_unique_id():
 			_hud.update_player_hand(_is_client_turn())
 		if _hands_mapped.has(player.id):
 			_hud.update_opponent(player.id, player.hand_count, player.id == current_player_id)
 
-func _cycle_turn(turn_info: Dictionary) -> void:
+func _cycle_turn(payload: Dictionary) -> void:
+	var turn_info = payload.get("turn_info", null)
+
+	if not turn_info: return
+
 	var current_player_hand : Hand
 
 	if _is_client_turn(): current_player_hand = _client_hand
@@ -155,49 +175,43 @@ func _cycle_turn(turn_info: Dictionary) -> void:
 
 func _on_cards_played(is_client: bool, payload: Dictionary, snapshot: Dictionary) -> void:
 	_sync_game_snapshot(snapshot)
+	_cycle_turn(payload)
 	
 	if is_client: _play_from_client(payload.cards)
 	else: _play_from_opponent(payload.player_id, payload.cards)
 
-	if payload.get("turn_info"):
-		_cycle_turn(payload.turn_info)
-
+	_cycle_hand_available()
 	emit_signal("cards_played", payload.player_id)
 
 func _on_cards_drew(is_client: bool, payload: Dictionary, snapshot: Dictionary) -> void:
 	_sync_game_snapshot(snapshot)
+	_cycle_turn(payload)
 
 	if is_client: _add_cards_to_client(payload.cards)
 	else: _add_cards_to_opponent(payload.player_id, payload.draw_count)
 
-	if payload.get("turn_info"):
-		_cycle_turn(payload.turn_info)
+	if is_client: _check_available_cards()
 
-func _on_turn_changed(result: Dictionary) -> void:
-	if not result.success:
-		print("GameManager: Turn Skip Failed")
-		return
+	_cycle_hand_available()
+	emit_signal("cards_drew", payload.player_id)
 
-	_sync_game_snapshot(result.get("game", {}))
+func _on_turn_changed(payload: Dictionary, snapshot: Dictionary) -> void:
+	_sync_game_snapshot(snapshot)
 
-	var current_player_hand : Hand
-
-	if multiplayer.get_unique_id() == result.current:
-		current_player_hand = _client_hand
-	else:
-		current_player_hand = _hands_mapped[result.current]
-
-	_turn_manager.update_turn(current_player_hand, result.game.direction, result.skips, result.reverses)
+	_cycle_hand_available()
+	emit_signal("turn_skipped", payload.player_id)
 
 func _on_game_started(snapshot: Dictionary) -> void:
 	_start(snapshot)
+
+func _on_hue_requested() -> void:
+	var hue = await _hue_manager.prompt_hue_selection()
 
 func _on_play_failed() -> void:
 	_discard_pile.reject_play()
 
 func _on_draw_failed() -> void:
 	pass
-
 
 # Discard Pile Handlers ---------------------------------------------------
 

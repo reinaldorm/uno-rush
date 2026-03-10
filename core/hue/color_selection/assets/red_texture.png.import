@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bjkdf7c43kcjv"
-path="res://.godot/imported/yellow_texture.png-3a283b599e0154b5d1068da0a67221e0.ctex"
+uid="uid://8h13r6dc8udx"
+path="res://.godot/imported/red_texture.png-4d9dd594d5852bb1c3b6fcda25778b14.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/color_selection/assets/yellow_texture.png"
-dest_files=["res://.godot/imported/yellow_texture.png-3a283b599e0154b5d1068da0a67221e0.ctex"]
+source_file="res://core/hue/color_selection/assets/red_texture.png"
+dest_files=["res://.godot/imported/red_texture.png-4d9dd594d5852bb1c3b6fcda25778b14.ctex"]
 
 [params]
 

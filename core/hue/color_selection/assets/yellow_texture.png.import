@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://xllid4fhicip"
-path="res://.godot/imported/green_texture.png-6803faea7527103a7bfc7953f095cc60.ctex"
+uid="uid://bjkdf7c43kcjv"
+path="res://.godot/imported/yellow_texture.png-d8188a412d5cc7399c3b755c7e0cb0df.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/color_selection/assets/green_texture.png"
-dest_files=["res://.godot/imported/green_texture.png-6803faea7527103a7bfc7953f095cc60.ctex"]
+source_file="res://core/hue/color_selection/assets/yellow_texture.png"
+dest_files=["res://.godot/imported/yellow_texture.png-d8188a412d5cc7399c3b755c7e0cb0df.ctex"]
 
 [params]
 

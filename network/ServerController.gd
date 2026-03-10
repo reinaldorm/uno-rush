@@ -9,6 +9,8 @@ enum ActionType {
 	PLAY,
 	DRAW,
 	SKIP,
+	SELECT_HUE,
+	SELECT_HAND,
 	UNO
 }
 
@@ -48,9 +50,11 @@ func request_action(action: ActionType, payload: Dictionary = {}) -> void:
 			result = _game.play(sender_id, payload.cards)
 
 			if result.success:
-				result["snapshot"] = _game.create_game_snapshot()
-				client_controller._on_cards_played.rpc(result)
-				pass
+				if result.awaiting_selection:
+					client_controller._on_hue_selection_request.rpc_id(sender_id)
+				else:
+					result["snapshot"] = _game.create_game_snapshot()
+					client_controller._on_cards_played.rpc(result)
 			else:
 				client_controller._on_cards_played.rpc_id(sender_id, result)
 
@@ -66,7 +70,12 @@ func request_action(action: ActionType, payload: Dictionary = {}) -> void:
 		ActionType.SKIP:
 			result = _game.skip(sender_id)
 			result["snapshot"] = _game.create_game_snapshot()
-			client_controller._on_turn_skipped.rpc(result)
+			client_controller._on_turn_changed.rpc(result)
+		
+		ActionType.SELECT_HUE:
+			result = _game.select_hue(sender_id, payload.hue)
+			result["snapshot"] = _game.create_game_snapshot()
+			client_controller._on_hue_selected.rpc(result)
 
 # -------------------------
 # Handlers

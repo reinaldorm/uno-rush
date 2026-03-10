@@ -21,6 +21,19 @@ enum Effect {
 @export var effect : Effect
 @export var effect_parameter : int
 @export var id: String
+@export var faceless: bool = false
+
+static func create_faceless(_hue: Hue) -> CardData:
+
+	var new_data := CardData.new()
+	new_data.hue = _hue
+	new_data.number = -1
+	new_data.effect = Effect.NULL
+	new_data.effect_parameter = 0
+	new_data.id = str(randi_range(0, 1000000))
+	new_data.faceless = true
+
+	return new_data
 
 static func create_numbered(_hue: Hue, _number: int) -> CardData:
 	if _number < 0 or _number > 9: pass ## Should throw error as no card may have lower than 0 or greater than 9 numbers.

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cehrsi0hwnrcd" path="res://debug/debug_node.gd" id="1_ucakl"]
 [ext_resource type="Shader" uid="uid://byyoekgmp6rx3" path="res://shaders/card_fix.gdshader" id="1_vgcv5"]
-[ext_resource type="Texture2D" uid="uid://8h13r6dc8udx" path="res://scenes/color_selection/assets/red_texture.png" id="2_5buv8"]
+[ext_resource type="Texture2D" uid="uid://8h13r6dc8udx" path="res://core/hue/color_selection/assets/red_texture.png" id="2_5buv8"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_2jg28"]
 frequency = 0.0095

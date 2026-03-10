@@ -15,7 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://cjdkmqlkwnn3b" path="res://card/card_view.tscn" id="9_nvumn"]
 [ext_resource type="Script" uid="uid://d0nv5vi28moja" path="res://core/hue/hue_manager.gd" id="10_th5th"]
 [ext_resource type="PackedScene" uid="uid://5l4hlbf13et7" path="res://hud/hud.tscn" id="11_ouso4"]
-[ext_resource type="PackedScene" uid="uid://dmedcufah270y" path="res://scenes/color_selection/color_selection.tscn" id="12_blune"]
+[ext_resource type="PackedScene" uid="uid://dmedcufah270y" path="res://core/hue/color_selection/color_selection.tscn" id="12_blune"]
 [ext_resource type="PackedScene" uid="uid://3liiamwek2ge" path="res://core/turn/turn_arrow/turn_arrow.tscn" id="12_necax"]
 [ext_resource type="PackedScene" uid="uid://rtey47r1s52j" path="res://core/turn/direction_arrow/direction_arrow.tscn" id="13_r4lks"]
 [ext_resource type="Script" uid="uid://1aqiwmbck15p" path="res://network/ClientController.gd" id="16_hxu8e"]
@@ -253,10 +253,7 @@ offset_left = -320.0
 offset_top = -180.0
 offset_right = -320.0
 offset_bottom = -180.0
-_select_max_time = 0.5
-
-[node name="Hud" parent="." unique_id=827020285 instance=ExtResource("11_ouso4")]
-layer = 0
+_select_max_time = 5.0
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=1884324124]
 layer = -1
@@ -299,6 +296,9 @@ visibility_rect = Rect2(0, 0, 640, 360)
 process_material = SubResource("ParticleProcessMaterial_l3cfh")
 metadata/_edit_lock_ = true
 
+[node name="Hud" parent="." unique_id=827020285 instance=ExtResource("11_ouso4")]
+layer = -1
+
 [node name="ClientController" type="Node" parent="." unique_id=909286862 node_paths=PackedStringArray("server_controller")]
 script = ExtResource("16_hxu8e")
 server_controller = NodePath("../ServerController")
@@ -318,7 +318,8 @@ environment = SubResource("Environment_r4lks")
 [connection signal="selection_changed" from="PlayerHand" to="GameManager" method="_on_selection_changed"]
 [connection signal="selection_changed" from="PlayerHand/SelectionComponent" to="PlayerHand" method="_on_selection_changed"]
 [connection signal="camera_shook" from="FXManager" to="DrawPile" method="_on_camera_shake"]
-[connection signal="cards_played" from="GameManager" to="PlayerHand" method="_on_cards_played"]
 [connection signal="turn_advanced" from="TurnManager" to="." method="_on_turn_manager_turn_advanced"]
 [connection signal="hue_selected" from="HueManager/ColorSelection" to="HueManager" method="_on_hue_selected"]
+[connection signal="arrange_color" from="Hud" to="PlayerHand" method="_arrange_by_color"]
+[connection signal="arrange_number" from="Hud" to="PlayerHand" method="_arrange_by_number"]
 [connection signal="skip_turn" from="Hud" to="GameManager" method="_on_skip_requested"]

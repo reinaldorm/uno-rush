@@ -52,7 +52,7 @@ func draw(player_id: int) -> Dictionary:
 		cards = _draw_from_pile(draw_stack)
 
 		response = _generate_draw_response(player_id, cards)
-		var turn_info = skip(player_id)
+		var turn_info = _advance_turn()
 
 		response.payload["turn_info"] = turn_info
 		draw_stack = 0
@@ -72,15 +72,14 @@ func play(player_id: int, cards_serial: Array[Dictionary]) -> Dictionary:
 	var cards := CardData.array_to_data(cards_serial)
 	var player = players[player_id]
 
-	var ok = GameLogic.validate_play(_last_card(), cards, draw_stack)
+	var ok = _validate_play(_last_card(), cards, draw_stack)
 
 	if ok:
-
 		_add_to_pile(cards)
 		_apply_effects(cards)
 		_remove_from_hand(player, cards)
 
-		var turn_info = skip(player_id)
+		var turn_info = _advance_turn()
 
 		return _generate_play_response(player_id, cards_serial, turn_info)
 	else:
@@ -89,15 +88,19 @@ func play(player_id: int, cards_serial: Array[Dictionary]) -> Dictionary:
 func skip(player_id: int) -> Dictionary:
 	if player_id != _current_player(): return _generate_fail_response(player_id, fail_reason.inv_turn)
 
-	play_lock = false
-	draw_lock = false
+	var turn_info = _advance_turn()
 
-	var skip_count := skips
-	var reverse_count := reverses
+	return _generate_skip_response(player_id, turn_info)
 
-	_next_turn()
+func select_hue(player_id: int, hue: int) -> Dictionary:
+	if player_id != _current_player(): return _generate_fail_response(player_id, fail_reason.inv_turn)
 
-	return { "skips" = skip_count, "reverses" = reverse_count }
+	var faceless_card = CardData.create_faceless(hue)
+	discard_pile.append(faceless_card)
+
+	var turn_info = _advance_turn()
+
+	return _generate_hue_selection_response(player_id, faceless_card, turn_info)
 
 func add_player(player: Dictionary) -> Dictionary:
 	print("GameLogic: Tried to add player with ID and Name: ", player.id, player.name)
@@ -137,7 +140,18 @@ func create_game_snapshot(exclude_player_id: int = -1) -> Dictionary:
 # early play validation for visual feedback since it its lightweigh
 # and deterministic
 
-static func validate_play(top_card: CardData, cards: Array[CardData], stack: int) -> bool:
+func _advance_turn() -> Dictionary:
+	play_lock = false
+	draw_lock = false
+
+	var skip_count := skips
+	var reverse_count := reverses
+
+	_next_turn()
+
+	return { "skips" = skip_count, "reverses" = reverse_count }
+
+func _validate_play(top_card: CardData, cards: Array[CardData], stack: int) -> bool:
 	# No cards, returns false.
 	if not cards.size(): return false
 
@@ -157,48 +171,6 @@ static func validate_play(top_card: CardData, cards: Array[CardData], stack: int
 	else:
 		if GameLogic.can_play(top_card, cards[0]): return true
 		else: return false
-
-static func can_play(top_card: CardData, card: CardData) -> bool:
-	if card.hue == CardData.Hue.WILD: return true
-	if card.hue == top_card.hue: return true
-	if card.effect != CardData.Effect.NULL and card.effect == top_card.effect: return true
-	if card.number >= 0 and card.number == top_card.number: return true
-
-	return false
-
-static func can_combo(cards: Array[CardData]) -> bool:
-	var starter = cards[0]
-
-	return cards.slice(1, cards.size()).all(func(next_card: CardData): return GameLogic.can_play_with_next(starter, next_card))
-
-static func can_stack(top_card: CardData, card: CardData) -> bool:
-	if card.hue == CardData.Hue.WILD and card.effect == CardData.Effect.DRAW: return true
-
-	if top_card.hue == CardData.Hue.WILD:
-		if card.effect == CardData.Effect.DRAW:
-			if card.hue == top_card.hue: return true
-	else:
-		if card.effect == CardData.Effect.DRAW: return true
-
-	return false
-
-static func can_play_with_next(previous: CardData, next_card: CardData) -> bool:
-	if next_card.hue == CardData.Hue.WILD:
-		if next_card.effect == previous.effect:
-			return true
-		else:
-			return false
-
-	if next_card.number >= 0:
-		if next_card.number == previous.number:
-			return true
-		else:
-			return false
-
-	if next_card.effect == previous.effect:
-		return true
-	else:
-		return false
 
 func _create_deck() -> Array[CardData]:
 	var new_deck : Array[CardData]
@@ -244,6 +216,48 @@ func _apply_effects(cards: Array[CardData]) -> void:
 
 	if cards[0].effect == CardData.Effect.SKIP:
 		skips += cards.size()
+
+static func can_play(top_card: CardData, card: CardData) -> bool:
+	if card.hue == CardData.Hue.WILD: return true
+	if card.hue == top_card.hue: return true
+	if card.effect != CardData.Effect.NULL and card.effect == top_card.effect: return true
+	if card.number >= 0 and card.number == top_card.number: return true
+
+	return false
+
+static func can_combo(cards: Array[CardData]) -> bool:
+	var starter = cards[0]
+
+	return cards.slice(1, cards.size()).all(func(next_card: CardData): return GameLogic.can_play_with_next(starter, next_card))
+
+static func can_stack(top_card: CardData, card: CardData) -> bool:
+	if card.hue == CardData.Hue.WILD and card.effect == CardData.Effect.DRAW: return true
+
+	if top_card.hue == CardData.Hue.WILD:
+		if card.effect == CardData.Effect.DRAW:
+			if card.hue == top_card.hue: return true
+	else:
+		if card.effect == CardData.Effect.DRAW: return true
+
+	return false
+
+static func can_play_with_next(previous: CardData, next_card: CardData) -> bool:
+	if next_card.hue == CardData.Hue.WILD:
+		if next_card.effect == previous.effect:
+			return true
+		else:
+			return false
+
+	if next_card.number >= 0:
+		if next_card.number == previous.number:
+			return true
+		else:
+			return false
+
+	if next_card.effect == previous.effect:
+		return true
+	else:
+		return false
 
 # -------------------------
 # Internal Helpers
@@ -305,10 +319,7 @@ func _generate_play_response(player_id: int, cards: Array[Dictionary], turn_info
 		"payload" = {
 			"player_id" = player_id,
 			"cards" = cards,
-			"turn_info" = {
-				"skips" = turn_info.skips, 
-				"reverses" = turn_info.reverses
-		} 
+			"turn_info" = turn_info
 		}
 	}
 
@@ -320,6 +331,27 @@ func _generate_draw_response(player_id: int, cards: Array[CardData]) -> Dictiona
 			"player_id" = player_id,
 			"cards" = CardData.array_to_serial(cards),
 			"draw_count" = cards.size()
+		}
+	}
+
+func _generate_skip_response(player_id: int, turn_info: Dictionary) -> Dictionary:
+
+	return {
+		"success" = true,
+		"payload" = {
+			"player_id" = player_id,
+			"turn_info" = turn_info
+		}
+	}
+
+func _generate_hue_selection_response(player_id: int, card: Dictionary, turn_info) -> Dictionary:
+
+	return {
+		"success" = true,
+		"payload" = {
+			"player_id" = player_id,
+			"card" = card,
+			"turn_info" = turn_info
 		}
 	}
 

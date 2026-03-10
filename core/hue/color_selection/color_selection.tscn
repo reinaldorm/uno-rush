@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://dmedcufah270y"]
 
-[ext_resource type="Script" uid="uid://8t323sph5xg5" path="res://scenes/color_selection/color_selection.gd" id="1_5jnvq"]
+[ext_resource type="Script" uid="uid://8t323sph5xg5" path="res://core/hue/color_selection/color_selection.gd" id="1_5jnvq"]
 [ext_resource type="Shader" uid="uid://db8far0wnetwl" path="res://shaders/light_shaft.gdshader" id="2_tdiwh"]
-[ext_resource type="Texture2D" uid="uid://8h13r6dc8udx" path="res://scenes/color_selection/assets/red_texture.png" id="3_tj4ln"]
-[ext_resource type="Texture2D" uid="uid://xllid4fhicip" path="res://scenes/color_selection/assets/green_texture.png" id="4_3642w"]
-[ext_resource type="Texture2D" uid="uid://drt5rnen71300" path="res://scenes/color_selection/assets/blue_texture.png" id="5_vy1da"]
-[ext_resource type="Texture2D" uid="uid://bjkdf7c43kcjv" path="res://scenes/color_selection/assets/yellow_texture.png" id="6_ctpbj"]
+[ext_resource type="Texture2D" uid="uid://8h13r6dc8udx" path="res://core/hue/color_selection/assets/red_texture.png" id="3_tj4ln"]
+[ext_resource type="Texture2D" uid="uid://xllid4fhicip" path="res://core/hue/color_selection/assets/green_texture.png" id="4_3642w"]
+[ext_resource type="Texture2D" uid="uid://drt5rnen71300" path="res://core/hue/color_selection/assets/blue_texture.png" id="5_vy1da"]
+[ext_resource type="Texture2D" uid="uid://bjkdf7c43kcjv" path="res://core/hue/color_selection/assets/yellow_texture.png" id="6_ctpbj"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tdiwh"]
 
@@ -178,4 +178,8 @@ texture = ExtResource("6_ctpbj")
 [node name="SelectTimer" type="Timer" parent="." unique_id=1032477249]
 one_shot = true
 
+[connection signal="pressed" from="Buttons/RedButton" to="." method="_on_button_pressed" binds= [0]]
+[connection signal="pressed" from="Buttons/GreenButton" to="." method="_on_button_pressed" binds= [1]]
+[connection signal="pressed" from="Buttons/BlueButton" to="." method="_on_button_pressed" binds= [2]]
+[connection signal="pressed" from="Buttons/YellowButton" to="." method="_on_button_pressed" binds= [3]]
 [connection signal="timeout" from="SelectTimer" to="." method="_on_select_timeout"]

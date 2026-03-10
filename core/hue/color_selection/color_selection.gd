@@ -36,10 +36,6 @@ func _idle() -> void:
 		pass
 
 func _select_hue(hue: CardData.Hue) -> void:
-	# TODO
-	# Animate Card Selection
-	# TODO
-
 	emit_signal("hue_selected", hue)
 	hide()
 
@@ -47,15 +43,15 @@ func _select_hue(hue: CardData.Hue) -> void:
 # Handlers
 # -------------------------
 
-func _on_button_pressed(_hue: String) -> void:
+func _on_button_pressed(_hue: int) -> void:
 	_select_timer.stop()
 	var selected_hue : CardData.Hue
 
 	match _hue:
-		"red": selected_hue = CardData.Hue.RED
-		"green": selected_hue = CardData.Hue.GREEN
-		"blue": selected_hue = CardData.Hue.BLUE
-		"green": selected_hue = CardData.Hue.YELLOW
+		0: selected_hue = CardData.Hue.RED
+		1: selected_hue = CardData.Hue.GREEN
+		2: selected_hue = CardData.Hue.BLUE
+		3: selected_hue = CardData.Hue.YELLOW
 
 	_select_hue(selected_hue)
 

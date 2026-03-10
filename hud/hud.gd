@@ -3,7 +3,7 @@ class_name HUD
 
 signal skip_turn()
 signal arrange_number()
-signal arranger_color()
+signal arrange_color()
 
 @export var _opponent_boxes : Array[OpponentBox]
 
@@ -71,6 +71,12 @@ func _hide_client_turn() -> void:
 
 func _on_skip_turn_pressed() -> void:
 	emit_signal("skip_turn")
+
+func _on_arrange_number_pressed() -> void:
+	emit_signal("arrange_number")
+
+func _on_arrange_color_pressed() -> void:
+	emit_signal("arrange_color")
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey:
