@@ -36,8 +36,6 @@ func request_skip() -> void:
 
 @rpc("authority", "reliable", "call_local")
 func _on_cards_played(result: Dictionary) -> void:
-	var player = result.payload.player_id
-
 	if result.success:
 		result.payload.cards = CardData.array_to_data(result.payload.cards)
 

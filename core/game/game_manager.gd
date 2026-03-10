@@ -133,17 +133,23 @@ func _sync_game_snapshot(snapshot: Dictionary) -> void:
 	if snapshot.is_empty(): return
 	_snapshot = snapshot
 
-	# Update UI (Hand counts, turn labels, etc.)
 	var current_player_id : int = snapshot.get("current_player", -1)
 
-	if not snapshot.has("players"):
-		return
+
 
 	for player in snapshot.players:
 		if player.id == multiplayer.get_unique_id():
-			_hud.update_player_hand(multiplayer.get_unique_id() == current_player_id)
+			_hud.update_player_hand(_is_client_turn())
 		if _hands_mapped.has(player.id):
 			_hud.update_opponent(player.id, player.hand_count, player.id == current_player_id)
+
+func _cycle_turn(turn_info: Dictionary) -> void:
+	var current_player_hand : Hand
+
+	if _is_client_turn(): current_player_hand = _client_hand
+	else: current_player_hand = _hands_mapped[_get_current_player()]
+
+	_turn_manager.update_turn(current_player_hand, _snapshot.direction, turn_info.skips, turn_info.reverses)
 
 # Network Handlers --------------------------------------------------------
 
@@ -153,23 +159,19 @@ func _on_cards_played(is_client: bool, payload: Dictionary, snapshot: Dictionary
 	if is_client: _play_from_client(payload.cards)
 	else: _play_from_opponent(payload.player_id, payload.cards)
 
-	var current_player_hand : Hand
-
-	if _is_client_turn(): current_player_hand = _client_hand
-	else: current_player_hand = _hands_mapped[_get_current_player()]
-
-	_turn_manager.update_turn(current_player_hand, _snapshot.direction, payload.skips, payload.reverses)
+	if payload.get("turn_info"):
+		_cycle_turn(payload.turn_info)
 
 	emit_signal("cards_played", payload.player_id)
 
-func _on_play_failed() -> void:
-	_discard_pile.reject_play()
-
 func _on_cards_drew(is_client: bool, payload: Dictionary, snapshot: Dictionary) -> void:
+	_sync_game_snapshot(snapshot)
+
 	if is_client: _add_cards_to_client(payload.cards)
 	else: _add_cards_to_opponent(payload.player_id, payload.draw_count)
 
-	_sync_game_snapshot(snapshot)
+	if payload.get("turn_info"):
+		_cycle_turn(payload.turn_info)
 
 func _on_turn_changed(result: Dictionary) -> void:
 	if not result.success:
@@ -189,6 +191,13 @@ func _on_turn_changed(result: Dictionary) -> void:
 
 func _on_game_started(snapshot: Dictionary) -> void:
 	_start(snapshot)
+
+func _on_play_failed() -> void:
+	_discard_pile.reject_play()
+
+func _on_draw_failed() -> void:
+	pass
+
 
 # Discard Pile Handlers ---------------------------------------------------
 

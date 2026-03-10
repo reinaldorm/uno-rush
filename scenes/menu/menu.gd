@@ -23,7 +23,7 @@ func _on_host_pressed() -> void:
 	get_tree().change_scene_to_packed(lobby_scene)
 
 func _on_join_pressed() -> void:
-	NetworkManager.join_game("192.168.237.33", 8910)
+	NetworkManager.join_game("192.168.237.77", 8910)
 
 func _on_options_pressed() -> void:
 	print("Menu: Options not implemented yet!")

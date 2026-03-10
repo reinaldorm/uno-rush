@@ -45,13 +45,25 @@ func draw(player_id: int) -> Dictionary:
 	if draw_lock: return _generate_fail_response(player_id, fail_reason.locked)
 
 	var player := players[player_id]
-	draw_lock = true
+	var cards : Array[CardData] = []
+	var response : Dictionary = {}
 
-	var cards := _draw_from_pile(1)
+	if draw_stack:
+		cards = _draw_from_pile(draw_stack)
+
+		response = _generate_draw_response(player_id, cards)
+		var turn_info = skip(player_id)
+
+		response.payload["turn_info"] = turn_info
+		draw_stack = 0
+
+	else:
+		draw_lock = true
+		cards = _draw_from_pile(1)
+		response  = _generate_draw_response(player_id, cards)
 
 	player.hand.append_array(cards)
-
-	return _generate_draw_response(player_id, cards)
+	return response
 
 func play(player_id: int, cards_serial: Array[Dictionary]) -> Dictionary:
 	if player_id != _current_player(): return _generate_fail_response(player_id, fail_reason.inv_turn)
@@ -289,13 +301,15 @@ func _last_card() -> CardData:
 
 func _generate_play_response(player_id: int, cards: Array[Dictionary], turn_info: Dictionary) -> Dictionary:
 	return { 
-		"success" = true, 
+		"success" = true,
 		"payload" = {
 			"player_id" = player_id,
 			"cards" = cards,
-			"skips" = turn_info.skips, 
-			"reverses" = turn_info.reverses
+			"turn_info" = {
+				"skips" = turn_info.skips, 
+				"reverses" = turn_info.reverses
 		} 
+		}
 	}
 
 func _generate_draw_response(player_id: int, cards: Array[CardData]) -> Dictionary:

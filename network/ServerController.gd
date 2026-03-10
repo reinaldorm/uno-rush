@@ -59,19 +59,7 @@ func request_action(action: ActionType, payload: Dictionary = {}) -> void:
 			result["snapshot"] = _game.create_game_snapshot()
 
 			if result.success:
-				for player_id in _game.players.keys():
-					if player_id == sender_id:
-						client_controller.rpc_id(player_id, "_on_cards_drew", result)
-					## REFACTOR, RETURN SHOULD NOT BE EXPLICIT HERE
-					else:
-						client_controller.rpc_id(player_id, "_on_cards_drew", {
-							"success" = true,
-							"snapshot" = result.snapshot,
-							"payload" = {
-								"player_id" = sender_id,
-								"draw_count" = result.payload.draw_count
-							}
-						})
+				client_controller.rpc("_on_cards_drew", result)
 			else:
 				client_controller.rpc_id(sender_id, "_on_cards_drew", result)
 
