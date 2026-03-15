@@ -16,6 +16,7 @@ var draw_stack := 0
 var ongoing = false
 var play_lock = false
 var draw_lock = false
+var play_stack : Array[CardData] = []
 
 const fail_reason := {
 	inv_turn = "Invalid turn, not sender's turn.",
@@ -75,13 +76,17 @@ func play(player_id: int, cards_serial: Array[Dictionary]) -> Dictionary:
 	var ok = _validate_play(_last_card(), cards, draw_stack)
 
 	if ok:
-		_add_to_pile(cards)
-		_apply_effects(cards)
-		_remove_from_hand(player, cards)
+		if cards[0].hue == CardData.Hue.WILD:
+			play_stack = cards.duplicate()
+			return { "success" = true, "awaiting_selection" = true }
+		else:
+			_add_to_pile(cards)
+			_apply_effects(cards)
+			_remove_from_hand(player, cards)
 
-		var turn_info = _advance_turn()
+			var turn_info = _advance_turn()
 
-		return _generate_play_response(player_id, cards_serial, turn_info)
+			return _generate_play_response(player_id, cards_serial, turn_info)
 	else:
 		return _generate_fail_response(player_id, fail_reason.inv_play)
 
@@ -94,13 +99,24 @@ func skip(player_id: int) -> Dictionary:
 
 func select_hue(player_id: int, hue: int) -> Dictionary:
 	if player_id != _current_player(): return _generate_fail_response(player_id, fail_reason.inv_turn)
+	
+	var player = players[player_id]
+	
+	for card in play_stack: 
+		card.faceless = true
+		card.hue = hue as CardData.Hue
 
-	var faceless_card = CardData.create_faceless(hue)
-	discard_pile.append(faceless_card)
+	_add_to_pile(play_stack)
+	_apply_effects(play_stack)
+	_remove_from_hand(player, play_stack)
 
 	var turn_info = _advance_turn()
+	var response = _generate_play_response(player_id, CardData.array_to_serial(play_stack), turn_info)
+	
+	play_stack = []
 
-	return _generate_hue_selection_response(player_id, faceless_card, turn_info)
+	return response
+
 
 func add_player(player: Dictionary) -> Dictionary:
 	print("GameLogic: Tried to add player with ID and Name: ", player.id, player.name)
@@ -344,13 +360,13 @@ func _generate_skip_response(player_id: int, turn_info: Dictionary) -> Dictionar
 		}
 	}
 
-func _generate_hue_selection_response(player_id: int, card: Dictionary, turn_info) -> Dictionary:
+func _generate_hue_selection_response(player_id: int, cards: Array[CardData], turn_info) -> Dictionary:
 
 	return {
 		"success" = true,
 		"payload" = {
 			"player_id" = player_id,
-			"card" = card,
+			"cards" = CardData.array_to_serial(cards),
 			"turn_info" = turn_info
 		}
 	}

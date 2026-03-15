@@ -81,24 +81,8 @@ func _on_turn_changed(result: Dictionary) -> void:
 		emit_signal("on_skip_failed")
 
 @rpc("authority", "reliable", "call_local")
-func _on_hue_selection_request(result: Dictionary) -> void:
-	if result.success:
-		var snapshot : Dictionary = result.snapshot
-		var payload = result.payload
-
-		emit_signal("on_turn_changed", payload, snapshot)
-	else:
-		emit_signal("on_skip_failed")
-
-@rpc("authority", "reliable", "call_local")
-func _on_hue_selected(result: Dictionary) -> void:
-	if result.success:
-		var snapshot : Dictionary = result.snapshot
-		var payload = result.payload
-
-		emit_signal("on_turn_changed", payload, snapshot)
-	else:
-		emit_signal("on_skip_failed")
+func _on_hue_selection_request() -> void:
+	emit_signal("on_hue_selection_request")
 
 @rpc("authority", "reliable", "call_local")
 func _on_game_started(snapshot: Dictionary):

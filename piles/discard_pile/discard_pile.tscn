@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dtmex3jq2n2md" path="res://assets/effects/star_sheet.png" id="5_kccp7"]
 [ext_resource type="Script" uid="uid://cn2y722rub2qw" path="res://interactions/drop/drop_zone.gd" id="5_pn0yc"]
 [ext_resource type="AudioStream" uid="uid://d4kl1wf08m2sf" path="res://assets/sfx/card_play.mp3" id="8_6vir3"]
+[ext_resource type="PackedScene" uid="uid://bqb32w30rmmot" path="res://piles/discard_pile/hue_view/hue_view.tscn" id="9_xxae7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6vir3"]
 shader = ExtResource("3_lq65o")
@@ -157,6 +158,8 @@ _area_outline = NodePath("Visuals/Outline")
 _drop_zone = NodePath("DropZone")
 _cards_node = NodePath("Cards")
 _audio_player = NodePath("AudioStreamPlayer")
+
+[node name="HueView" parent="." unique_id=954324616 instance=ExtResource("9_xxae7")]
 
 [node name="Visuals" type="Node2D" parent="." unique_id=1194200993]
 

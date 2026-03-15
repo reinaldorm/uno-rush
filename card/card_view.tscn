@@ -203,7 +203,7 @@ material = SubResource("ShaderMaterial_m3lw8")
 position = Vector2(8, 12)
 texture = ExtResource("3_qvwpc")
 hframes = 13
-vframes = 5
+vframes = 6
 frame = 57
 
 [node name="SelectionTransform" type="Node2D" parent="." unique_id=1445043032]

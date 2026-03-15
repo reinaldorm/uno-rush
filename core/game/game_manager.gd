@@ -47,6 +47,7 @@ func _ready() -> void:
 	client_controller.on_cards_drew.connect(_on_cards_drew)
 	client_controller.on_turn_changed.connect(_on_turn_changed)
 	client_controller.on_game_started.connect(_on_game_started)
+	client_controller.on_hue_selection_request.connect(_on_hue_requested)
 
 func _create_player_hand(id: int, hand: Array[Dictionary]) -> void:
 	var cards : Array[CardData] = CardData.array_to_data(hand)
@@ -206,6 +207,7 @@ func _on_game_started(snapshot: Dictionary) -> void:
 
 func _on_hue_requested() -> void:
 	var hue = await _hue_manager.prompt_hue_selection()
+	client_controller.select_hue(hue)
 
 func _on_play_failed() -> void:
 	_discard_pile.reject_play()

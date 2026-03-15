@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://bqb32w30rmmot"]
+
+[ext_resource type="Script" uid="uid://beoymxtwh4e8" path="res://piles/discard_pile/hue_view/hue_view.gd" id="1_m27am"]
+[ext_resource type="Texture2D" uid="uid://bb7eisj6xy33m" path="res://assets/card/blank_sheet.png" id="2_c8a4b"]
+[ext_resource type="Shader" uid="uid://c2kfwnkkt8ge8" path="res://shaders/card.gdshader" id="3_buemb"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_j1tb8"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hvn8j"]
+shader = ExtResource("3_buemb")
+shader_parameter/_alpha = 1.0
+shader_parameter/_color_ow = Vector3(0, 0, 0)
+shader_parameter/fov = 90.0
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 0.0
+shader_parameter/x_rot = 7.500008906250002
+shader_parameter/inset = 0.0
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_08p43"]
+viewport_path = NodePath("SubViewport")
+
+[node name="ColorView" type="Node2D" unique_id=954324616]
+script = ExtResource("1_m27am")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=1081092184]
+disable_3d = true
+own_world_3d = true
+transparent_bg = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(16, 24)
+
+[node name="Sprite2D" type="Sprite2D" parent="SubViewport" unique_id=832673849]
+material = SubResource("ShaderMaterial_j1tb8")
+position = Vector2(8, 12)
+texture = ExtResource("2_c8a4b")
+hframes = 4
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=607396448]
+material = SubResource("ShaderMaterial_hvn8j")
+scale = Vector2(1.5, 1.5)
+texture = SubResource("ViewportTexture_08p43")
