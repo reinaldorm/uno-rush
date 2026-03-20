@@ -70,13 +70,15 @@ func play(player_id: int, cards_serial: Array[Dictionary]) -> Dictionary:
 	if player_id != _current_player(): return _generate_fail_response(player_id, fail_reason.inv_turn)
 	if play_lock: return _generate_fail_response(player_id, "DEPRECATED: Play lock, player already played. :DEPRECATED")
 
+	print("tried to play")
+
 	var cards := CardData.array_to_data(cards_serial)
 	var player = players[player_id]
 
 	var ok = _validate_play(_last_card(), cards, draw_stack)
 
 	if ok:
-		if cards[0].hue == CardData.Hue.WILD:
+		if cards[0].category == CardData.Category.WILD:
 			play_stack = cards.duplicate()
 			return { "success" = true, "awaiting_selection" = true }
 		else:
@@ -102,9 +104,7 @@ func select_hue(player_id: int, hue: int) -> Dictionary:
 	
 	var player = players[player_id]
 	
-	for card in play_stack: 
-		card.faceless = true
-		card.hue = hue as CardData.Hue
+	for card in play_stack: card.hue = hue as CardData.Hue
 
 	_add_to_pile(play_stack)
 	_apply_effects(play_stack)
@@ -116,7 +116,6 @@ func select_hue(player_id: int, hue: int) -> Dictionary:
 	play_stack = []
 
 	return response
-
 
 func add_player(player: Dictionary) -> Dictionary:
 	print("GameLogic: Tried to add player with ID and Name: ", player.id, player.name)
@@ -216,8 +215,8 @@ func _create_deck() -> Array[CardData]:
 
 	## Four of each special wild card (WILD, WILD FOUR) for each color
 	for color in range(4):
-		var data_wild := CardData.create_special(CardData.Hue.WILD, CardData.Effect.NULL)
-		var data_wild_four := CardData.create_special(CardData.Hue.WILD, CardData.Effect.DRAW, 4)
+		var data_wild := CardData.create_wild(CardData.Effect.NULL)
+		var data_wild_four := CardData.create_wild(CardData.Effect.DRAW, 4)
 		new_deck.append(data_wild)
 		new_deck.append(data_wild_four)
 
@@ -234,10 +233,12 @@ func _apply_effects(cards: Array[CardData]) -> void:
 		skips += cards.size()
 
 static func can_play(top_card: CardData, card: CardData) -> bool:
-	if card.hue == CardData.Hue.WILD: return true
-	if card.hue == top_card.hue: return true
-	if card.effect != CardData.Effect.NULL and card.effect == top_card.effect: return true
-	if card.number >= 0 and card.number == top_card.number: return true
+	if card.category == CardData.Category.WILD:
+		return true
+	else:
+		if card.hue == top_card.hue: return true
+		if card.effect != CardData.Effect.NULL and card.effect == top_card.effect: return true
+		if card.number >= 0 and card.number == top_card.number: return true
 
 	return false
 
@@ -247,9 +248,9 @@ static func can_combo(cards: Array[CardData]) -> bool:
 	return cards.slice(1, cards.size()).all(func(next_card: CardData): return GameLogic.can_play_with_next(starter, next_card))
 
 static func can_stack(top_card: CardData, card: CardData) -> bool:
-	if card.hue == CardData.Hue.WILD and card.effect == CardData.Effect.DRAW: return true
+	if card.category == CardData.Category.WILD and card.effect == CardData.Effect.DRAW: return true
 
-	if top_card.hue == CardData.Hue.WILD:
+	if top_card.category == CardData.Category.WILD:
 		if card.effect == CardData.Effect.DRAW:
 			if card.hue == top_card.hue: return true
 	else:
@@ -258,7 +259,7 @@ static func can_stack(top_card: CardData, card: CardData) -> bool:
 	return false
 
 static func can_play_with_next(previous: CardData, next_card: CardData) -> bool:
-	if next_card.hue == CardData.Hue.WILD:
+	if next_card.category == CardData.Category.WILD:
 		if next_card.effect == previous.effect:
 			return true
 		else:

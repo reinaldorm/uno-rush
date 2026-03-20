@@ -19,8 +19,9 @@ shader_parameter/inset = 0.0
 [sub_resource type="ViewportTexture" id="ViewportTexture_08p43"]
 viewport_path = NodePath("SubViewport")
 
-[node name="ColorView" type="Node2D" unique_id=954324616]
+[node name="HueView" type="Node2D" unique_id=954324616 node_paths=PackedStringArray("sheet_sprite")]
 script = ExtResource("1_m27am")
+sheet_sprite = NodePath("SubViewport/Sprite2D")
 
 [node name="SubViewport" type="SubViewport" parent="." unique_id=1081092184]
 disable_3d = true

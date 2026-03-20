@@ -6,7 +6,7 @@ enum Hue {
 	GREEN,
 	BLUE,
 	YELLOW,
-	WILD
+	NULL
 }
 
 enum Effect {
@@ -16,30 +16,24 @@ enum Effect {
 	NULL
 }
 
+enum Category {
+	COLORED,
+	WILD
+}
+
 @export var hue : Hue
+@export var category : Category
 @export var number : int
 @export var effect : Effect
 @export var effect_parameter : int
 @export var id: String
-@export var faceless: bool = false
-
-static func create_faceless(_hue: Hue) -> CardData:
-
-	var new_data := CardData.new()
-	new_data.hue = _hue
-	new_data.number = -1
-	new_data.effect = Effect.NULL
-	new_data.effect_parameter = 0
-	new_data.id = str(randi_range(0, 1000000))
-	new_data.faceless = true
-
-	return new_data
 
 static func create_numbered(_hue: Hue, _number: int) -> CardData:
 	if _number < 0 or _number > 9: pass ## Should throw error as no card may have lower than 0 or greater than 9 numbers.
 
 	var new_data := CardData.new()
 	new_data.hue = _hue
+	new_data.category = Category.COLORED
 	new_data.number = _number
 	new_data.effect = Effect.NULL
 	new_data.effect_parameter = 0
@@ -50,6 +44,7 @@ static func create_numbered(_hue: Hue, _number: int) -> CardData:
 static func create_special(_hue: Hue, _effect: Effect, draw_amount:= 0) -> CardData:
 	var new_data := CardData.new()
 	new_data.hue = _hue
+	new_data.category = Category.COLORED
 	new_data.number = -1
 	new_data.effect = _effect
 	new_data.effect_parameter = draw_amount
@@ -59,7 +54,8 @@ static func create_special(_hue: Hue, _effect: Effect, draw_amount:= 0) -> CardD
 
 static func create_wild(_effect: Effect, draw_amount:= 0) -> CardData:
 	var new_data := CardData.new()
-	new_data.hue = Hue.WILD
+	new_data.hue = Hue.NULL
+	new_data.category = Category.WILD
 	new_data.number = -1
 	new_data.effect = _effect
 	new_data.effect_parameter = draw_amount
@@ -67,9 +63,15 @@ static func create_wild(_effect: Effect, draw_amount:= 0) -> CardData:
 
 	return new_data
 
+func set_wild_hue(new_hue: Hue) -> void:
+	assert(category == Category.WILD)
+	assert(new_hue != Hue.NULL)
+	hue = new_hue
+
 static func to_serial(card: CardData) -> Dictionary:
 	return {
 		"hue": card.hue,
+		"category": card.category,
 		"number": card.number,
 		"effect": card.effect,
 		"effect_parameter": card.effect_parameter,
@@ -87,6 +89,7 @@ static func to_data(serial: Dictionary) -> CardData:
 	var data := CardData.new()
 
 	data.hue = serial["hue"]
+	data.category = serial.get("category", Category.COLORED)
 	data.number = serial["number"]
 	data.effect = serial["effect"]
 	data.effect_parameter = serial["effect_parameter"]

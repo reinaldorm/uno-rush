@@ -312,6 +312,8 @@ metadata/_custom_type_script = "uid://db72o0ul18xad"
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1936753063]
 environment = SubResource("Environment_r4lks")
 
+[connection signal="drag_requested" from="DiscardPile" to="GameManager" method="_on_drag_requested"]
+[connection signal="play_requested" from="DiscardPile" to="GameManager" method="_on_play_requested"]
 [connection signal="draw_requested" from="DrawPile" to="GameManager" method="_on_draw_requested"]
 [connection signal="selection_changed" from="PlayerHand" to="GameManager" method="_on_selection_changed"]
 [connection signal="selection_changed" from="PlayerHand/SelectionComponent" to="PlayerHand" method="_on_selection_changed"]

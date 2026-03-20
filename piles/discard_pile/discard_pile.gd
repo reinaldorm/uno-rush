@@ -44,20 +44,21 @@ func play(played_cards: Array[CardView]) -> void:
 func reject_play() -> void:
 	_drop_zone.resolve_drop(false)
 
-func toggle_color_viewer(on: bool) -> void:
-	if on: _show_color_viewer()
-	else: _hide_color_viewer()
+func toggle_hue_viewer(on: bool, hue: CardData.Hue = CardData.Hue.NULL) -> void:
+	if on: _show_hue_viewer(hue)
+	else: _hide_hue_viewer()
 
 # -------------------------
 # Internal
 # -------------------------
 
-func _show_color_viewer() -> void:
+func _show_hue_viewer(hue: CardData.Hue) -> void:
+	_hue_view.set_hue(hue)
 	var tween = _animate("color").set_trans(Tween.TRANS_ELASTIC)
 
 	tween.tween_property(_hue_view, "position:y", -20, 1.0)
 
-func _hide_color_viewer() -> void:
+func _hide_hue_viewer() -> void:
 	var tween = _animate("color").set_trans(Tween.TRANS_ELASTIC)
 
 	tween.tween_property(_hue_view, "position:y", 0, 1.0)

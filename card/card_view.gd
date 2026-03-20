@@ -145,19 +145,14 @@ func _toggle_input_helpers(to: bool) -> void:
 func _get_texture_coord() -> Vector2i:
 	var texture_coord := Vector2i(0, 0)
 
-	if data.faceless:
-		if data.effect == CardData.Effect.DRAW:
-			texture_coord = Vector2i(data.hue, 5)
-		else:
-			texture_coord = Vector2i(data.hue + 4, 5)
-	elif data.number >= 0:
+	if data.number >= 0:
 		texture_coord = Vector2i(data.number, data.hue)
-	elif data.hue == CardData.Hue.WILD:
-		texture_coord = Vector2i(0, data.hue)
+	elif data.category == CardData.Category.WILD:
+		texture_coord = Vector2i(0, 4)
 		if data.effect == CardData.Effect.DRAW:
-			texture_coord = Vector2i(1, data.hue)
+			texture_coord = Vector2i(1, 4)
 		else:
-			texture_coord = Vector2i(0, data.hue)
+			texture_coord = Vector2i(0, 4)
 	elif data.effect != null:
 		texture_coord = Vector2i(9 + data.effect + 1, data.hue)
 

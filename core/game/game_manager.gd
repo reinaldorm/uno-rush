@@ -83,6 +83,11 @@ func _play_from_client(cards: Array[CardData]) -> void:
 
 	_discard_pile.play(played_cards)
 
+	if cards[0].category == CardData.Category.WILD:
+		_discard_pile.toggle_hue_viewer(true, cards[0].hue)
+	else:
+		_discard_pile.toggle_hue_viewer(false)
+
 func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 	var card_views : Array[CardView] = []
 	var opponent_hand : Hand
@@ -98,6 +103,11 @@ func _play_from_opponent(opponent_id: int, cards: Array[CardData]) -> void:
 		card_views.append(view)
 
 	_discard_pile.play(card_views)
+
+	if cards[0].category == CardData.Category.WILD:
+		_discard_pile.toggle_hue_viewer(true, cards[0].hue)
+	else:
+		_discard_pile.toggle_hue_viewer(false)
 
 func _cycle_hand_available() -> void:
 	_client_hand.deselect_all_cards()
@@ -259,7 +269,6 @@ func _on_selection_changed(views: Array[CardView], _selected: Array[CardView]) -
 	var top_card = CardData.to_data(_snapshot.top_card)
 
 	if _selected.size():
-		print(_selected)
 		var first := _selected[0]
 		if _snapshot.draw_stack:
 			if GameLogic.can_stack(top_card, first.data):

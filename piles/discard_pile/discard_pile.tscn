@@ -149,7 +149,7 @@ _data = {
 &"show_bubbles": SubResource("Animation_kccp7")
 }
 
-[node name="DiscardPile" type="Node2D" unique_id=411543129 node_paths=PackedStringArray("animation_player", "_particles", "_area_outline", "_drop_zone", "_cards_node", "_audio_player")]
+[node name="DiscardPile" type="Node2D" unique_id=411543129 node_paths=PackedStringArray("animation_player", "_particles", "_area_outline", "_drop_zone", "_cards_node", "_audio_player", "_hue_view")]
 script = ExtResource("1_twh83")
 card_scene = ExtResource("2_kccp7")
 animation_player = NodePath("AnimationPlayer")
@@ -158,6 +158,7 @@ _area_outline = NodePath("Visuals/Outline")
 _drop_zone = NodePath("DropZone")
 _cards_node = NodePath("Cards")
 _audio_player = NodePath("AudioStreamPlayer")
+_hue_view = NodePath("HueView")
 
 [node name="HueView" parent="." unique_id=954324616 instance=ExtResource("9_xxae7")]
 

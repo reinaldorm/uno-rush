@@ -58,7 +58,4 @@ func _on_button_pressed(_hue: int) -> void:
 func _on_select_timeout() -> void:
 	var random_hue : CardData.Hue = CardData.Hue.values().pick_random()
 
-	while random_hue == CardData.Hue.WILD:
-		random_hue = CardData.Hue.values().pick_random()
-
 	_select_hue(random_hue)
